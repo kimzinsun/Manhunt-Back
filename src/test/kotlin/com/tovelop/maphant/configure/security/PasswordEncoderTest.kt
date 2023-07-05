@@ -13,7 +13,7 @@ class PasswordEncoderTest {
     @DisplayName("SHA256 Hello")
     fun test1() {
         val pw = "Hello"
-        val encoded= sha256.encode(pw)
+        val encoded = sha256.encode(pw)
         sha256.matches(pw, encoded)
         println(encoded)
     }
@@ -22,7 +22,7 @@ class PasswordEncoderTest {
     @DisplayName("SHA512 Hello")
     fun test2() {
         val pw = "Hello"
-        val encoded= sha512.encode(pw)
+        val encoded = sha512.encode(pw)
         sha512.matches(pw, encoded)
         println(encoded)
     }
@@ -31,7 +31,7 @@ class PasswordEncoderTest {
     @DisplayName("Bcrypt Hello")
     fun test3() {
         val pw = "Hello"
-        val encoded= bcrypt.encode(pw)
+        val encoded = bcrypt.encode(pw)
         bcrypt.matches(pw, encoded)
         println(encoded)
     }
