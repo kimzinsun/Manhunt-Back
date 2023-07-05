@@ -3,10 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.UserMapper">
-    <select id="existIn"  resultType="UserDTO">
-            select *
-            from User
-            where #{columnName} = #{value};
+    <select id="existIn" resultType="UserDTO" parameterType="UserDTO">
+        SELECT *
+        FROM User
+        WHERE ${columnName} = #{value}
     </select>
     <select id="readUserByEmail"  resultType="UserDTO">
         select *
