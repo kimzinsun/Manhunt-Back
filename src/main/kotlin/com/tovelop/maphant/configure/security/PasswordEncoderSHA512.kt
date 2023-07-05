@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import java.security.MessageDigest
 
 @Component
-class PasswordEncoderSHA512 :PasswordEncoder{
+class PasswordEncoderSHA512 : PasswordEncoder {
 
     override fun encode(rawPassword: CharSequence): String {
         val digest = MessageDigest.getInstance("SHA-512")
