@@ -17,7 +17,7 @@ class UserController {
         if(true/*서비스.비번 두 개 틀릴 때*/) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("비밀번호가 일치하지 않습니다.")))
         }
-        //대학 이메일 체크
+        //대학 이메일 체크 1. *.ac.kr* 2.대학명 추출 3. universeName
 
         //DB 유니크 검사
         //DB 저장
