@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class SignService(
     private val encoder: PasswordEncoder,
-    private val mapper: UserMapper
+    private val mapper: UserMapper,
 )
 {
     fun signUp(){
@@ -27,14 +27,16 @@ class SignService(
     fun isEmailValid(): Boolean {
         return true
     }
+    fun isNicknameValid(): Boolean {
+        return true
+    }
+    fun isUniversityValid(): Boolean {
+        return true
+    }
     fun duplicateEmail(): Boolean {
         return true
     }
     fun duplicateNickname(): Boolean {
         return true
     }
-    fun isNicknameValid(): Boolean {
-        return true
-    }
-
 }
