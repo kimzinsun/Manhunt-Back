@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserMapper {
     fun insertUser(user: UserDTO)
-    fun readUserBy(columnName:String):List<UserDTO>
+    fun existIn(value:Any,columnName:String):List<UserDTO>
     fun readAllColumnVal(emails: List<String>): List<UserDTO>
     fun updateUserByEmail(id: Int)
 }
