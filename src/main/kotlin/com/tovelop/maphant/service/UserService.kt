@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class UserService(val mapper: UserMapper) {
-    fun existIn(value:Any,columnName:String):Boolean{
-        return mapper.existIn(value, columnName).isNotEmpty()
+class   UserService(val mapper: UserMapper) {
+    fun existSameEmail(email:String):Boolean{
+        return mapper.countSameEmails(email) != 0
     }
+
 }
