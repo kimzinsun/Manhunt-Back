@@ -12,10 +12,10 @@ class PasswordEncoderConfig {
         return PasswordEncoderSHA512()
     }
 
-    /*@Bean
-    fun passwordEncoderSHA256(): PasswordEncoder {
+    @Bean
+    fun passwordEncoderSHA256(): PasswordEncoderSHA256 {
         return PasswordEncoderSHA256()
-    }*/
+    }
 
     @Bean
     fun passwordEncoderBcrypt(): PasswordEncoder {
