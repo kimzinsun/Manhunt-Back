@@ -21,6 +21,7 @@ class UserController {
 
         //DB 유니크 검사
         //DB 저장
+
         return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
     }
     @PostMapping("/login")
