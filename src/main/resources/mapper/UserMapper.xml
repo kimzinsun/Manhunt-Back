@@ -3,12 +3,21 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.UserMapper">
-    <select id="readUser" resultType="UserDTO">
-        select *
+    <select id="readAllColumnVal"  resultType="Any?">
+        select #{columnName}
         from User;
+    </select>
+    <select id="readUserByEmail"  resultType="UserDTO">
+        select *
+        from User
+        where email in  <foreach item="email" collection="emails" open="(" separator="," close=")">
+        #{email}
+    </foreach> ;
     </select>
     <insert id="insertUser">
         INSERT INTO User (id,email, password, nickname, name, phoneInt, create_at, role, state, is_agree, last_modified_date, university_id)
         VALUES (#{id},#{email}, #{password}, #{nickname}, #{name}, #{phoneInt}, #{create_at}, #{role}, #{state}, #{is_agree}, #{last_modified_date}, #{university_id})
     </insert>
+    <update id="updateUser" databaseId="id" >
+    </update>
 </mapper>
