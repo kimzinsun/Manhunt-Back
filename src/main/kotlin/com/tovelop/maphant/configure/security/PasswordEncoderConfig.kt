@@ -13,7 +13,7 @@ class PasswordEncoderConfig {
     }
 
     @Bean
-    fun passwordEncoderSHA256(): PasswordEncoderSHA256 {
+    fun passwordEncoderSHA256(): PasswordEncoder {
         return PasswordEncoderSHA256()
     }
 
