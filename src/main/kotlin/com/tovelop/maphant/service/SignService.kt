@@ -1,6 +1,7 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.configure.security.PasswordEncoder
+import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.stereotype.Service
 
@@ -14,10 +15,11 @@ class SignService(
     }
     fun login(){
     }
-    fun getUser(user: String): String {
-        return user
+    fun getUser(){
+
     }
-    fun insertUser(){
+    fun insertUser(user: UserDTO){
+        mapper.insertUser(user)
     }
     fun isPasswordValid(): Boolean {
         return true
@@ -26,6 +28,12 @@ class SignService(
         return true
     }
     fun duplicateEmail(): Boolean {
+        return true
+    }
+    fun duplicateNickname(): Boolean {
+        return true
+    }
+    fun isNicknameValid(): Boolean {
         return true
     }
 
