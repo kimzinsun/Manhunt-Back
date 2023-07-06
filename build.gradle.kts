@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+    implementation("io.awspring.cloud:spring-cloud-starter-aws:2.3.1")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-security")
