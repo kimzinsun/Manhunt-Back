@@ -114,11 +114,12 @@ class SignupController(@Autowired val signService: SignService) {
     @PostMapping("/findemail")
     fun findEmail(@RequestBody findEmail: FindEmailDTO): ResponseEntity<MemberResponse> {
         //학번, 전화번호 DB 체크
-        if(true/*입력 받은 학번, 전화번호 확인 후 일치할 때 return type 스트링으로 이메일 반환, 틀렸을 때 null*/) {
+//        val result: String? =
+        if(true/*result.isNull()인지 확인. 입력 받은 학번, 전화번호 확인 후 일치할 때 return type 스트링으로 이메일 반환, 틀렸을 때 null*/) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("학번, 전화번호를 확인해주세요.")))
         }
         //이메일
-        return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
+        return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true"/*, "email" to 일부 별표 처리 된 result*/)))
     }
     @PostMapping("/changepw")
     fun ChangePw(@RequestBody changePw: ChangePwDTO): ResponseEntity<MemberResponse> {
@@ -131,9 +132,13 @@ class SignupController(@Autowired val signService: SignService) {
         return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
     }
 
+    @PostMapping("/changepw/authenticationcode")
+    fun authenticationCode(@RequestBody newPw: NewPwDTO) {
+        //인증번호 확인
+    }
+
     @PostMapping("/newpw")
     fun newPw(@RequestBody newPw: NewPwDTO) {
-        //인증번호 확인
         //패스워드 입력, 검증
         //DB 패스워드 치환
     }
