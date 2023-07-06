@@ -45,42 +45,42 @@ class SignService(private val mapper: UserMapper) {
         return mapper.readAllColumnVal(listOf(email)).firstOrNull()
     }
 
-    private fun insertUser(user: UserDTO) {
+    fun insertUser(user: UserDTO) {
         // 사용자 추가 로직
         mapper.insertUser(user)
     }
 
-    private fun isPasswordValid(password: String): Boolean {
+    fun isPasswordValid(password: String): Boolean {
         // 비밀번호 유효성 검사 로직
         // ... 구현 내용
         return true
     }
 
-    private fun isEmailValid(email: String): Boolean {
+    fun isEmailValid(email: String): Boolean {
         // 이메일 유효성 검사 로직
         // ... 구현 내용
         return true
     }
 
-    private fun isNicknameValid(nickname: String): Boolean {
+    fun isNicknameValid(nickname: String): Boolean {
         // 닉네임 유효성 검사 로직
         // ... 구현 내용
         return true
     }
 
-    private fun isUniversityValid(universityId: Int?): Boolean {
+    fun isUniversityValid(universityId: Int?): Boolean {
         // 대학교 유효성 검사 로직
         // ... 구현 내용
         return true
     }
 
-    private fun duplicateEmail(email: String): Boolean {
+    fun duplicateEmail(email: String): Boolean {
         // 이메일 중복 검사 로직
         // ... 구현 내용
         return false
     }
 
-    private fun duplicateNickname(nickname: String): Boolean {
+    fun duplicateNickname(nickname: String): Boolean {
         // 닉네임 중복 검사 로직
         // ... 구현 내용
         return false

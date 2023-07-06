@@ -8,7 +8,7 @@ data class SignupDTO (
     val passwordChk: String,
     val nickname: String,
     val name: String,
-    val sNo: Long,
+    val sNo: String,
     val phoneNo: String,
     val universityName: String
 )
