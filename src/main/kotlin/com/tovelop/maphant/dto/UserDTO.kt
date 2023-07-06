@@ -9,6 +9,7 @@ data class UserDTO(
     val nickname: String,
     val name: String,
     val phoneInt: String,
+    val sNo: String,
     val create_at: LocalDate,
     val role: String,
     val state: String,
