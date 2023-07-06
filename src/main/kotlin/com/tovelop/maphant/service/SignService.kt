@@ -2,6 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.UserMapper
+import com.tovelop.maphant.utils.VaildationHelper
 import org.springframework.stereotype.Service
 
 @Service
@@ -50,39 +51,32 @@ class SignService(private val mapper: UserMapper) {
         mapper.insertUser(user)
     }
 
+
     private fun isPasswordValid(password: String): Boolean {
-        // 비밀번호 유효성 검사 로직
-        // ... 구현 내용
-        return true
+        return VaildationHelper.isPasswordValid(password)
     }
 
     private fun isEmailValid(email: String): Boolean {
-        // 이메일 유효성 검사 로직
-        // ... 구현 내용
-        return true
+        return VaildationHelper.isEmailValid(email)
     }
 
-    private fun isNicknameValid(nickname: String): Boolean {
-        // 닉네임 유효성 검사 로직
-        // ... 구현 내용
-        return true
+    fun isNicknameValid(nickname: String): Boolean {
+        return VaildationHelper.isAlphaNumericKorean(nickname)
     }
 
-    private fun isUniversityValid(universityId: Int?): Boolean {
-        // 대학교 유효성 검사 로직
-        // ... 구현 내용
-        return true
+    fun isUniversityValid(universityId: Int?): Boolean {
+        if (universityId == null) {
+            return true
+        }
+
+        return mapper.isUniversityExist(universityId)
     }
 
-    private fun duplicateEmail(email: String): Boolean {
-        // 이메일 중복 검사 로직
-        // ... 구현 내용
-        return false
+    fun duplicateEmail(email: String): Boolean {
+        return mapper.countSameEmails(email) > 0
     }
 
-    private fun duplicateNickname(nickname: String): Boolean {
-        // 닉네임 중복 검사 로직
-        // ... 구현 내용
-        return false
+    fun duplicateNickname(nickname: String): Boolean {
+        return mapper.countSameNickName(nickname) > 0
     }
 }
