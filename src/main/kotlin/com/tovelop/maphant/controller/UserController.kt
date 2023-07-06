@@ -120,13 +120,14 @@ class SignupController(@Autowired val userService: UserService) {
     @PostMapping("/findemail")
     fun findEmail(@RequestBody findEmail: FindEmailDTO): ResponseEntity<MemberResponse> {
         //학번, 전화번호 DB 체크
-//        val result: String? =
-        if (true/*result.isNull()인지 확인. 입력 받은 학번, 전화번호 확인 후 일치할 때 return type 스트링으로 이메일 반환, 틀렸을 때 null*/) {
-            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("학번, 전화번호를 확인해주세요.")))
-        }
+        val email = "a@ks.ac.kr"
+//        val email = userService.
+//            userService.(학번과 전화번호를 입력받아 있으면 ture / 없으면 false로 반환)
+//             ?: return ResponseEntity.badRequest().body(MemberResponse(data = mutableMapOf("email" to email)))
         //이메일
+
         return ResponseEntity.ok()
-            .body(MemberResponse(data = mutableMapOf("success" to "true"/*, "email" to 일부 별표 처리 된 result*/)))
+            .body(MemberResponse(data = mutableMapOf("email" to email)))
     }
 
     @PostMapping("/changepw")
@@ -138,6 +139,7 @@ class SignupController(@Autowired val userService: UserService) {
         //        이메일 전송 서비스 사용.
         //        signService.sendEmail()
         return ResponseEntity.ok().body(MemberResponse(data = mutableMapOf("success" to "true")))
+        // 여기서 내 이메일을 session을 넘겨줄지, 아니면 data에 email을 넘겨줄지 결정 해야함.
     }
 
     @PostMapping("/changepw/authenticationcode")
@@ -146,8 +148,16 @@ class SignupController(@Autowired val userService: UserService) {
     }
 
     @PostMapping("/newpw")
-    fun newPw(@RequestBody newPw: NewPwDTO) {
+    fun newPw(@RequestBody newPw: NewPwDTO) : ResponseEntity<MemberResponse>{
         //패스워드 입력, 검증
+//        val response =
+//            userService.(비번 두개를 확인시켜 맞으면 바꿔줘야하는데 여기서 바꾸고자하는 email도 함께 줘서 그 이메일의 비밀번호를 바꿔줘야함.)
+//        return if(response.success) {
+            // ok 반환
+//        }else{
+            //bad 반환
+//        }
         //DB 패스워드 치환
+        return ResponseEntity.ok().body(MemberResponse(data = mutableMapOf("success" to "true")))
     }
 }
