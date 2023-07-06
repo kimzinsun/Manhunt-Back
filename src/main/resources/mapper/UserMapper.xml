@@ -37,4 +37,7 @@
         WHERE phoneInt=#{phoneInt}
         -- User에 학번 추가시 진행
     </select>
+    <select id="isUniversityExist" resultType="Boolean">
+        SELECT EXISTS(SELECT * FROM University WHERE id=#{university_id})
+    </select>
 </mapper>
