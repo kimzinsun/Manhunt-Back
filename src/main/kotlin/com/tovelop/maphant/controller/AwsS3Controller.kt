@@ -1,7 +1,9 @@
 package com.tovelop.maphant.controller
 
+import com.tovelop.maphant.dto.UploadLogDTO
 import com.tovelop.maphant.service.AwsS3Service
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -28,5 +30,11 @@ class AwsS3Controller(@Autowired private val awsS3Service: AwsS3Service) {
         //
 
         return "ok";
+    }
+
+    @PostMapping("/store")
+    fun uploadFiles(@RequestParam("files") files: List<MultipartFile>): ResponseEntity<List<UploadLogDTO>> {
+        val dtoList = awsS3Service.storeUrl(files)
+        return ResponseEntity.ok(dtoList)
     }
 }
