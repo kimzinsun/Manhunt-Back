@@ -65,6 +65,7 @@ class SignupController(@Autowired val signService: SignService) {
         return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
     }
 
+    @PostMapping("/validation/passwordcheck")
     fun validationPasswordChk(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<MemberResponse> {
         if (true/* password, passwordChk 두 개 받아서 동일한지 검사 */){
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("비밀번호와 비밀번호 확인이 동일하지 않습니다.")))
@@ -85,7 +86,7 @@ class SignupController(@Autowired val signService: SignService) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("학교와 이메일을 정확히 입력해주세요.")))
         }
 
-        //DB 저장
+        //비밀번호를 제외한 나머지 형식 확인 후 DB 저장
         if(true/*DB 저장 */) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("학교와 이메일을 정확히 입력해주세요.")))
         }
@@ -94,6 +95,9 @@ class SignupController(@Autowired val signService: SignService) {
         if(true/* email in .ac.kr contains check & 유효하면 이메일 전송 (2, 3번은 api 따로 분리) */) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("대학교 이메일이 아닙니다.")))
         }
+
+//        이메일 전송 서비스 사용.
+//        signService.sendEmail()
 
         return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
     }
