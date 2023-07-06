@@ -8,6 +8,16 @@
         FROM User
         WHERE email= #{email};
     </select>
+    <select id="countSameNickName" resultType="Int">
+        SELECT COUNT(*)
+        FROM User
+        WHERE nickname= #{nickName};
+    </select>
+    <select id="countSamePhoneInt" resultType="Int">
+        SELECT COUNT(*)
+        FROM User
+        WHERE phoneInt = #{phoneInt};
+    </select>
     <select id="readUserByEmail"  resultType="UserDTO">
         SELECT *
         FROM User
