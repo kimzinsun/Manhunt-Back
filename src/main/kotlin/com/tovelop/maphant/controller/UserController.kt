@@ -1,6 +1,7 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.*
+import com.tovelop.maphant.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,15 +12,15 @@ import org.springframework.web.bind.annotation.RestController
 data class MemberResponse(val data: MutableMap<String, String> = mutableMapOf(), val errors: MutableList<String> = mutableListOf())
 @RestController
 @RequestMapping("/user")
-class SignupController(@Autowired val signService: SignService) {
+class SignupController(@Autowired val userService: UserService) {
     //이메일 검증 api
     @PostMapping("/validation/email")
     fun validationEmail(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<MemberResponse> {
-        if (signService.isEmailValid(validationSignupDTO.email)/* 이메일 형식에 맞는지 확인 (ValidationSignupDTO.email만 인자로 받아 쓰셈)*/){
+        if (userService.isEmailValid(validationSignupDTO.email)/* 이메일 형식에 맞는지 확인 (ValidationSignupDTO.email만 인자로 받아 쓰셈)*/){
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("형식에 맞지 않는 이메일입니다.")))
         }
 
-        if (signService.duplicateEmail(validationSignupDTO.email)/* db에 중복 있는지 유니크 검사 (ValidationSignupDTO.email만 인자로 받아 쓰셈)*/){
+        if (userService.duplicateEmail(validationSignupDTO.email)/* db에 중복 있는지 유니크 검사 (ValidationSignupDTO.email만 인자로 받아 쓰셈)*/){
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("이미 사용중인 이메일입니다.")))
         }
 
@@ -29,11 +30,11 @@ class SignupController(@Autowired val signService: SignService) {
     //nickname 검증 api
     @PostMapping("/validation/nickname")
     fun validationNickname(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<MemberResponse> {
-        if (signService.isNicknameValid(validationSignupDTO.nickName)/* nickname 형식에 맞는지 확인 (ValidationSignupDTO.nickname만 인자로 받아 쓰셈)*/){
+        if (userService.isNicknameValid(validationSignupDTO.nickName)/* nickname 형식에 맞는지 확인 (ValidationSignupDTO.nickname만 인자로 받아 쓰셈)*/){
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("형식에 맞지 않는 별명입니다.")))
         }
 
-        if (signService.duplicateNickname(validationSignupDTO.nickName)/* db에 중복 있는지 유니크 검사 (ValidationSignupDTO.nickname만 인자로 받아 쓰셈)*/){
+        if (userService.duplicateNickname(validationSignupDTO.nickName)/* db에 중복 있는지 유니크 검사 (ValidationSignupDTO.nickname만 인자로 받아 쓰셈)*/){
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("이미 사용중인 별명입니다.")))
         }
 
