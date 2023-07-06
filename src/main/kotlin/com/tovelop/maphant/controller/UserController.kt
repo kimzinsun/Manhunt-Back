@@ -102,20 +102,33 @@ class SignupController(@Autowired val signService: SignService) {
         return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
     }
     @PostMapping("/login")
-    fun login(@RequestBody login: LoginDTO) {
+    fun login(@RequestBody login: LoginDTO): ResponseEntity<MemberResponse> {
         //ID, PW DB 체크
+        if(true /*입력받은 이메일, 비밀번호 DB에 있는 정보와 동일한 지 확인 */) {
+            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("이메일, 비밀번호를 확인해주세요.")))
+        }
         //JWT 주기
         //로그 기록
+        return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
     }
     @PostMapping("/findemail")
-    fun findEmail(@RequestBody findEmail: FindEmailDTO) {
+    fun findEmail(@RequestBody findEmail: FindEmailDTO): ResponseEntity<MemberResponse> {
         //학번, 전화번호 DB 체크
-        //이메일 반환
+        if(true/*입력 받은 학번, 전화번호 확인 후 일치할 때 return type 스트링으로 이메일 반환, 틀렸을 때 null*/) {
+            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("학번, 전화번호를 확인해주세요.")))
+        }
+        //이메일
+        return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
     }
     @PostMapping("/changepw")
-    fun ChangePw(@RequestBody changePw: ChangePwDTO) {
+    fun ChangePw(@RequestBody changePw: ChangePwDTO): ResponseEntity<MemberResponse> {
         //이메일 DB 체크
-        //이메일 전송
+//        if(true/*이메일이 일치하지 않을 때*/) {
+//            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("유효하지 않은 이메일입니다.")))
+//        }
+        //        이메일 전송 서비스 사용.
+        //        signService.sendEmail()
+        return ResponseEntity.ok().body(MemberResponse(data= mutableMapOf("success" to "true")))
     }
 
     @PostMapping("/newpw")
