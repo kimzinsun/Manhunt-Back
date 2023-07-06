@@ -1,7 +1,6 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.*
-import com.tovelop.maphant.service.SignService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
