@@ -14,5 +14,5 @@ data class UserDTO(
     val state: String,
     val is_agree: String,
     val last_modified_date: LocalDate,
-    val university_id: Int
+    val university_id: Int?
 )
