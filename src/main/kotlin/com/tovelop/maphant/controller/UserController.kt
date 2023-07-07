@@ -19,11 +19,11 @@ class SignupController(@Autowired val userService: UserService) {
     //이메일 검증 api
     @PostMapping("/validation/email")
     fun validationEmail(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<MemberResponse> {
-        if (userService.isEmailValid(validationSignupDTO.email)/* 이메일 형식에 맞는지 확인 (ValidationSignupDTO.email만 인자로 받아 쓰셈)*/) {
+        if (userService.isEmailValid(validationSignupDTO.email!!)/* 이메일 형식에 맞는지 확인 (ValidationSignupDTO.email만 인자로 받아 쓰셈)*/) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("형식에 맞지 않는 이메일입니다.")))
         }
 
-        if (userService.duplicateEmail(validationSignupDTO.email)/* db에 중복 있는지 유니크 검사 (ValidationSignupDTO.email만 인자로 받아 쓰셈)*/) {
+        if (userService.duplicateEmail(validationSignupDTO.email!!)/* db에 중복 있는지 유니크 검사 (ValidationSignupDTO.email만 인자로 받아 쓰셈)*/) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("이미 사용중인 이메일입니다.")))
         }
 
@@ -33,11 +33,16 @@ class SignupController(@Autowired val userService: UserService) {
     //nickname 검증 api
     @PostMapping("/validation/nickname")
     fun validationNickname(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<MemberResponse> {
-        if (userService.isNicknameValid(validationSignupDTO.nickName)/* nickname 형식에 맞는지 확인 (ValidationSignupDTO.nickname만 인자로 받아 쓰셈)*/) {
+        val nicknameRegex = Regex("^[a-zA-Z0-9가-힣_-]{3,20}$") // 3~20 사이의 nickname
+
+        if (!validationSignupDTO.nickName!!.matches(nicknameRegex)) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("형식에 맞지 않는 별명입니다.")))
         }
+//        if (userService.isNicknameValid(validationSignupDTO.nickName)/* nickname 형식에 맞는지 확인 (ValidationSignupDTO.nickname만 인자로 받아 쓰셈)*/) {
+//            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("형식에 맞지 않는 별명입니다.")))
+//        }
 
-        if (userService.duplicateNickname(validationSignupDTO.nickName)/* db에 중복 있는지 유니크 검사 (ValidationSignupDTO.nickname만 인자로 받아 쓰셈)*/) {
+        if (userService.duplicateNickname(validationSignupDTO.nickName!!)/* db에 중복 있는지 유니크 검사 (ValidationSignupDTO.nickname만 인자로 받아 쓰셈)*/) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("이미 사용중인 별명입니다.")))
         }
 
@@ -47,10 +52,10 @@ class SignupController(@Autowired val userService: UserService) {
     //phoneNum 검증 api
     @PostMapping("/validation/phonenum")
     fun validationPhonenum(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<MemberResponse> {
-        if (true/* signService.isPhonenumValid(validationSignupDTO.phoneNum) nickname 형식에 맞는지 확인 (ValidationSignupDTO.phoneNum 인자로 받아 쓰셈)*/) {
-            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("핸드폰 번호를 확인해주세요.")))
+        val phoneNumberRegex = Regex("^01[0-9]-\\d{4}-\\d{4}$")
+        if (!validationSignupDTO.phoneNum!!.matches(phoneNumberRegex)) {
+            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678")))
         }
-
         if (true/*signService.duplicatePhonenum(validationSignupDTO.phoneNum) db에 중복 있는지 유니크 검사 (ValidationSignupDTO.phoneNum 인자로 받아 쓰셈)*/) {
             return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("이미 사용중인 핸드폰 번호입니다.")))
         }
@@ -61,6 +66,11 @@ class SignupController(@Autowired val userService: UserService) {
     //pw 검증 api
     @PostMapping("/validation/password")
     fun validationPassword(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<MemberResponse> {
+        val passwordRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[a-zA-Z\\d@\$!%*?&]{8,16}$")
+
+        if (!validationSignupDTO.password!!.matches(passwordRegex)) {
+            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("비밀번호는 영문 소문자, 대문자, 숫자와 특수문자를 포함하고, 최소 8자 최대 16자로 구성되어야 합니다.")))
+        }
         if (true/* password만 받아서 사용 가능여부(형식에 맞는지) */) {
             return ResponseEntity.badRequest()
                 .body(MemberResponse(errors = mutableListOf("비밀번호는 영문 소문자, 대문자, 숫자와 특수문자를 포함해야 합니다.")))
@@ -103,6 +113,9 @@ class SignupController(@Autowired val userService: UserService) {
 //        이메일 전송 서비스 사용.
 //        signService.sendEmail()
 
+//        회원가입 시켜주기 / state는 0인상태로 회원가입
+//        userService.signup(signup)
+
         return ResponseEntity.ok().body(MemberResponse(data = mutableMapOf("success" to "true")))
     }
 
@@ -120,13 +133,14 @@ class SignupController(@Autowired val userService: UserService) {
     @PostMapping("/findemail")
     fun findEmail(@RequestBody findEmail: FindEmailDTO): ResponseEntity<MemberResponse> {
         //학번, 전화번호 DB 체크
-//        val result: String? =
-        if (true/*result.isNull()인지 확인. 입력 받은 학번, 전화번호 확인 후 일치할 때 return type 스트링으로 이메일 반환, 틀렸을 때 null*/) {
-            return ResponseEntity.badRequest().body(MemberResponse(errors = mutableListOf("학번, 전화번호를 확인해주세요.")))
-        }
+        val email = "a@ks.ac.kr"
+//        val email = userService.
+//            userService.(학번과 전화번호를 입력받아 있으면 ture / 없으면 false로 반환)
+//             ?: return ResponseEntity.badRequest().body(MemberResponse(data = mutableMapOf("email" to email)))
         //이메일
+
         return ResponseEntity.ok()
-            .body(MemberResponse(data = mutableMapOf("success" to "true"/*, "email" to 일부 별표 처리 된 result*/)))
+            .body(MemberResponse(data = mutableMapOf("email" to email)))
     }
 
     @PostMapping("/changepw")
@@ -138,6 +152,7 @@ class SignupController(@Autowired val userService: UserService) {
         //        이메일 전송 서비스 사용.
         //        signService.sendEmail()
         return ResponseEntity.ok().body(MemberResponse(data = mutableMapOf("success" to "true")))
+        // 여기서 내 이메일을 session을 넘겨줄지, 아니면 data에 email을 넘겨줄지 결정 해야함.
     }
 
     @PostMapping("/changepw/authenticationcode")
@@ -146,8 +161,16 @@ class SignupController(@Autowired val userService: UserService) {
     }
 
     @PostMapping("/newpw")
-    fun newPw(@RequestBody newPw: NewPwDTO) {
+    fun newPw(@RequestBody newPw: NewPwDTO) : ResponseEntity<MemberResponse>{
         //패스워드 입력, 검증
+//        val response =
+//            userService.(비번 두개를 확인시켜 맞으면 바꿔줘야하는데 여기서 바꾸고자하는 email도 함께 줘서 그 이메일의 비밀번호를 바꿔줘야함.)
+//        return if(response.success) {
+            // ok 반환
+//        }else{
+            //bad 반환
+//        }
         //DB 패스워드 치환
+        return ResponseEntity.ok().body(MemberResponse(data = mutableMapOf("success" to "true")))
     }
 }
