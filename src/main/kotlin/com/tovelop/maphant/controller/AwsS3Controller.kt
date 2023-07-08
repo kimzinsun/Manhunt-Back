@@ -2,21 +2,25 @@ package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.UploadLogDTO
 import com.tovelop.maphant.service.AwsS3Service
+import com.tovelop.maphant.service.UploadLogService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MaxUploadSizeExceededException
 import org.springframework.web.multipart.MultipartFile
 
-@Controller
-class AwsS3Controller(@Autowired private val awsS3Service: AwsS3Service) {
+@RestController
+class AwsS3Controller(
+    private val awsS3Service: AwsS3Service,
+    private val uploadLogService: UploadLogService) {
 
     @PostMapping("/upload")
-    @ResponseBody
-    fun uploadFile(@RequestParam files:List<MultipartFile>):String {
+    fun uploadFile(@RequestParam files:List<MultipartFile>):List<UploadLogDTO> {
 
         if(files.size > 5) {
             // 에러 던지기
@@ -27,14 +31,8 @@ class AwsS3Controller(@Autowired private val awsS3Service: AwsS3Service) {
 
         // 서비스에서 여러 파일 aws에 올려서 url 받기
         val imageUrls:List<String> = awsS3Service.uploadFiles(files);
-        //
-
-        return "ok";
+        //db저장 후 dto 반환
+        return uploadLogService.storeUrl(userId,imageUrls,files);
     }
 
-    @PostMapping("/store")
-    fun uploadFiles(@RequestParam("files") files: List<MultipartFile>): ResponseEntity<List<UploadLogDTO>> {
-        val dtoList = awsS3Service.storeUrl(files)
-        return ResponseEntity.ok(dtoList)
-    }
 }

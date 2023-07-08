@@ -3,6 +3,7 @@ package com.tovelop.maphant.service
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.tovelop.maphant.dto.UploadLogDTO
+import com.tovelop.maphant.utils.UploadUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -15,7 +16,10 @@ import java.util.*
 
 
 @Service
-class AwsS3Service(@Autowired val amazonS3Client: AmazonS3Client) {
+class AwsS3Service(
+    private val amazonS3Client: AmazonS3Client,
+    private val uploadUtils: UploadUtils) {
+
     @Value("\${cloud.aws.s3.bucket}")
     private lateinit var bucket:String
 
@@ -24,8 +28,9 @@ class AwsS3Service(@Autowired val amazonS3Client: AmazonS3Client) {
         var imageUrls = ArrayList<String>()
         for (file in files) {
             val originalFileName: String? = file.originalFilename
-            //uuid로 임의의 파일네임 생성 //일단 추가해놓음
-            //val uploadFileName:String? = getUuidFileName(originalFileName.toString())
+
+            if(uploadUtils.isNotImageFile(originalFileName as String))
+                throw IllegalArgumentException("png, jpeg, jpg에 해당하는 파일만 업로드할 수 있습니다.");
 
             val objectMetadata = ObjectMetadata()
             objectMetadata.setContentLength(file.getSize())
@@ -42,29 +47,5 @@ class AwsS3Service(@Autowired val amazonS3Client: AmazonS3Client) {
         }
         return imageUrls
     }
-
-    // url db 저장
-    @Transactional
-    fun storeUrl(files: List<MultipartFile>): ArrayList<UploadLogDTO> {
-        val dtoList = ArrayList<UploadLogDTO>()
-        val imageUrls: List<String> = uploadFiles(files)
-
-        for ((index, file) in files.withIndex()) {
-            val storeUrlDto = UploadLogDTO(
-                number = 0,
-                user_id = 1,
-                file_size = file.size,
-                upload_date = LocalDate.now(),
-                url = imageUrls[index]
-            )
-            dtoList.add(storeUrlDto)
-        }
-        return dtoList
-    }
-//
-//    fun getUuidFileName(fileName: String): String? {
-//        val ext = fileName.substring(fileName.indexOf(".") + 1)
-//        return UUID.randomUUID().toString() + "." + ext
-//    }
 
 }
