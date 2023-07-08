@@ -10,7 +10,11 @@ interface UserMapper {
     fun insertUser(user: UserDTO)
     fun countSameEmails(email: String): Int
     fun countSameNickName(nickName: String): Int
-    fun countSamePhoneInt(phoneNum: String): Int
+    fun countSamePhoneInt(phoneInt: String): Int
     fun readAllColumnVal(emails: List<String>): List<UserDTO>
+    fun findEmailBy(studentNum: Int, phoneInt: String): String
     fun updateUserByEmail(id: Int)
+
+    fun isUniversityExist(universityId: Int): Boolean
+
 }
