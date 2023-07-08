@@ -8,11 +8,11 @@ import com.tovelop.maphant.storage.RedisMockup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.io.IOException
 
 @Component
-class SendGrid (@Autowired val redisMockup: RedisMockup) {
-    @Value("\${SEND_GRID_API}") val apiKey: String = ""
+class SendGrid(@Autowired val redisMockup: RedisMockup) {
+    @Value("\${SEND_GRID_API}")
+    val apiKey: String = ""
 
     fun sendConfirmMail(email: String) {
         val token = saveEmailToken(email)
@@ -20,11 +20,14 @@ class SendGrid (@Autowired val redisMockup: RedisMockup) {
     }
 
     fun sendMail(email: String, token: String) {
-        val from = Email("admin@ssda.dawoony.com", "SSDA 관리자")
-        val subject = "mail test"
+        val from = Email("admin@ssda.dawoony.com", "과끼리 관리자")
+        val subject = "과끼리 이메일 인증 코드 발송"
         val to = Email(email)
-        val content = Content("text/plain", "code : $token")
+        val content = Content("text/html", "code : $token")
         val mail = Mail(from, subject, to, content)
+        mail.setTemplateId("d-cc500a28387545d7a285cc1fd9c70481")
+        mail.personalization[0].addDynamicTemplateData("token", token)
+        mail.personalization[0].addDynamicTemplateData("email", email)
         val sg = SendGrid(apiKey)
         val request = Request()
         try {
@@ -45,37 +48,25 @@ class SendGrid (@Autowired val redisMockup: RedisMockup) {
         val random = (0..999999).random().toString().padStart(4, '0')
         return when (redisMockup.setnx(email, random)) {
             0 -> {
-                // TODO: 이미 인증 토큰이 존재하는 경우
-                println("토큰이 존재합니다")
+                // 이미 인증 토큰이 존재하는 경우
                 redisMockup.get(email).toString()
             }
+
             1 -> {
-                // TODO: 저장에 성공 한 경우
-                println("저장 완료")
+                // 저장에 성공 한 경우
                 random
             }
+
             else -> {
-                // TODO: 나머지
-                println("저장 실패")
+                // 나머지
                 throw Error("Failed save token")
             }
         }
     }
 
-    fun confirmEmailToken(email : String, token : String): Boolean {
-        val org_token = redisMockup.get(email)
-        return if (org_token == token) true
-        else false
+    fun confirmEmailToken(email: String, token: String): Boolean {
+        val orgToken = redisMockup.get(email)
+        return orgToken == token
     }
-
-//    fun createEmail() : String {
-//        val from = Email("kwlstjs00@gmail.com")
-//        val subject = "mail test"
-//        val body = "mail test"
-//
-//        val email = "To : $from\nSubject: $subject\n\n$body"
-//        return email
-//    }
-
 }
 
