@@ -2,7 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.UserMapper
-import com.tovelop.maphant.utils.VaildationHelper
+import com.tovelop.maphant.utils.ValidationHelper
 import org.springframework.stereotype.Service
 
 
@@ -22,13 +22,13 @@ class UserService(val mapper: UserMapper) {
         if (!isUniversityValid(user.university_id)) {
             return false
         }
-        if (duplicateEmail(user.email)) {
+        if (isDuplicateEmail(user.email)) {
             return false
         }
-        if (duplicateNickname(user.nickname)) {
+        if (isDuplicateNickname(user.nickname)) {
             return false
         }
-        if (duplicatePhoneInt(user.phoneInt)) {
+        if (isDuplicatePhoneNum(user.phoneInt)) {
             return false
         }
 
@@ -57,15 +57,15 @@ class UserService(val mapper: UserMapper) {
 
 
     fun isPasswordValid(password: String): Boolean {
-        return VaildationHelper.isPasswordValid(password)
+        return ValidationHelper.isValidPassword(password)
     }
 
     fun isEmailValid(email: String): Boolean {
-        return VaildationHelper.isEmailValid(email)
+        return ValidationHelper.isUniversityEmail(email)
     }
 
     fun isNicknameValid(nickname: String): Boolean {
-        return VaildationHelper.isAlphaNumericKorean(nickname)
+        return ValidationHelper.isAlphaNumericKorean(nickname)
     }
 
     fun isUniversityValid(universityId: Int?): Boolean {
@@ -76,15 +76,15 @@ class UserService(val mapper: UserMapper) {
         return mapper.isUniversityExist(universityId)
     }
 
-    fun duplicateEmail(email: String): Boolean {
+    fun isDuplicateEmail(email: String): Boolean {
         return mapper.countSameEmails(email) > 0
     }
 
-    fun duplicateNickname(nickname: String): Boolean {
+    fun isDuplicateNickname(nickname: String): Boolean {
         return mapper.countSameNickName(nickname) > 0
     }
-    fun duplicatePhoneInt(phoneInt: String): Boolean {
-        return mapper.countSamePhoneInt(phoneInt) > 0
+    fun isDuplicatePhoneNum(phoneNum: String): Boolean {
+        return mapper.countSamePhoneInt(phoneNum) > 0
     }
 
 }

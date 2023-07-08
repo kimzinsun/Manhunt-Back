@@ -1,9 +1,9 @@
 package com.tovelop.maphant.dto
 
 data class ValidationSignupDTO(
-    val email: String?,
-    val nickName: String?,
-    val phoneNum: String?,
-    val password: String?,
-    val passwordChk: String?
+    val email: String? = null,
+    val nickName: String? = null,
+    val phoneNum: String? = null,
+    val password: String? = null,
+    val passwordChk: String? = null
 )
