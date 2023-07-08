@@ -1,8 +1,9 @@
 package com.tovelop.maphant.dto
 
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDate
 
-data class SignupDTO (
+data class SignupDTO(
     val email: String,
     val password: String,
     val passwordChk: String,
@@ -12,10 +13,10 @@ data class SignupDTO (
     val phoneNo: String,
     val universityId: Int?
 ) {
-    fun toUserDTO(): UserDTO {
+    fun toUserDTO(passwordEncoder: PasswordEncoder): UserDTO {
         return UserDTO(
             email = email,
-            password = password,
+            password = passwordEncoder.encode(password),
             nickname = nickname,
             name = name,
             phoneInt = phoneNo,

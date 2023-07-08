@@ -6,7 +6,6 @@ import java.security.MessageDigest
 
 @Component
 class PasswordEncoderSHA512 : PasswordEncoder {
-
     override fun encode(rawPassword: CharSequence): String {
         val digest = MessageDigest.getInstance("SHA-512")
         val hash = digest.digest(rawPassword.toString().toByteArray())
