@@ -13,9 +13,11 @@ class UserService(val mapper: UserMapper) {
         if (!isEmailValid(user.email)) {
             return false
         }
-        if (!isPasswordValid(user.password)) {
-            return false
-        }
+        // 이미 bcrypt등으로 해싱 되어 있어서 검증 불가.
+        // 검증 하겠다고 한다면, bcrypt등이 적용 되어있는지 확인하는 코드가 필요
+        // if (!isPasswordValid(user.password)) {
+        //     return false
+        // }
         if (!isNicknameValid(user.nickname)) {
             return false
         }
