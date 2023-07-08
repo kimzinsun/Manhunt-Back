@@ -14,5 +14,8 @@ class VaildationHelper {
         fun isPasswordValid(password: String): Boolean {
             return password.matches(Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$"))
         }
+        fun isPhoneNumValid(phoneNum: String): Boolean {
+            return phoneNum.matches(Regex("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$"))
+        }
     }
 }
