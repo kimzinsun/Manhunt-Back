@@ -3,12 +3,13 @@ package com.tovelop.maphant.dto
 import java.time.LocalDate
 
 data class UserDTO(
-    val id: Int,
+    val id: Int? = null,
     val email: String,
     val password: String,
     val nickname: String,
     val name: String,
     val phoneInt: String,
+    val sNo: String,
     val create_at: LocalDate,
     val role: String,
     val state: String,

@@ -26,9 +26,18 @@
     </foreach> ;
     </select>
     <insert id="insertUser">
-        INSERT INTO User (id,email, password, nickname, name, phoneInt, create_at, role, state, is_agree, last_modified_date, university_id)
-        VALUES (#{id},#{email}, #{password}, #{nickname}, #{name}, #{phoneInt}, #{create_at}, #{role}, #{state}, #{is_agree}, #{last_modified_date}, #{university_id})
+        INSERT INTO User (email, password, nickname, name, phoneInt, create_at, role, state, is_agree, last_modified_date, university_id)
+        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneInt}, #{create_at}, #{role}, #{state}, #{is_agree}, #{last_modified_date}, #{university_id})
     </insert>
     <update id="updateUser" databaseId="id" >
     </update>
+    <select id="findEmailBy" resultType="String">
+        SELECT email
+        FROM User
+        WHERE phoneInt=#{phoneInt}
+        -- User에 학번 추가시 진행
+    </select>
+    <select id="isUniversityExist" resultType="Boolean">
+        SELECT EXISTS(SELECT * FROM University WHERE id=#{university_id})
+    </select>
 </mapper>
