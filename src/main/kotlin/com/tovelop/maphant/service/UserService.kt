@@ -28,6 +28,9 @@ class UserService(val mapper: UserMapper) {
         if (duplicateNickname(user.nickname)) {
             return false
         }
+        if (duplicatePhoneInt(user.phoneInt)) {
+            return false
+        }
 
         insertUser(user)
         return true
@@ -41,19 +44,6 @@ class UserService(val mapper: UserMapper) {
         }
         return null
     }
-
-    fun isEmailExist(email: String): Boolean {
-        return mapper.countSameEmails(email) != 0
-    }
-
-    fun isNicknameExist(nickName: String): Boolean {
-        return mapper.countSameNickName(nickName) != 0
-    }
-
-    fun existSamePhoneInt(phoneInt: String): Boolean {
-        return mapper.countSamePhoneInt(phoneInt) != 0
-    }
-
 
     fun getUser(email: String): UserDTO? {
         // 사용자 조회 로직
@@ -92,6 +82,9 @@ class UserService(val mapper: UserMapper) {
 
     fun duplicateNickname(nickname: String): Boolean {
         return mapper.countSameNickName(nickname) > 0
+    }
+    fun duplicatePhoneInt(phoneInt: String): Boolean {
+        return mapper.countSamePhoneInt(phoneInt) > 0
     }
 
 }
