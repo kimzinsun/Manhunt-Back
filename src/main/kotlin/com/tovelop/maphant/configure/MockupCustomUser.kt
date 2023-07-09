@@ -16,7 +16,7 @@ class MockupCustomUser(private val email: String, private var password: String?,
     override fun getUsername(): String = email
 
     fun getUserData(): UserDTO = userData
-
+    fun getUserId(): Int = userData.id!!
 
     override fun isAccountNonExpired(): Boolean {
         return true

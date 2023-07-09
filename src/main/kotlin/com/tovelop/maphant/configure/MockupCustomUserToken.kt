@@ -11,8 +11,9 @@ data class MockupCustomUserToken(
 ) : AbstractAuthenticationToken(authorities) {
     override fun getCredentials(): String = password
 
-    override fun getPrincipal(): MockupCustomUser = userData!!
-    override fun isAuthenticated(): Boolean {
-        return userData != null
-    }
+    override fun getPrincipal(): Int = userData!!.getUserId()
+    override fun isAuthenticated(): Boolean = userData != null
+
+    override fun getDetails() = userData!!
+    override fun getName() = userData!!.getUserData().nickname
 }
