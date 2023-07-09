@@ -6,7 +6,10 @@
 # Prerequisites: appropriate project structure should exist in the repository.
 
 image: gradle:7.6.2
-
+definitions:
+  caches:
+    increment-build: ./build
+      
 pipelines:
   default:
     - parallel:
@@ -14,6 +17,7 @@ pipelines:
           name: Build and Test
           caches:
             - gradle
+            - increment-build
           script:
             - gradle bootJar
           after-script:
