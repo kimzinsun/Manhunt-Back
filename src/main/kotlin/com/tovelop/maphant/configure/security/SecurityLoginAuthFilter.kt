@@ -1,6 +1,7 @@
 package com.tovelop.maphant.configure.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.tovelop.maphant.utils.ResponseJsonWriter.Companion.writeJSON
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.AuthenticationManager
@@ -27,9 +28,7 @@ AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POS
                 )
 
                 response.status = 200
-                response.contentType = "application/json"
-                response.characterEncoding = "UTF-8"
-                response.writer.write(ObjectMapper().writeValueAsString(output))
+                response.writeJSON(output)
             }
         }
 
@@ -41,9 +40,7 @@ AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POS
                 )
 
                 response.status = 401
-                response.contentType = "application/json"
-                response.characterEncoding = "UTF-8"
-                response.writer.write(ObjectMapper().writeValueAsString(output))
+                response.writeJSON(output)
             }
         }
 
@@ -57,6 +54,4 @@ AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POS
 
         return this.authenticationManager.authenticate(authReq)
     }
-
-
 }
