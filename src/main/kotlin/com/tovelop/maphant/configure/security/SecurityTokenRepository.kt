@@ -19,7 +19,7 @@ class SecurityTokenRepository(@Autowired private val redis: RedisMockup) {
         while (true) {
             val key = RandomGenerator.generateRandomString(48)
 
-            if (redis.setnx(key, testAndSet) == 0) {
+            if (redis.setnx(key, testAndSet) == 1) {
                 return key
             }
         }
