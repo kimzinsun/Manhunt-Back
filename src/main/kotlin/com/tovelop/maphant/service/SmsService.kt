@@ -25,10 +25,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 @Service
 class SmsService {
-
-    private val smsConfirmNum: String = createSmsKey()
-
-
     @Value("\${naver-cloud-sms.accessKey}")
     private lateinit var accessKey: String;
 
@@ -65,6 +61,7 @@ class SmsService {
         val messages: MutableList<MessageDto> = ArrayList()
         messages.add(messageDto)
 
+        val smsConfirmNum: String = createSmsKey()
         // api 요청 양식에 맞춰 세팅
         val request: SmsRequestDto = SmsRequestDto(
             type = "SMS",
@@ -92,6 +89,11 @@ class SmsService {
 
         // responseBody를 SmsResponseDto 객체로 변환
         val smsResponseDto: SmsResponseDto? = objectMapper.readValue(responseBody, SmsResponseDto::class.java)
+        
+        //인증코드 set
+        if (smsResponseDto != null) {
+            smsResponseDto.smsConfirmNum = smsConfirmNum
+        }
 
         return smsResponseDto
 
