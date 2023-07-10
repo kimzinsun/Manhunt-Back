@@ -13,21 +13,21 @@ import org.springframework.stereotype.Component
 class SendGrid(@Autowired val redisMockup: RedisMockup) {
     @Value("\${SEND_GRID_API}")
     val apiKey: String = ""
+    val from = Email("admin@ssda.dawoony.com", "과끼리 관리자")
 
-    fun sendConfirmMail(email: String) {
+    fun sendSignUp(email: String) {
         val token = saveEmailToken(email)
-        sendMail(email, token)
-    }
-
-    fun sendMail(email: String, token: String) {
-        val from = Email("admin@ssda.dawoony.com", "과끼리 관리자")
-        val subject = "과끼리 이메일 인증 코드 발송"
         val to = Email(email)
-        val content = Content("text/html", "code : $token")
+        val subject = "과끼리 이메일 인증 코드 발송"
+        val content = Content("text/html", "code")
         val mail = Mail(from, subject, to, content)
         mail.setTemplateId("d-cc500a28387545d7a285cc1fd9c70481")
         mail.personalization[0].addDynamicTemplateData("token", token)
         mail.personalization[0].addDynamicTemplateData("email", email)
+        return send(mail)
+    }
+
+    fun send(mail: Mail) {
         val sg = SendGrid(apiKey)
         val request = Request()
         try {
