@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority
 
 class SecurityLoginAuthToken(private val email: String,
                              private val password: String,
-                             private val userData: MockupCustomUser?,
+                             private val userData: MockupCustomUser? = null,
                              authorities: MutableCollection<out GrantedAuthority>? = null
 ): AbstractAuthenticationToken(authorities)
 {
