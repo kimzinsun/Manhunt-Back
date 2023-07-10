@@ -30,6 +30,7 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
     implementation("org.projectlombok:lombok:1.18.22")
     implementation("commons-io:commons-io:2.5")
+    implementation("com.google.firebase:firebase-admin:7.1.0")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
