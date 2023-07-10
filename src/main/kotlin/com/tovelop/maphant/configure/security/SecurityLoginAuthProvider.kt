@@ -18,7 +18,7 @@ class SecurityLoginAuthProvider(
             throw SecurityException("No authentication")
         }
 
-        val usernamePasswordAuthenticationToken = authentication as MockupCustomUserToken
+        val usernamePasswordAuthenticationToken = authentication as SecurityLoginAuthToken
         val userData = userDataService.loadUserByUsername(usernamePasswordAuthenticationToken.name)
 
         if (userData.password != usernamePasswordAuthenticationToken.credentials) {
@@ -32,6 +32,6 @@ class SecurityLoginAuthProvider(
     override fun supports(authentication: Class<*>?): Boolean {
         if (authentication == null) return false
 
-        return authentication == MockupCustomUserToken::class.java
+        return authentication == SecurityLoginAuthToken::class.java
     }
 }
