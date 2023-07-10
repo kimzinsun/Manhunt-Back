@@ -11,6 +11,12 @@ class FcmService {
     fun send(fcmMessageDTO: FcmMessageDTO) {
         val message = Message.builder()
             .putAllData(fcmMessageDTO.data)
+            .setNotification(
+                com.google.firebase.messaging.Notification.builder()
+                    .setTitle(fcmMessageDTO.notification.title)
+                    .setBody(fcmMessageDTO.notification.body)
+                    .build()
+            )
             .setToken(fcmMessageDTO.to)
             .build()
 
