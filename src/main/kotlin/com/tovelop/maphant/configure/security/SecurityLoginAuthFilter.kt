@@ -1,5 +1,6 @@
 package com.tovelop.maphant.configure.security
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.AuthenticationManager
@@ -15,6 +16,37 @@ AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POS
 
     init {
         this.authenticationManager = authenticationManager
+
+        this.setAuthenticationSuccessHandler { request, response, authentication ->
+            run {
+                val authResult = authentication as SecurityLoginAuthToken
+                val output = mutableMapOf<String, Any>(
+                    "status" to true,
+                    "pubKey" to authResult.principal,
+                    "privateKey" to authResult.credentials
+                )
+
+                response.status = 200
+                response.contentType = "application/json"
+                response.characterEncoding = "UTF-8"
+                response.writer.write(ObjectMapper().writeValueAsString(output))
+            }
+        }
+
+        this.setAuthenticationFailureHandler { request, response, exception ->
+            run {
+                val output = mutableMapOf<String, Any>(
+                    "status" to false,
+                    "message" to (exception.message ?: "unexpected error")
+                )
+
+                response.status = 401
+                response.contentType = "application/json"
+                response.characterEncoding = "UTF-8"
+                response.writer.write(ObjectMapper().writeValueAsString(output))
+            }
+        }
+
     }
 
     override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication? {
