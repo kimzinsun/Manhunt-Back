@@ -6,11 +6,11 @@ import java.time.LocalDate
 data class SignupDTO(
     val email: String,
     val password: String,
-    val passwordChk: String,
+    val passwordCheck: String,
     val nickname: String,
     val name: String,
     val sNo: String,
-    val phoneNo: String,
+    val phonenum: String,
     val universityId: Int?
 ) {
     fun toUserDTO(passwordEncoder: PasswordEncoder): UserDTO {
@@ -19,7 +19,7 @@ data class SignupDTO(
             password = passwordEncoder.encode(password),
             nickname = nickname,
             name = name,
-            phoneInt = phoneNo,
+            phoneInt = phonenum,
             sNo = sNo,
             create_at = LocalDate.now(),
             role = "user",

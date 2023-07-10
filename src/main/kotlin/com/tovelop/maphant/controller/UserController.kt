@@ -28,7 +28,7 @@ class SignupController(@Autowired val userService: UserService) {
         }
 
         if (userService.isDuplicateEmail(validationSignupDTO.email)) {
-            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
+            return ResponseEntity.badRequest().body(Response.error("이미 가입이 되어있는 이메일 입니다."))
         }
 
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -36,11 +36,11 @@ class SignupController(@Autowired val userService: UserService) {
 
     @PostMapping("/validation/nickname")
     fun validationNickname(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidNickname(validationSignupDTO.nickName!!)) {
-            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 별명입니다."))
+        if (!ValidationHelper.isValidNickname(validationSignupDTO.nickname!!)) {
+            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 별명입니다. ex) @domain.ac.kr 또는 @domain.edu"))
         }
 
-        if (userService.isDuplicateNickname(validationSignupDTO.nickName)) {
+        if (userService.isDuplicateNickname(validationSignupDTO.nickname)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
         }
 
@@ -49,10 +49,10 @@ class SignupController(@Autowired val userService: UserService) {
 
     @PostMapping("/validation/phoneNum")
     fun validationPhonenum(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidPhoneNum(validationSignupDTO.phoneNum!!)) {
+        if (!ValidationHelper.isValidPhoneNum(validationSignupDTO.phonenum!!)) {
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
-        if (userService.isDuplicatePhoneNum(validationSignupDTO.phoneNum)) {
+        if (userService.isDuplicatePhoneNum(validationSignupDTO.phonenum)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 핸드폰 번호입니다."))
         }
 
@@ -63,7 +63,7 @@ class SignupController(@Autowired val userService: UserService) {
     fun validationPassword(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
         if (!ValidationHelper.isValidPassword(validationSignupDTO.password!!)) {
             return ResponseEntity.badRequest()
-                .body(Response.error("비밀번호는 영문 소문자, 대문자, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
         }
 
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -71,7 +71,7 @@ class SignupController(@Autowired val userService: UserService) {
 
     @PostMapping("/validation/passwordCheck")
     fun validationPasswordChk(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        if (validationSignupDTO.password != validationSignupDTO.passwordChk) {
+        if (validationSignupDTO.password != validationSignupDTO.passwordCheck) {
             return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
         }
 
@@ -85,12 +85,12 @@ class SignupController(@Autowired val userService: UserService) {
             return emailValidation
         }
 
-        val nicknameValidation = validationNickname(ValidationSignupDTO(nickName = signup.nickname))
+        val nicknameValidation = validationNickname(ValidationSignupDTO(nickname = signup.nickname))
         if (!nicknameValidation.isSuccess()) {
             return nicknameValidation
         }
 
-        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phoneNum = signup.phoneNo))
+        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phonenum = signup.phonenum))
         if (!phoneNumValidation.isSuccess()) {
             return phoneNumValidation
         }
@@ -101,7 +101,7 @@ class SignupController(@Autowired val userService: UserService) {
         }
 
         val passwordChkValidation =
-            validationPasswordChk(ValidationSignupDTO(password = signup.password, passwordChk = signup.passwordChk))
+            validationPasswordChk(ValidationSignupDTO(password = signup.password, passwordCheck = signup.passwordCheck))
         if (!passwordChkValidation.isSuccess()) {
             return passwordChkValidation
         }
@@ -109,7 +109,7 @@ class SignupController(@Autowired val userService: UserService) {
         if (!ValidationHelper.isValidName(signup.name)) {
             return ResponseEntity.badRequest().body(Response.error("이름을 형식에 맞춰주세요. ex) 홍길동"))
         }
-
+        //singup.dto.univer
         // 이메일 인증 코드 발송 (feat-sendgrid)
 
         userService.signUp(signup.toUserDTO(passwordEncoder))
