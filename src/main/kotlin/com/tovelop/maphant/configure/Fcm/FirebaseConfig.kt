@@ -5,17 +5,25 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.io.FileInputStream
+import org.springframework.core.io.ClassPathResource
 
 @Configuration
 class FirebaseConfig {
+
     @Bean
-    fun firebaseApp(): FirebaseApp {
-        val serviceAccount = FileInputStream("src/main/kotlin/com/tovelop/maphant/configure/Fcm/serviceAccountKey.json")
-        val options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-            .setDatabaseUrl("https://maphant-1f0f9.firebaseio.com")
+    fun firebaseInitialization(): FirebaseApp {
+        val firebaseOptions = FirebaseOptions.builder()
+            .setCredentials(
+                GoogleCredentials.fromStream(
+                    ClassPathResource("adminsdk.json").inputStream
+                )
+            )
             .build()
-        return FirebaseApp.initializeApp(options)
+
+        return if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(firebaseOptions)
+        } else {
+            FirebaseApp.getInstance()
+        }
     }
 }
