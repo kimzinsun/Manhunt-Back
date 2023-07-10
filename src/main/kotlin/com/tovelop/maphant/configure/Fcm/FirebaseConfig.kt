@@ -15,7 +15,7 @@ class FirebaseConfig {
         val firebaseOptions = FirebaseOptions.builder()
             .setCredentials(
                 GoogleCredentials.fromStream(
-                    ClassPathResource("adminsdk.json").inputStream
+                    ClassPathResource("serviceAccountKey.json").inputStream
                 )
             )
             .build()
