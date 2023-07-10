@@ -22,6 +22,12 @@ class UserService(val mapper: UserMapper) {
         return null
     }
 
+    fun matchEmail(email: String, universityId: Int?): Boolean {
+        val universityName = this.extractFromEmail(email)
+        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(universityId))
+        return universityName == universityUrl
+    }
+
     fun getUser(email: String): UserDTO? {
         // 사용자 조회 로직
         return mapper.readAllColumnVal(listOf(email)).firstOrNull()
@@ -65,6 +71,18 @@ class UserService(val mapper: UserMapper) {
 
     fun isDuplicatePhoneNum(phoneNum: String): Boolean {
         return mapper.countSamePhoneInt(phoneNum) > 0
+    }
+
+    fun extractFromEmail(email: String): String? {
+        val pattern = Regex("""(?<=@)[^.]+\.(ac\.kr|edu)""")
+        val matchResult = pattern.find(email)
+        return matchResult?.value
+    }
+
+    fun extractFromUrl(url: String): String? {
+        val pattern = """(?<=\/\/|www\.)[^\.]+\.(ac\.kr|edu)""".toRegex()
+        val matchResult = pattern.find(url)
+        return matchResult?.value
     }
 
 }
