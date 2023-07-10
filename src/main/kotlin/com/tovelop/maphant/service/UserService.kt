@@ -9,31 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(val mapper: UserMapper) {
     fun signUp(user: UserDTO): Boolean {
-        // 회원 가입 로직
-        if (!isEmailValid(user.email)) {
-            return false
-        }
-        // 이미 bcrypt등으로 해싱 되어 있어서 검증 불가.
-        // 검증 하겠다고 한다면, bcrypt등이 적용 되어있는지 확인하는 코드가 필요
-        // if (!isPasswordValid(user.password)) {
-        //     return false
-        // }
-        if (!isNicknameValid(user.nickname)) {
-            return false
-        }
-        if (!isUniversityValid(user.university_id)) {
-            return false
-        }
-        if (isDuplicateEmail(user.email)) {
-            return false
-        }
-        if (isDuplicateNickname(user.nickname)) {
-            return false
-        }
-        if (isDuplicatePhoneNum(user.phoneInt)) {
-            return false
-        }
-
         insertUser(user)
         return true
     }
@@ -57,6 +32,9 @@ class UserService(val mapper: UserMapper) {
         mapper.insertUser(user)
     }
 
+    fun findUniversityIdBy(universityName: String): Int? {
+        return mapper.findUniversityIdBy(universityName)
+    }
 
     fun isPasswordValid(password: String): Boolean {
         return ValidationHelper.isValidPassword(password)
@@ -74,7 +52,6 @@ class UserService(val mapper: UserMapper) {
         if (universityId == null) {
             return true
         }
-
         return mapper.isUniversityExist(universityId)
     }
 
@@ -85,6 +62,7 @@ class UserService(val mapper: UserMapper) {
     fun isDuplicateNickname(nickname: String): Boolean {
         return mapper.countSameNickName(nickname) > 0
     }
+
     fun isDuplicatePhoneNum(phoneNum: String): Boolean {
         return mapper.countSamePhoneInt(phoneNum) > 0
     }
