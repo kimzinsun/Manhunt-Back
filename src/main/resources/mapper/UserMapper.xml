@@ -27,9 +27,9 @@
     </select>
     <insert id="insertUser">
         INSERT INTO User (email, password, nickname, name, phoneInt, create_at, role, state, is_agree,
-                          last_modified_date, university_id)
+                          last_modified_date, university_id, sno)
         VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneInt}, #{create_at}, #{role}, #{state}, #{is_agree},
-                #{last_modified_date}, #{university_id})
+                #{last_modified_date}, #{university_id}, #{sNo})
     </insert>
     <update id="updateUser" databaseId="id">
     </update>
