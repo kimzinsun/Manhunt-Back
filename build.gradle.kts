@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.sendgrid:sendgrid-java:4.9.3")
     implementation("io.awspring.cloud:spring-cloud-starter-aws:2.3.1")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
