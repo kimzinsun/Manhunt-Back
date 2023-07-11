@@ -8,6 +8,5 @@ data class FcmMessageDTO(
 
 data class NotificationDTO(
     val title: String,
-    val body: String,
-    val clickAction: String? = null
+    val body: String
 )
