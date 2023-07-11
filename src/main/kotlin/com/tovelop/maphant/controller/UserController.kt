@@ -116,8 +116,9 @@ class SignupController(@Autowired val userService: UserService) {
         }
         // if문 -> 내가친 이메일 = 대학교 비교
         // 대학교 이름 -> universityid
-        val universityId = userService.findUniversityIdBy(signupDTO.universityName)!!
-        if (userService.matchEmail(signupDTO.email, universityId)) {
+        val universityId = userService.findUniversityIdBy(signupDTO.universityName)
+        if (universityId == null) return ResponseEntity.badRequest().body(Response.error("해당 도메인을 가진 학교가 없습니다."))
+        if (!userService.matchEmail(signupDTO.email, universityId)) {
             return ResponseEntity.badRequest().body(Response.error("이메일과 학교 이름을 확인해주세요."))
         }
         //singup.dto.univer
