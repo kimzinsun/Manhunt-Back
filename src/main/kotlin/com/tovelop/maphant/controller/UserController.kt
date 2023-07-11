@@ -120,7 +120,7 @@ class SignupController(@Autowired val userService: UserService) {
         if (!userService.matchEmail(signupDTO.email, universityId)) {
             return ResponseEntity.badRequest().body(Response.error("이메일과 학교 이름을 확인해주세요."))
         }
-        
+
         userService.signUp(signupDTO.toUserDTO(universityId, passwordEncoder))
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -137,11 +137,11 @@ class SignupController(@Autowired val userService: UserService) {
 
 
     @PostMapping("/findemail")
-    fun findEmail(@RequestBody findEmail: FindEmailDTO): ResponseEntity<Response<Map<String, String>>> {
-        //학번, 전화번호 DB 체크
-        val email = "a@ks.ac.kr"
-
-        return ResponseEntity.ok(Response.success(mutableMapOf("email" to email)))
+    fun findEmail(@RequestBody findEmailDTO: FindEmailDTO): ResponseEntity<Any> {
+        val emailcheck = userService.findEmailBy(findEmailDTO.sNo, findEmailDTO.phoneNo)
+        if (emailcheck.isNullOrEmpty()) return ResponseEntity.badRequest()
+            .body(Response.error<String>("일치하는 회원정보가 없습니다"))
+        return ResponseEntity.ok(Response.success(mapOf<String, String>("email" to emailcheck)))
     }
 
     @PostMapping("/changepw")
