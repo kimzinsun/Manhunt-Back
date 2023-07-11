@@ -5,7 +5,7 @@ import java.time.LocalDate
 data class UserDTO(
     val id: Int? = null,
     val email: String,
-    val password: String,
+    var password: String,
     val nickname: String,
     val name: String,
     val phoneInt: String,

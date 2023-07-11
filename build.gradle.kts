@@ -28,6 +28,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
     implementation("org.projectlombok:lombok:1.18.22")
+    implementation("com.sendgrid:sendgrid-java:4.9.3")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
