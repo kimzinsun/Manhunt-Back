@@ -114,16 +114,13 @@ class SignupController(@Autowired val userService: UserService) {
         if (!ValidationHelper.isValidName(signupDTO.name)) {
             return ResponseEntity.badRequest().body(Response.error("이름을 형식에 맞춰주세요. ex) 홍길동"))
         }
-        // if문 -> 내가친 이메일 = 대학교 비교
-        // 대학교 이름 -> universityid
+
         val universityId = userService.findUniversityIdBy(signupDTO.universityName)
         if (universityId == null) return ResponseEntity.badRequest().body(Response.error("해당 도메인을 가진 학교가 없습니다."))
         if (!userService.matchEmail(signupDTO.email, universityId)) {
             return ResponseEntity.badRequest().body(Response.error("이메일과 학교 이름을 확인해주세요."))
         }
-        //singup.dto.univer
-        // 이메일 인증 코드 발송 (feat-sendgrid)
-
+        
         userService.signUp(signupDTO.toUserDTO(universityId, passwordEncoder))
         return ResponseEntity.ok(Response.stateOnly(true))
     }
