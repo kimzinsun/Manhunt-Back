@@ -11,9 +11,9 @@ data class SignupDTO(
     val name: String,
     val sNo: String,
     val phonenum: String,
-    val universityId: Int?
+    val universityName: String
 ) {
-    fun toUserDTO(passwordEncoder: PasswordEncoder): UserDTO {
+    fun toUserDTO(universityId: Int, passwordEncoder: PasswordEncoder): UserDTO {
         return UserDTO(
             email = email,
             password = passwordEncoder.encode(password),
