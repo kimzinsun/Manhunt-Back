@@ -50,6 +50,10 @@ class UserService(val mapper: UserMapper) {
         return ValidationHelper.isUniversityEmail(email)
     }
 
+    fun findEmailBy(sNo: String, phoneNum: String): String? {
+        return mapper.findEmailBy(sNo, phoneNum)
+    }
+
     fun isNicknameValid(nickname: String): Boolean {
         return ValidationHelper.isAlphaNumericKorean(nickname)
     }
