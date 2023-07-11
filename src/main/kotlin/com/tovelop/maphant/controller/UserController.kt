@@ -37,7 +37,7 @@ class SignupController(@Autowired val userService: UserService) {
     @PostMapping("/validation/nickname")
     fun validationNickname(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
         if (!ValidationHelper.isValidNickname(validationSignupDTO.nickname!!)) {
-            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 별명입니다. ex) @domain.ac.kr 또는 @domain.edu"))
+            return ResponseEntity.badRequest().body(Response.error("별명은 3~20자의 영문, 한글, 숫자로 구성해야 합니다."))
         }
 
         if (userService.isDuplicateNickname(validationSignupDTO.nickname)) {
@@ -49,10 +49,10 @@ class SignupController(@Autowired val userService: UserService) {
 
     @PostMapping("/validation/phoneNum")
     fun validationPhonenum(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidPhoneNum(validationSignupDTO.phonenum!!)) {
+        if (!ValidationHelper.isValidPhoneNum(validationSignupDTO.phoneNum!!)) {
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
-        if (userService.isDuplicatePhoneNum(validationSignupDTO.phonenum)) {
+        if (userService.isDuplicatePhoneNum(validationSignupDTO.phoneNum)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 핸드폰 번호입니다."))
         }
 
@@ -90,7 +90,7 @@ class SignupController(@Autowired val userService: UserService) {
             return nicknameValidation
         }
 
-        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phonenum = signupDTO.phonenum))
+        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phoneNum = signupDTO.phonenum))
         if (!phoneNumValidation.isSuccess()) {
             return phoneNumValidation
         }
@@ -100,13 +100,11 @@ class SignupController(@Autowired val userService: UserService) {
             return passwordValidation
         }
 
-        val passwordChkValidation =
-            validationPasswordChk(
-                ValidationSignupDTO(
-                    password = signupDTO.password,
-                    passwordCheck = signupDTO.passwordCheck
-                )
+        val passwordChkValidation = validationPasswordChk(
+            ValidationSignupDTO(
+                password = signupDTO.password, passwordCheck = signupDTO.passwordCheck
             )
+        )
         if (!passwordChkValidation.isSuccess()) {
             return passwordChkValidation
         }
