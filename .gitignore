@@ -40,4 +40,4 @@ out/
 application-*.properties
 
 ### Key Files ###
-!**/src/main/resources/firebase/
+src/main/resources/firebase/serviceAccountKey.json
