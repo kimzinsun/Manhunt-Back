@@ -109,6 +109,9 @@ class SignupController(@Autowired val userService: UserService) {
         if (!ValidationHelper.isValidName(signup.name)) {
             return ResponseEntity.badRequest().body(Response.error("이름을 형식에 맞춰주세요. ex) 홍길동"))
         }
+        // if문 -> 내가친 이메일 = 대학교 비교
+        // 대학교 이름 -> universityid
+
         //singup.dto.univer
         // 이메일 인증 코드 발송 (feat-sendgrid)
 
