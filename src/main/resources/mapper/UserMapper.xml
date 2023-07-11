@@ -37,7 +37,7 @@
         SELECT email
         FROM User
         WHERE phoneInt = #{phoneInt}
-        -- User에 학번 추가시 진행
+        AND sno=#{sNo}
     </select>
     <select id="findUniversityIdBy" resultType="int">
         SELECT id

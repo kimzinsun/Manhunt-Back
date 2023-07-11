@@ -30,7 +30,10 @@ class Security {
         ).sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             it.disable()
-        }
+        }.addFilterBefore(
+            SecurityLoginAuthFilter(authenticationManager(http)),
+            UsernamePasswordAuthenticationFilter::class.java
+        )
 
         http.authenticationManager(authenticationManager(http))
         return http.build()
