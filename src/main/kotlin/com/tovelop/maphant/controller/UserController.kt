@@ -79,43 +79,51 @@ class SignupController(@Autowired val userService: UserService) {
     }
 
     @PostMapping("/signup")
-    fun signup(@RequestBody signup: SignupDTO): ResponseEntity<ResponseUnit> {
-        val emailValidation = validationEmail(ValidationSignupDTO(email = signup.email))
+    fun signup(@RequestBody signupDTO: SignupDTO): ResponseEntity<ResponseUnit> {
+        val emailValidation = validationEmail(ValidationSignupDTO(email = signupDTO.email))
         if (!emailValidation.isSuccess()) {
             return emailValidation
         }
 
-        val nicknameValidation = validationNickname(ValidationSignupDTO(nickname = signup.nickname))
+        val nicknameValidation = validationNickname(ValidationSignupDTO(nickname = signupDTO.nickname))
         if (!nicknameValidation.isSuccess()) {
             return nicknameValidation
         }
 
-        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phonenum = signup.phonenum))
+        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phonenum = signupDTO.phonenum))
         if (!phoneNumValidation.isSuccess()) {
             return phoneNumValidation
         }
 
-        val passwordValidation = validationPassword(ValidationSignupDTO(password = signup.password))
+        val passwordValidation = validationPassword(ValidationSignupDTO(password = signupDTO.password))
         if (!passwordValidation.isSuccess()) {
             return passwordValidation
         }
 
         val passwordChkValidation =
-            validationPasswordChk(ValidationSignupDTO(password = signup.password, passwordCheck = signup.passwordCheck))
+            validationPasswordChk(
+                ValidationSignupDTO(
+                    password = signupDTO.password,
+                    passwordCheck = signupDTO.passwordCheck
+                )
+            )
         if (!passwordChkValidation.isSuccess()) {
             return passwordChkValidation
         }
 
-        if (!ValidationHelper.isValidName(signup.name)) {
+        if (!ValidationHelper.isValidName(signupDTO.name)) {
             return ResponseEntity.badRequest().body(Response.error("이름을 형식에 맞춰주세요. ex) 홍길동"))
         }
         // if문 -> 내가친 이메일 = 대학교 비교
         // 대학교 이름 -> universityid
-
+        val universityId = userService.findUniversityIdBy(signupDTO.universityName)!!
+        if (userService.matchEmail(signupDTO.email, universityId)) {
+            return ResponseEntity.badRequest().body(Response.error("이메일과 학교 이름을 확인해주세요."))
+        }
         //singup.dto.univer
         // 이메일 인증 코드 발송 (feat-sendgrid)
 
-        userService.signUp(signup.toUserDTO(passwordEncoder))
+        userService.signUp(signupDTO.toUserDTO(universityId, passwordEncoder))
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 

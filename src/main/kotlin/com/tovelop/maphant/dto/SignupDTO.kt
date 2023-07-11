@@ -11,10 +11,9 @@ data class SignupDTO(
     val name: String,
     val sNo: String,
     val phonenum: String,
-    val universityname: String,
-//    val universityId: Int?
+    val universityName: String
 ) {
-    fun toUserDTO(passwordEncoder: PasswordEncoder): UserDTO {
+    fun toUserDTO(universityId: Int, passwordEncoder: PasswordEncoder): UserDTO {
         return UserDTO(
             email = email,
             password = passwordEncoder.encode(password),
@@ -27,7 +26,7 @@ data class SignupDTO(
             state = "0",
             is_agree = "Y",
             last_modified_date = LocalDate.now(),
-            university_id = universityname.toInt()
+            university_id = universityId
         )
     }
 }
