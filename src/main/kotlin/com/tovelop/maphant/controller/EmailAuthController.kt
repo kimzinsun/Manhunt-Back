@@ -33,6 +33,7 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid) {
             .body(Response.error("인증코드를 입력해 주세요."))
         if (!sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authcode))
             return ResponseEntity.badRequest().body(Response.error("인증코드가 일치하지 않습니다."))
+        // state -> 1로 바꿔주기
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }
