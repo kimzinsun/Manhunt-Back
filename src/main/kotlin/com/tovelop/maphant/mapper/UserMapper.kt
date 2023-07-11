@@ -14,7 +14,7 @@ interface UserMapper {
     fun readAllColumnVal(emails: List<String>): List<UserDTO>
     fun findEmailBy(sNo: String, phoneInt: String): String
     fun updateUserByEmail(id: Int)
-    fun findUniversityIdBy(universityName: String): Int
+    fun findUniversityIdBy(universityName: String): Int?
     fun isUniversityExist(universityId: Int): Boolean
     fun findUniversityUrlBy(universityId: Int?): String
 }
