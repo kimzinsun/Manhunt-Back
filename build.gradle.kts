@@ -35,8 +35,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     runtimeOnly("com.mysql:mysql-connector-j")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.sendgrid:sendgrid-java:4.9.3")
+
 }
 
 tasks.withType<KotlinCompile> {
