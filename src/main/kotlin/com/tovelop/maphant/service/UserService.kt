@@ -9,12 +9,20 @@ import java.time.LocalDate
 
 @Service
 class UserService(val mapper: UserMapper) {
+<<<<<<< HEAD
     fun updateUserState(email: String, state: Char){
         mapper.updateUserState(email, state, LocalDate.now())
     }
     fun updateUserPassword(email: String, newPassword: String){
         mapper.updateUserPassword(email, newPassword, LocalDate.now())
+=======
+    fun updateUserState(email: String, state: Char) {
+        mapper.updateUserState(email, state)
+>>>>>>> a84521f7d9a50d292bedd0f9275cb312dd467bc0
     }
+
+    fun findPasswordByEmail(email: String): String? = mapper.findPasswordByEmail(email)
+
     fun signUp(user: UserDTO): Boolean {
         insertUser(user)
         return true
