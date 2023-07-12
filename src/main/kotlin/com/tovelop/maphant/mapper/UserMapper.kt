@@ -20,4 +20,5 @@ interface UserMapper {
     fun findUniversityUrlBy(universityId: Int?): String
     fun updateUserState(email: String, state: Char, lastModifiedDate: LocalDate)
     fun updateUserPassword(email: String, password: String, lastModifiedDate: LocalDate)
+    fun findPasswordByEmail(email: String)
 }
