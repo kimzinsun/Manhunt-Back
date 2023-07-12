@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.sendgrid:sendgrid-java:4.9.3")
     implementation("io.awspring.cloud:spring-cloud-starter-aws:2.3.1")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
@@ -30,6 +31,7 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
     implementation("org.projectlombok:lombok:1.18.22")
     implementation("commons-io:commons-io:2.5")
+    implementation("com.google.firebase:firebase-admin:9.2.0")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
