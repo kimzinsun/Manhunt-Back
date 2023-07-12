@@ -10,7 +10,6 @@ data class SignupDTO(
     val nickname: String,
     val name: String,
     val sNo: String,
-    val phonenum: String,
     val universityName: String
 ) {
     fun toUserDTO(universityId: Int, passwordEncoder: PasswordEncoder): UserDTO {
@@ -19,7 +18,7 @@ data class SignupDTO(
             password = passwordEncoder.encode(password),
             nickname = nickname,
             name = name,
-            phoneInt = phonenum,
+            phoneInt = null,
             sNo = sNo,
             create_at = LocalDate.now(),
             role = "user",
