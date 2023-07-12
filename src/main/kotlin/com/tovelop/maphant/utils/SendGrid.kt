@@ -57,21 +57,15 @@ class SendGrid(@Autowired val redisMockup: RedisMockup) {
 
     fun saveEmailToken(email: String): String {
         val random = (0..999999).random().toString().padStart(4, '0')
-        return when (redisMockup.setnx(email, random)) {
-            0 -> {
-                // 이미 인증 토큰이 존재하는 경우
-                redisMockup.get(email).toString()
-            }
+        val isEmailExist = redisMockup.get(email) == null
 
-            1 -> {
-                // 저장에 성공 한 경우
-                random
-            }
-
-            else -> {
-                // 나머지
-                throw Error("Failed save token")
-            }
+        return if (isEmailExist) {
+            redisMockup.del(email)
+            redisMockup.set(email, random)
+            random
+        } else {
+            redisMockup.set(email, random)
+            random
         }
     }
 
