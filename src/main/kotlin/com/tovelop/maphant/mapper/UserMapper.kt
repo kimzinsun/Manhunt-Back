@@ -18,4 +18,5 @@ interface UserMapper {
     fun isUniversityExist(universityId: Int): Boolean
     fun findUniversityUrlBy(universityId: Int?): String
     fun updateUserState(email: String, state: Char)
+    fun findPasswordByEmail(email: String) : String?
 }

@@ -57,4 +57,9 @@
         SET state = #{state}
         WHERE email = #{email}
     </update>
+    <select id="findPasswordByEmail" resultType="String">
+        SELECT password
+        FROM User
+        WHERE email = #{email}
+    </select>
 </mapper>
