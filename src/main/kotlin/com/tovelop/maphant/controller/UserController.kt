@@ -170,7 +170,10 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
         }
 
-        //기존 비밀번호인지 확인
+        val ogPwd = userService.findPasswordByEmail(newPwDTO.email)
+        if (passwordEncoder.matches(newPwDTO.passwordChk, ogPwd)) {
+            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
+        }
 
         userService.updateUserPassword(newPwDTO.email, passwordEncoder.encode(newPwDTO.passwordChk))
 

@@ -23,7 +23,7 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid, @Autowired val user
             return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
 
         sendGrid.sendSignUp(eamilAuthDTO.email)
-        
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
