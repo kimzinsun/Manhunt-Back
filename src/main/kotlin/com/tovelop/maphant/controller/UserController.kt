@@ -160,17 +160,19 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     }
 
     @PostMapping("/changepw/newpw")
-    fun newPw(@RequestBody newPw: NewPwDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidPassword(newPw.password)) {
+    fun newPw(@RequestBody newPwDTO: NewPwDTO): ResponseEntity<ResponseUnit> {
+        if (!ValidationHelper.isValidPassword(newPwDTO.password)) {
             return ResponseEntity.badRequest()
                 .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
         }
 
-        if (newPw.password != newPw.passwordChk) {
+        if (newPwDTO.password != newPwDTO.passwordChk) {
             return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
         }
 
-        //민철이 -> 비밀번호 변경 passwordEncoder.encode(newPw.passwordChk)
+        //기존 비밀번호인지 확인
+
+        userService.updateUserPassword(newPwDTO.email, passwordEncoder.encode(newPwDTO.passwordChk))
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
