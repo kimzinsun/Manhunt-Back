@@ -5,6 +5,7 @@ import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.SendGrid
 import com.tovelop.maphant.utils.ValidationHelper
 import com.tovelop.maphant.utils.isSuccess
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/user")
-class SignupController(@Autowired val userService: UserService) {
+class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid) {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
 
@@ -129,39 +130,48 @@ class SignupController(@Autowired val userService: UserService) {
     }
 
 
-    @PostMapping("/findemail")
-    fun findEmail(@RequestBody findEmailDTO: FindEmailDTO): ResponseEntity<Any> {
-        val emailcheck = userService.findEmailBy(findEmailDTO.sNo, findEmailDTO.phoneNo)
-        if (emailcheck.isNullOrEmpty()) return ResponseEntity.badRequest()
-            .body(Response.error<String>("일치하는 회원정보가 없습니다"))
-        return ResponseEntity.ok(Response.success(mapOf<String, String>("email" to emailcheck)))
-    }
+//    @PostMapping("/findemail")
+//    fun findEmail(@RequestBody findEmailDTO: FindEmailDTO): ResponseEntity<Any> {
+//        val emailcheck = userService.findEmailBy(findEmailDTO.sNo, findEmailDTO.phoneNo)
+//        if (emailcheck.isNullOrEmpty()) return ResponseEntity.badRequest()
+//            .body(Response.error<String>("일치하는 회원정보가 없습니다"))
+//        return ResponseEntity.ok(Response.success(mapOf<String, String>("email" to emailcheck)))
+//    }
 
-    @PostMapping("/changepw")
+    @PostMapping("/changepw/sendemail")
     fun ChangePw(@RequestBody changePw: ChangePwDTO): ResponseEntity<ResponseUnit> {
-        //이메일 DB 체크
-        if (true /*이메일이 일치하지 않을 때*/) {
-            return ResponseEntity.badRequest().body(Response.error("유효하지 않은 이메일입니다."))
+        if (!userService.isEmailValid(changePw.email)) {
+            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
         }
 
-        // You might have to handle signService.sendEmail() based on its implementation and return type.
+        if (userService.isDuplicateEmail(changePw.email)) {
+            sendGrid.sendChangePW(changePw.email)
+        }
 
         return ResponseEntity.ok(Response.stateOnly(true))
-        // 여기서 내 이메일을 session을 넘겨줄지, 아니면 data에 email을 넘겨줄지 결정 해야함.
     }
 
     @PostMapping("/changepw/authenticationcode")
-    fun authenticationCode(@RequestBody newPw: NewPwDTO) {
-        //인증번호 확인
-        // You might have to handle this method based on its implementation and return type.
+    fun authenticationCode(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
+        val result = sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO?.authcode ?: "")
+
+        return if (result) ResponseEntity.ok(Response.stateOnly(true)) else ResponseEntity.badRequest()
+            .body(Response.error("인증번호가 일치하지 않습니다."))
     }
 
-    @PostMapping("/newpw")
+    @PostMapping("/changepw/newpw")
     fun newPw(@RequestBody newPw: NewPwDTO): ResponseEntity<ResponseUnit> {
-        //패스워드 입력, 검증
-        // You might have to handle userService related function based on its implementation and return type.
+        if (!ValidationHelper.isValidPassword(newPw.password)) {
+            return ResponseEntity.badRequest()
+                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+        }
 
-        //DB 패스워드 치환
+        if (newPw.password != newPw.passwordChk) {
+            return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
+        }
+
+        //민철이 -> 비밀번호 변경 passwordEncoder.encode(newPw.passwordChk)
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }

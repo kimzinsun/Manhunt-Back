@@ -54,7 +54,14 @@
     </select>
     <update id="updateUserState">
         UPDATE User
-        SET state = #{state}
+        SET state              = #{state},
+            last_modified_date = #{lastModifiedDate}
+        WHERE email = #{email}
+    </update>
+    <update id="updateUserPassword">
+        UPDATE User
+        SET password           = #{password},
+            last_modified_date = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
 </mapper>

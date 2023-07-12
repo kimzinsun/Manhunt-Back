@@ -4,12 +4,16 @@ import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.UserMapper
 import com.tovelop.maphant.utils.ValidationHelper
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 
 @Service
 class UserService(val mapper: UserMapper) {
     fun updateUserState(email: String, state: Char){
-        mapper.updateUserState(email, state)
+        mapper.updateUserState(email, state, LocalDate.now())
+    }
+    fun updateUserPassword(email: String, newPassword: String){
+        mapper.updateUserPassword(email, newPassword, LocalDate.now())
     }
     fun signUp(user: UserDTO): Boolean {
         insertUser(user)
