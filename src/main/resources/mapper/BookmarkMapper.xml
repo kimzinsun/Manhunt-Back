@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.BookmarkMapper">
+    <insert id="insertBoard">
+        INSERT INTO board_bookmark(board_id)
+        VALUES (#{board_id})
+    </insert>
+
+    <select id="selectBoardAllById" resultType="List">
+        SELECT board_id
+        FROM board_bookmark
+        WHERE user_id
+    </select>
+</mapper>
