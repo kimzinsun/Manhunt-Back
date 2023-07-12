@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserService(val mapper: UserMapper) {
+    fun updateUserState(email: String, state: Char){
+        mapper.updateUserState(email, state)
+    }
     fun signUp(user: UserDTO): Boolean {
         insertUser(user)
         return true
