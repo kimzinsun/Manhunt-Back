@@ -1,18 +1,26 @@
 package com.tovelop.maphant.configure.security
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.tovelop.maphant.service.RedisService
 import com.tovelop.maphant.utils.RandomGenerator
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 
 @Component
 class TokenRepository(@Autowired private val redis: RedisService) {
-    fun generateToken(userData: UserDetails): Pair<String, String> {
+    fun generateToken(userData: UserData): Pair<String, String> {
         val privKey = RandomGenerator.generateRandomString(64)
         val pubKey = generateUniqueToken(privKey)
 
-        redis.set(pubKey, "${redis.get(pubKey)}|${userData}")
+        val objMapper = ObjectMapper()
+        userData.zeroisePassword()
+        val value = objMapper.writeValueAsString(userData.getUserData())
+
+        redis.set(pubKey, "${redis.get(pubKey)}|${value}")
 
         return Pair(pubKey, privKey)
     }
