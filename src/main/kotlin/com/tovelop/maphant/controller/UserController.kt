@@ -166,8 +166,59 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 //        return ResponseEntity.ok(Response.success(mapOf<String, String>("email" to emailcheck)))
 //    }
 
+
+    //개인정보 수정 페이지 접근 전, 본인 확인 절차: 비밀번호 확인
+    @PostMapping("/identification")
+    fun identification(@RequestBody identificationDTO: IdentificationDTO): ResponseEntity<ResponseUnit> {
+        val ogPwd = userService.findPasswordByEmail(identificationDTO.email)
+        if (!passwordEncoder.matches(identificationDTO.password, ogPwd)) {
+            return ResponseEntity.badRequest().body(Response.error("비밀번호를 확인해주세요."))
+        }
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    //    @PostMapping("/changeinfo")
+//    fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+//
+//    }
+    @PostMapping("/changeinfo/nickname")
+    fun changeInfoNickname(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val ogNickname = userService.findNicknameByEmail(changeInfoDTO.email)
+        if (changeInfoDTO.nickname == ogNickname) {
+            return ResponseEntity.badRequest().body(Response.error("닉네임을 변경 해주세요."))
+        }
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/changeinfo/")
+    fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val ogPwd = userService.findPasswordByEmail(changeInfoDTO.email)
+        if (!passwordEncoder.matches(changeInfoDTO.nowPassword, ogPwd)) {
+            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호가 틀렸습니다."))
+        }
+
+        if (!ValidationHelper.isValidPassword(changeInfoDTO.password)) {
+            return ResponseEntity.badRequest()
+                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+        }
+
+        if (changeInfoDTO.password != changeInfoDTO.passwordChk) {
+            return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
+        }
+
+
+        if (passwordEncoder.matches(changeInfoDTO.passwordChk, ogPwd)) {
+            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
+        }
+
+        userService.updateUserPassword(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.passwordChk))
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+
     @PostMapping("/changepw/sendemail")
-    fun ChangePw(@RequestBody changePw: ChangePwDTO): ResponseEntity<ResponseUnit> {
+    fun changePw(@RequestBody changePw: ChangePwDTO): ResponseEntity<ResponseUnit> {
         if (!userService.isEmailValid(changePw.email)) {
             return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
         }
