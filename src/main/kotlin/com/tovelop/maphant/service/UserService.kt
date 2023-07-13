@@ -10,6 +10,7 @@ import java.time.LocalDate
 
 @Service
 class UserService(val mapper: UserMapper) {
+    fun findStateByUserId(userId: Int) = mapper.findStateByUserId(userId)
     fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
 
     fun updateUserState(email: String, state: Char) {
