@@ -13,7 +13,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
 //        return boardMapper.createPost(board)
     }
 
-    fun readPost(postId: Int) {
+    fun readPost(postId: Int)  {
 
 
     }
