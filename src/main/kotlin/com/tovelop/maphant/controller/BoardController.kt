@@ -75,6 +75,7 @@ class BoardController(@Autowired val boardService: BoardService) {
     @GetMapping("/my")
     fun readMyPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
         // 내가 쓴 게시글 읽어오기
+
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
