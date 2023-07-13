@@ -74,4 +74,9 @@
         FROM User
         WHERE id = #{userId}
     </select>
+    <select id="findNicknameByEmail" resultType="String">
+        SELECT nickname
+        FROM User
+        WHERE email = #{email}
+    </select>
 </mapper>
