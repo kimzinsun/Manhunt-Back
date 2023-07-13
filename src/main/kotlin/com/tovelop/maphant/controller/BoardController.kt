@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
+
     @GetMapping("/main")
-    fun readBoard() {
+    fun readBoard(): ResponseEntity<ResponseUnit> {
         // 보드 메인 (선택한 장르의 게시글)
         // 정렬(추천수, 생성 일자)
         // 추천수, 작성자(익명인지), 수정 일자, 제목,
         // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/recommend")
@@ -36,19 +38,33 @@ class BoardController(@Autowired val boardService: BoardService) {
 
     @DeleteMapping("/post/delete")
     fun deletePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+
         boardService.deletePost(post.postId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/create")
     fun createPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 제목 내용 빈칸인지 확인
+
         boardService.createPost(post)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PutMapping("/update")
     fun updatePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 제목 내용 빈칸인지 확인
         boardService.updatePost(post)
         return ResponseEntity.ok(Response.stateOnly(true))
+        }
     }
-}
+
+    @GetMapping("/search")
+    fun searchPost(@RequestParam searchPost: String): ResponseEntity<ResponseUnit> {
+        // 검색어로 게시글 검색
+        // 검색어 빈칸인지 확인
+        // 검색어 포함된 게시글 제목
+
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
