@@ -79,6 +79,34 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
+    @PostMapping("validtion/category")
+    fun validationCategory(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/validation/major")
+    fun validationMajor(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/signup/category")
+    fun signupCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
+        val categoryValidation = validationCategory(ValidationSignupDTO(category = categoryDTO.category))
+        if (!categoryValidation.isSuccess()) {
+            return categoryValidation
+        }
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/signup/major")
+    fun signupMajor(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
+        val majorValidation = validationCategory(ValidationSignupDTO(major = categoryDTO.major))
+        if (!majorValidation.isSuccess()) {
+            return majorValidation
+        }
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
     @PostMapping("/signup")
     fun signup(@RequestBody signupDTO: SignupDTO): ResponseEntity<ResponseUnit> {
         val emailValidation = validationEmail(ValidationSignupDTO(email = signupDTO.email))
