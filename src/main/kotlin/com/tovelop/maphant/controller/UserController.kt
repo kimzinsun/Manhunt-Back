@@ -192,6 +192,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/changeinfo/")
     fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+//        val ogPwd = userService.findPasswordByEmail(changeInfoDTO.email)
         val ogPwd = userService.findPasswordByEmail(changeInfoDTO.email)
         if (!passwordEncoder.matches(changeInfoDTO.nowPassword, ogPwd)) {
             return ResponseEntity.badRequest().body(Response.error("기존 비밀번호가 틀렸습니다."))

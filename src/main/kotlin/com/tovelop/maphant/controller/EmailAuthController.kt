@@ -2,7 +2,6 @@ package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.EmailAuthDTO
 import com.tovelop.maphant.dto.ValidationSignupDTO
-import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import com.tovelop.maphant.utils.SendGrid
