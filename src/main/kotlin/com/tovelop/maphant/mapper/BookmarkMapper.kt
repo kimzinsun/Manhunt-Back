@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface BookmarkMapper {
 
-    fun insertBoard(boardId: BookmarkDTO)
+    fun insertBoard(userId: Int, boardId: Int)
 
-    fun selectBoardAllById(userId: BookmarkDTO): List<BookmarkDTO>
+    fun selectBoardAllById(userId: Int): List<BookmarkDTO>
 }

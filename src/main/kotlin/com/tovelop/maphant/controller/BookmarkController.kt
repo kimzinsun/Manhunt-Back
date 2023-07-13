@@ -1,13 +1,14 @@
 package com.tovelop.maphant.controller
 
-import com.tovelop.maphant.dto.BookmarkDTO
+import com.tovelop.maphant.configure.MockupCustomUserToken
 import com.tovelop.maphant.service.BookmarkService
 import com.tovelop.maphant.type.response.Response
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 class BookmarkController(val bookmarkService: BookmarkService) {
 
     //북마크 추가 api
-    @PostMapping("/")
-    fun bookmark(@RequestBody bordId: BookmarkDTO): ResponseEntity<Any> {
-        val bookmarkResult = bookmarkService.insert(bordId)
+    @PostMapping("/{boardId}")
+    fun bookmark(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication!! as MockupCustomUserToken
+
+        val bookmarkResult = bookmarkService.insert(auth.principal, boardId)
         if (!bookmarkResult) {
             return ResponseEntity.badRequest().body(
                 Response.error<Any>
@@ -28,14 +31,18 @@ class BookmarkController(val bookmarkService: BookmarkService) {
     }
 
     //나의 북마크 보기
-    @GetMapping("/myBookmarks")
-    fun showBookmarks(@RequestBody userId: BookmarkDTO): ResponseEntity<Any> {
-        //user_id로 select
-        val bookmarkList = bookmarkService.showBookmarks(userId)
-        if (!bookmarkList) {
+    @GetMapping("/my-list")
+    fun showBookmarks(): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication
+        if (auth == null || auth !is MockupCustomUserToken || !auth.isAuthenticated) {
+            return ResponseEntity.badRequest().body("로그인 안됨")
+        }
+
+        val bookmarkList = bookmarkService.showBookmarks(auth.principal)
+        if (bookmarkList.isFailure) {
             return ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         }
 
-        return ResponseEntity.ok().body(Response.stateOnly(true))
+        return ResponseEntity.ok().body(Response.success(bookmarkList.getOrNull()))
     }
 }

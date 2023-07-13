@@ -4,13 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.BookmarkMapper">
     <insert id="insertBoard">
-        INSERT INTO board_bookmark(board_id)
-        VALUES (#{board_id})
+        INSERT INTO user_bookmark(user_id, board_id)
+        VALUES (#{userId}, #{boardId})
     </insert>
 
-    <select id="selectBoardAllById" resultType="List">
-        SELECT board_id
-        FROM board_bookmark
-        WHERE user_id
+    <select id="selectBoardAllById" resultType="BookmarkDTO">
+        SELECT board.id, board.title, board.type
+        FROM user_bookmark as ub
+                 JOIN board on board.id = ub.board_id
+        WHERE ub.user_id = #{userId}
     </select>
 </mapper>
