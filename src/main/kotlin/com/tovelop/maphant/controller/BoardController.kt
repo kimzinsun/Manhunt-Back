@@ -17,6 +17,8 @@ import org.yaml.snakeyaml.events.Event.ID
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
+    data class PostInfo(val id: Int, val recommend:Int)
+
     @GetMapping("/main")
     fun readBoard() { //
         // 보드 메인 (선택한 장르의 게시글)
@@ -25,7 +27,11 @@ class BoardController(@Autowired val boardService: BoardService) {
         // return: json
     }
 
-    data class PostInfo(val id: Int)
+
+    @PostMapping("/recommend")
+    fun recommendHandle(@RequestBody ){
+
+    }
 
     @GetMapping("/boardId")
     fun readPost(@RequestBody post:PostInfo): BoardDTO {
