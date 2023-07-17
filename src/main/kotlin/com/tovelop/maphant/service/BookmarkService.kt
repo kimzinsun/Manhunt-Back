@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 @Service
 class BookmarkService(val bookmarkMapper: BookmarkMapper) {
 
-    fun insert(userId: String, boardId: Int): Boolean {
+    fun insert(userId: String?, boardId: Int): Boolean {
         try {
             bookmarkMapper.insertBoard(userId, boardId)
         } catch (e: Exception) {
@@ -17,7 +17,7 @@ class BookmarkService(val bookmarkMapper: BookmarkMapper) {
         return true
     }
 
-    fun showBookmarks(userId: String): Result<List<BookmarkDTO>> {
+    fun showBookmarks(userId: String?): Result<List<BookmarkDTO>> {
         return Result.runCatching { bookmarkMapper.selectBoardAllById(userId) }
     }
 }

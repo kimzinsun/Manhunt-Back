@@ -20,7 +20,7 @@ class BookmarkController(val bookmarkService: BookmarkService) {
     fun bookmark(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
 
-        val bookmarkResult = bookmarkService.insert(auth.principal, boardId)
+        val bookmarkResult = bookmarkService.insert(auth.getUserData().id!!, boardId)
         if (!bookmarkResult) {
             return ResponseEntity.badRequest().body(
                 Response.error<Any>
@@ -38,7 +38,7 @@ class BookmarkController(val bookmarkService: BookmarkService) {
             return ResponseEntity.badRequest().body("로그인 안됨")
         }
 
-        val bookmarkList = bookmarkService.showBookmarks(auth.principal)
+        val bookmarkList = bookmarkService.showBookmarks(auth.getUserData().id!!)
         if (bookmarkList.isFailure) {
             return ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         }
