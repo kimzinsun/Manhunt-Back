@@ -91,24 +91,22 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/universitylist")
     fun listUniversity(@RequestBody universityName: String): ResponseEntity<Response<List<String>>> {
-        //입력이 포함된 대학이름 검색 리스트로 반환
-        return ResponseEntity.ok().body(Response.success(listOf()))
+        return ResponseEntity.ok().body(Response.success(userService.getAllUnivName()))
     }
 
     @PostMapping("/categorylist")
     fun listCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<Response<List<String>>> {
         //그냥 계열 검색 반환
-        return ResponseEntity.ok().body(Response.success(listOf()))
+        return ResponseEntity.ok().body(Response.success(userService.getAllCategories()))
     }
 
     @PostMapping("/majorlist")
     fun listMajor(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<Response<List<String>>> {
         //입력이 포함된 전공이름 검색 리스트로 반환
-        return ResponseEntity.ok().body(Response.success(listOf()))
+        return ResponseEntity.ok().body(Response.success(userService.getAllMajor()))
     }
 
     @PostMapping("/selection/categorymajor")
-
     fun selectionCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
         //이메일, 카테고리, 메이저
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -207,6 +205,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         }
 
         //email로 nickname db저장
+        userService.updateUserNicknameByEmail(changeInfoDTO.email, changeInfoDTO.nickname)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -218,6 +217,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         }
 
         //email로 phoneNum db저장
+        userService.updateUserPhoneNumByEmail(changeInfoDTO.email, changeInfoDTO.phoneNum)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
