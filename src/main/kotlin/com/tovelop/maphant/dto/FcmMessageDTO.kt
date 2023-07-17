@@ -7,6 +7,6 @@ data class FcmMessageDTO(
     val to: String, // receiver's-fcm-token
     val title: String,
     val body: String,
-    val data: Map<String, String>, // send more key-value (ex. chatting service - sender, message, etc...)*/
+    val etc: Map<String, String>, // send more key-value (ex. chatting service - sender, message, etc...)*/
     val createdAt: LocalDateTime? = LocalDateTime.now()
 )
