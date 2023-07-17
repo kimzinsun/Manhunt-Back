@@ -1,6 +1,6 @@
-package com.tovelop.maphant.configure.security
+package com.tovelop.maphant.configure.security.filter
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.tovelop.maphant.configure.security.token.LoginAuthToken
 import com.tovelop.maphant.utils.ResponseJsonWriter.Companion.writeJSON
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -12,26 +12,24 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
 
 @Component
-class SecurityLoginAuthFilter(authenticationManager: AuthenticationManager):
-AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POST"), authenticationManager){
+class LoginAuthFilter(authenticationManager: AuthenticationManager?)
+    :AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/login", "POST"), authenticationManager) {
 
     init {
         this.authenticationManager = authenticationManager
-
         this.setAuthenticationSuccessHandler { request, response, authentication ->
             run {
-                val authResult = authentication as SecurityLoginAuthToken
+                val authResult = authentication as LoginAuthToken
                 val output = mutableMapOf<String, Any>(
                     "status" to true,
                     "pubKey" to authResult.principal,
-                    "privateKey" to authResult.credentials
+                    "privKey" to authResult.credentials,
                 )
 
                 response.status = 200
                 response.writeJSON(output)
             }
         }
-
         this.setAuthenticationFailureHandler { request, response, exception ->
             run {
                 val output = mutableMapOf<String, Any>(
@@ -43,14 +41,13 @@ AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POS
                 response.writeJSON(output)
             }
         }
-
     }
 
     override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication? {
-        val user = request?.getParameter("email") ?: throw BadCredentialsException("no email field")
+        val email = request?.getParameter("email") ?: throw BadCredentialsException("no email field")
         val password = request.getParameter("password") ?: throw BadCredentialsException("no password field")
 
-        val authReq = SecurityLoginAuthToken(user, password)
+        val authReq = LoginAuthToken(email, password)
 
         return this.authenticationManager.authenticate(authReq)
     }
