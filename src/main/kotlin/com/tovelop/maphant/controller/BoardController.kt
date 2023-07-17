@@ -38,7 +38,9 @@ class BoardController(@Autowired val boardService: BoardService) {
 
     @DeleteMapping("/post/delete")
     fun deletePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
-
+        // 게시글 삭제
+        // 관리자 권한 확인
+        // 본인 게시글 인지 확인
         boardService.deletePost(post.postId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -56,15 +58,26 @@ class BoardController(@Autowired val boardService: BoardService) {
         // 제목 내용 빈칸인지 확인
         boardService.updatePost(post)
         return ResponseEntity.ok(Response.stateOnly(true))
-        }
     }
 
     @GetMapping("/search")
-    fun searchPost(@RequestParam searchPost: String): ResponseEntity<ResponseUnit> {
-        // 검색어로 게시글 검색
-        // 검색어 빈칸인지 확인
-        // 검색어 포함된 게시글 제목
+    fun searchPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 검색어가 포함된 게시글 읽어오기
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+    @GetMapping("/category")
+    fun readCategory(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 장르별 게시글 읽어오기
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+    @GetMapping("/my")
+    fun readMyPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 내가 쓴 게시글 읽어오기
 
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
+
+}
