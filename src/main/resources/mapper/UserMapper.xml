@@ -58,9 +58,21 @@
             last_modified_date = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
-    <update id="updateUserPassword">
+    <update id="updateUserPasswordByEmail">
         UPDATE User
         SET password           = #{password},
+            last_modified_date = #{lastModifiedDate}
+        WHERE email = #{email}
+    </update>
+    <update id="updateUserNicknameByEmail">
+        UPDATE User
+        SET nickname           = #{nickname},
+            last_modified_date = #{lastModifiedDate}
+        WHERE email = #{email}
+    </update>
+    <update id="updateUserPhoneNumByEmail">
+        UPDATE User
+        SET ph_num             = #{phoneNum},
             last_modified_date = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
