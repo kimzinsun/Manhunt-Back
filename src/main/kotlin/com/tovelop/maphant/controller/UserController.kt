@@ -90,7 +90,7 @@ class SignupController(@Autowired val userService: UserService) {
             return nicknameValidation
         }
 
-        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phoneNum = signupDTO.phonenum))
+        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phoneNum = signupDTO.phoneNum))
         if (!phoneNumValidation.isSuccess()) {
             return phoneNumValidation
         }

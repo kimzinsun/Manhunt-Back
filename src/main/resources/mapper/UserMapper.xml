@@ -69,4 +69,14 @@
         FROM User
         WHERE email = #{email}
     </select>
+    <select id="findStateByUserId" resultType="Char">
+        SELECT state
+        FROM User
+        WHERE id = #{userId}
+    </select>
+    <select id="findNicknameByEmail" resultType="String">
+        SELECT nickname
+        FROM User
+        WHERE email = #{email}
+    </select>
 </mapper>

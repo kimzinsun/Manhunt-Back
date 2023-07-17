@@ -17,7 +17,7 @@ class MockupCustomUserService : UserDetailsService {
                 password = "Password123!",
                 nickname = "NickName",
                 name = "User Name",
-                phoneInt = "1234567890",
+                phoneNum = "1234567890",
                 sNo = "2017648070",
                 create_at = LocalDate.now(),
                 role = "user",
