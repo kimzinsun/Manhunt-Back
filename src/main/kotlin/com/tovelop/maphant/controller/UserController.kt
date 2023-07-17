@@ -81,7 +81,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/universitylist")
     fun listUniversity(): ResponseEntity<Response<List<String>>> {
-        return ResponseEntity.ok().body(Response.success(userService.getAllUnivName()))
+        return ResponseEntity.ok().body(Response.success(userService.getAllUnivNames()))
     }
 
     @PostMapping("/categorylist")
@@ -93,12 +93,12 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     @PostMapping("/majorlist")
     fun listMajor(): ResponseEntity<Response<List<String>>> {
         //입력이 포함된 전공이름 검색 리스트로 반환
-        return ResponseEntity.ok().body(Response.success(userService.getAllMajor()))
+        return ResponseEntity.ok().body(Response.success(userService.getAllMajors()))
     }
 
     @PostMapping("/selection/categorymajor")
     fun selectionCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
-        //이메일, 카테고리, 메이저
+        userService.insertCategoryMajorByEmail(categoryDTO.email, categoryDTO.category, categoryDTO.major)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
