@@ -89,15 +89,28 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/signup/category")
-    fun signupCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
-        val categoryValidation = validationCategory(ValidationSignupDTO(category = categoryDTO.category))
-        return ResponseEntity.ok(Response.stateOnly(true))
+    @PostMapping("/universitylist")
+    fun listUniversity(@RequestBody universityName: String): ResponseEntity<Response<List<String>>> {
+        //입력이 포함된 대학이름 검색 리스트로 반환
+        return ResponseEntity.ok().body(Response.success(listOf()))
     }
 
-    @PostMapping("/signup/major")
-    fun signupMajor(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
-        val majorValidation = validationCategory(ValidationSignupDTO(major = categoryDTO.major))
+    @PostMapping("/categorylist")
+    fun listCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<Response<List<String>>> {
+        //그냥 계열 검색 반환
+        return ResponseEntity.ok().body(Response.success(listOf()))
+    }
+
+    @PostMapping("/majorlist")
+    fun listMajor(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<Response<List<String>>> {
+        //입력이 포함된 전공이름 검색 리스트로 반환
+        return ResponseEntity.ok().body(Response.success(listOf()))
+    }
+
+    @PostMapping("/selection/categorymajor")
+
+    fun selectionCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
+        //이메일, 카테고리, 메이저
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -111,6 +124,11 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         val nicknameValidation = validationNickname(ValidationSignupDTO(nickname = signupDTO.nickname))
         if (!nicknameValidation.isSuccess()) {
             return nicknameValidation
+        }
+
+        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phoneNum = signupDTO.phoneNum))
+        if (!phoneNumValidation.isSuccess()) {
+            return phoneNumValidation
         }
 
         val passwordValidation = validationPassword(ValidationSignupDTO(password = signupDTO.password))
@@ -172,21 +190,23 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     }
 
     @PostMapping("/changeinfo")
-    fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        //이메일로 회원정보 가져오기
-        return ResponseEntity.ok(Response.stateOnly(true))
+    fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<Response<UserDTO>> {
+        val user = userService.getUser(listOf(changeInfoDTO.email))!!
+
+        return ResponseEntity.ok().body(Response.success(user))
     }
 
     @PostMapping("/changeinfo/nickname")
     fun changeInfoNickname(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidNickname(changeInfoDTO.nickname)) {
+        if (!ValidationHelper.isValidNickname(changeInfoDTO.nickname!!)) {
             return ResponseEntity.badRequest().body(Response.error("별명은 3~20자의 영문, 한글, 숫자로 구성해야 합니다."))
         }
 
-        if (userService.isDuplicateNickname(changeInfoDTO.nickname)) {
+        if (userService.isDuplicateNickname(changeInfoDTO.nickname!!)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
         }
 
+        //email로 nickname db저장
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -197,35 +217,32 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
 
+        //email로 phoneNum db저장
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    //비밀번호 변경 페이지 newPw로 다 사용할 예정.
-//    @PostMapping("/changeinfo/pw")
-//    fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-//        val ogPwd = userService.findPasswordByEmail(changeInfoDTO.email)
-//        if (!passwordEncoder.matches(changeInfoDTO.nowPassword, ogPwd)) {
-//            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호가 틀렸습니다."))
-//        }
-//
-//        if (!ValidationHelper.isValidPassword(changeInfoDTO.password)) {
-//            return ResponseEntity.badRequest()
-//                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
-//        }
-//
-//        if (changeInfoDTO.password != changeInfoDTO.passwordChk) {
-//            return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
-//        }
-//
-//
-//        if (passwordEncoder.matches(changeInfoDTO.passwordChk, ogPwd)) {
-//            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
-//        }
-//
-//        userService.updateUserPassword(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.passwordChk))
-//
-//        return ResponseEntity.ok(Response.stateOnly(true))
-//    }
+    @PostMapping("/changeinfo/pw")
+    fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val ogPwd = userService.findPasswordByEmail(changeInfoDTO.email)
+
+        if (!ValidationHelper.isValidPassword(changeInfoDTO.password!!)) {
+            return ResponseEntity.badRequest()
+                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+        }
+
+        if (changeInfoDTO.password != changeInfoDTO.passwordChk) {
+            return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
+        }
+
+        if (passwordEncoder.matches(changeInfoDTO.passwordChk, ogPwd)) {
+            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
+        }
+
+        userService.updateUserPassword(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.passwordChk))
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
 
 
     @PostMapping("/changepw/sendemail")
