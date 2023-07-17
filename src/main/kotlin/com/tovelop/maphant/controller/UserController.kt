@@ -86,19 +86,18 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/categorylist")
     fun listCategory(): ResponseEntity<Response<List<String>>> {
-        //그냥 계열 검색 반환
         return ResponseEntity.ok().body(Response.success(userService.getAllCategories()))
     }
 
     @PostMapping("/majorlist")
     fun listMajor(): ResponseEntity<Response<List<String>>> {
-        //입력이 포함된 전공이름 검색 리스트로 반환
         return ResponseEntity.ok().body(Response.success(userService.getAllMajors()))
     }
 
     @PostMapping("/selection/categorymajor")
     fun selectionCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
         userService.insertCategoryMajorByEmail(categoryDTO.email, categoryDTO.category, categoryDTO.major)
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -205,8 +204,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         if (!ValidationHelper.isValidPhoneNum(changeInfoDTO.phoneNum!!)) {
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
-
-        //email로 phoneNum db저장
+        
         userService.updateUserPhoneNumByEmail(changeInfoDTO.email, changeInfoDTO.phoneNum)
 
         return ResponseEntity.ok(Response.stateOnly(true))
