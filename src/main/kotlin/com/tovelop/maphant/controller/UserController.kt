@@ -239,7 +239,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
         }
 
-        userService.updateUserPassword(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.passwordChk))
+        userService.updateUserPasswordByEmail(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.passwordChk))
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -282,7 +282,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
         }
 
-        userService.updateUserPassword(newPwDTO.email, passwordEncoder.encode(newPwDTO.passwordChk))
+        userService.updateUserPasswordByEmail(newPwDTO.email, passwordEncoder.encode(newPwDTO.passwordChk))
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
