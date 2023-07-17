@@ -79,29 +79,19 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("validtion/category")
-    fun validationCategory(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-
-    @PostMapping("/validation/major")
-    fun validationMajor(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-
     @PostMapping("/universitylist")
-    fun listUniversity(@RequestBody universityName: String): ResponseEntity<Response<List<String>>> {
+    fun listUniversity(): ResponseEntity<Response<List<String>>> {
         return ResponseEntity.ok().body(Response.success(userService.getAllUnivName()))
     }
 
     @PostMapping("/categorylist")
-    fun listCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<Response<List<String>>> {
+    fun listCategory(): ResponseEntity<Response<List<String>>> {
         //그냥 계열 검색 반환
         return ResponseEntity.ok().body(Response.success(userService.getAllCategories()))
     }
 
     @PostMapping("/majorlist")
-    fun listMajor(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<Response<List<String>>> {
+    fun listMajor(): ResponseEntity<Response<List<String>>> {
         //입력이 포함된 전공이름 검색 리스트로 반환
         return ResponseEntity.ok().body(Response.success(userService.getAllMajor()))
     }
