@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.NotificationMapper">
+    <select id="getNotificationsByUserId" resultType="NotificationResponseDTO">
+        SELECT id, data, title, body, created_at
+        FROM log_alert
+        WHERE user_id = #{userId}
+    </select>
+    <insert id="createNotification">
+        INSERT INTO log_alert (user_id, title, body, data, created_at)
+        VALUES (#{notification.userId}, #{notification.title}, #{notification.body}, #{jsonStr},
+                #{notification.createdAt})
+    </insert>
+</mapper>
