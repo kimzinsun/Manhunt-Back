@@ -1,12 +1,12 @@
 package com.tovelop.maphant.dto
 
-data class FcmMessageDTO(
-    val to: String, // receiver's-fcm-token
-    val notification: NotificationDTO, //title, body
-    val data: Map<String, String> = mapOf() // send more key-value (ex. chatting service - sender, message, etc...)
-)
+import java.time.LocalDateTime
 
-data class NotificationDTO(
+data class FcmMessageDTO(
+    val userId: Int,
+    val to: String, // receiver's-fcm-token
     val title: String,
-    val body: String
+    val body: String,
+    val data: Map<String, String>, // send more key-value (ex. chatting service - sender, message, etc...)*/
+    val createdAt: LocalDateTime? = LocalDateTime.now()
 )
