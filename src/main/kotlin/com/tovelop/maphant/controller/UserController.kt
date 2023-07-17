@@ -92,18 +92,12 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     @PostMapping("/signup/category")
     fun signupCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
         val categoryValidation = validationCategory(ValidationSignupDTO(category = categoryDTO.category))
-        if (!categoryValidation.isSuccess()) {
-            return categoryValidation
-        }
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/signup/major")
     fun signupMajor(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
         val majorValidation = validationCategory(ValidationSignupDTO(major = categoryDTO.major))
-        if (!majorValidation.isSuccess()) {
-            return majorValidation
-        }
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -177,45 +171,60 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    //    @PostMapping("/changeinfo")
-//    fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-//
-//    }
+        @PostMapping("/changeinfo")
+    fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+
+            return ResponseEntity.ok(Response.stateOnly(true))
+    }
     @PostMapping("/changeinfo/nickname")
     fun changeInfoNickname(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        val ogNickname = userService.findNicknameByEmail(changeInfoDTO.email)
-        if (changeInfoDTO.nickname == ogNickname) {
-            return ResponseEntity.badRequest().body(Response.error("닉네임을 변경 해주세요."))
+        if (!ValidationHelper.isValidNickname(changeInfoDTO.nickname)) {
+            return ResponseEntity.badRequest().body(Response.error("별명은 3~20자의 영문, 한글, 숫자로 구성해야 합니다."))
         }
+
+        if (userService.isDuplicateNickname(changeInfoDTO.nickname)) {
+            return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
+        }
+
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/changeinfo/")
-    fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+    @PostMapping("/changeinfo/phonenum")
+    fun changePhonenum(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        if (!ValidationHelper.isValidPhoneNum(changeInfoDTO.phoneNum!!)) {
+            return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
+        }
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    //비밀번호 변경 페이지 newPw로 다 사용할 예정.
+//    @PostMapping("/changeinfo/pw")
+//    fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
 //        val ogPwd = userService.findPasswordByEmail(changeInfoDTO.email)
-        val ogPwd = userService.findPasswordByEmail(changeInfoDTO.email)
-        if (!passwordEncoder.matches(changeInfoDTO.nowPassword, ogPwd)) {
-            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호가 틀렸습니다."))
-        }
-
-        if (!ValidationHelper.isValidPassword(changeInfoDTO.password)) {
-            return ResponseEntity.badRequest()
-                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
-        }
-
-        if (changeInfoDTO.password != changeInfoDTO.passwordChk) {
-            return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
-        }
-
-
-        if (passwordEncoder.matches(changeInfoDTO.passwordChk, ogPwd)) {
-            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
-        }
-
-        userService.updateUserPassword(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.passwordChk))
-
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
+//        if (!passwordEncoder.matches(changeInfoDTO.nowPassword, ogPwd)) {
+//            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호가 틀렸습니다."))
+//        }
+//
+//        if (!ValidationHelper.isValidPassword(changeInfoDTO.password)) {
+//            return ResponseEntity.badRequest()
+//                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+//        }
+//
+//        if (changeInfoDTO.password != changeInfoDTO.passwordChk) {
+//            return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
+//        }
+//
+//
+//        if (passwordEncoder.matches(changeInfoDTO.passwordChk, ogPwd)) {
+//            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
+//        }
+//
+//        userService.updateUserPassword(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.passwordChk))
+//
+//        return ResponseEntity.ok(Response.stateOnly(true))
+//    }
 
 
     @PostMapping("/changepw/sendemail")

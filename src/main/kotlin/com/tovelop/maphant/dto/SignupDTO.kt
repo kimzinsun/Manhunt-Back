@@ -18,7 +18,7 @@ data class SignupDTO(
             password = passwordEncoder.encode(password),
             nickname = nickname,
             name = name,
-            phoneInt = null,
+            phoneNum = null,
             sNo = sNo,
             create_at = LocalDate.now(),
             role = "user",

@@ -6,6 +6,6 @@ data class ChangeInfoDTO (
     val nowPassword: String,
     val password: String,
     val passwordChk: String,
-    val phoneNo: String? = null
+    val phoneNum: String? = null
 
 )
