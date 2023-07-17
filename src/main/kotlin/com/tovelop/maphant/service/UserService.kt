@@ -12,7 +12,7 @@ import java.time.LocalDate
 class UserService(val mapper: UserMapper) {
     fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == '1'
     fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
-
+    fun findNicknameByEmail(email: String) = mapper.findNicknameByEmail(email)
     fun updateUserState(email: String, state: Char) {
         mapper.updateUserState(email, state, LocalDate.now())
     }
