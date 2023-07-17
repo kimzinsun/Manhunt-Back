@@ -18,8 +18,8 @@ class FcmService(@Autowired private val notificationService: NotificationService
                     .build()
             )
             .setToken(fcmMessageDTO.to)
-        for (key in fcmMessageDTO.data.keys) {
-            messageBuilder.putData(key, fcmMessageDTO.data[key])
+        for (key in fcmMessageDTO.etc.keys) {
+            messageBuilder.putData(key, fcmMessageDTO.etc[key])
         }
 
         val message = messageBuilder.build()
