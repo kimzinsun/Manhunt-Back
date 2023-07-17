@@ -95,4 +95,13 @@
         SELECT name
         FROM category
     </select>
+    <select id="getAllMajor" resultType="String">
+        SELECT name
+        FROM major
+    </select>
+    <select id="getAllUnivName" resultType="String">
+        SELECT name
+        FROM univ
+    </select>
+
 </mapper>
