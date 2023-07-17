@@ -36,6 +36,8 @@ class UserData(
 
     fun getUserData() = this.userData
 
+    fun getUserID() = this.userData.id
+
     fun zeroisePassword() {
         this.userData.password = ""
     }
