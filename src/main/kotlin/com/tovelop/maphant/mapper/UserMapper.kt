@@ -25,5 +25,7 @@ interface UserMapper {
     fun findPasswordByEmail(email: String): String
     fun findNicknameByEmail(email: String): String
     fun findStateByUserId(userId: Int): Char
-
+    fun getAllCategories(): List<String>
+    fun getAllMajor(): List<String>
+    fun getAllUnivName(): List<String>
 }

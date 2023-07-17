@@ -10,6 +10,9 @@ import java.time.LocalDate
 
 @Service
 class UserService(val mapper: UserMapper) {
+    fun getAllCategories() = mapper.getAllCategories()
+    fun getAllMajor() = mapper.getAllMajor()
+    fun getAllUnivName() = mapper.getAllUnivName()
     fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == '1'
     fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
     fun findNicknameByEmail(email: String) = mapper.findNicknameByEmail(email)
