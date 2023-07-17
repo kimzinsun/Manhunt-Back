@@ -10,9 +10,17 @@ import java.time.LocalDate
 
 @Service
 class UserService(val mapper: UserMapper) {
+    fun insertCategoryMajorByEmail(email: String, category: String, major: String) {
+        mapper.insertCategoryIdMajorIdByUserId(
+            mapper.findUserIdByUserEmail(email),
+            mapper.findCategoryIdByCategoryName(category),
+            mapper.findMajorIdByMajorName(major)
+        )
+    }
+
     fun getAllCategories() = mapper.getAllCategories()
-    fun getAllMajor() = mapper.getAllMajor()
-    fun getAllUnivName() = mapper.getAllUnivName()
+    fun getAllMajors() = mapper.getAllMajors()
+    fun getAllUnivNames() = mapper.getAllUnivNames()
     fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == '1'
     fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
     fun findNicknameByEmail(email: String) = mapper.findNicknameByEmail(email)

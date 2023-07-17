@@ -26,6 +26,10 @@ interface UserMapper {
     fun findNicknameByEmail(email: String): String
     fun findStateByUserId(userId: Int): Char
     fun getAllCategories(): List<String>
-    fun getAllMajor(): List<String>
-    fun getAllUnivName(): List<String>
+    fun getAllMajors(): List<String>
+    fun getAllUnivNames(): List<String>
+    fun insertCategoryIdMajorIdByUserId(userId: Int, categoryId: Int, majorId: Int)
+    fun findUserIdByUserEmail(email: String): Int
+    fun findCategoryIdByCategoryName(categoryName: String): Int
+    fun findMajorIdByMajorName(majorName: String): Int
 }
