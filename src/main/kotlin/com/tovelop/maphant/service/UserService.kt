@@ -17,8 +17,16 @@ class UserService(val mapper: UserMapper) {
         mapper.updateUserState(email, state, LocalDate.now())
     }
 
-    fun updateUserPassword(email: String, newPassword: String) {
-        mapper.updateUserPassword(email, newPassword, LocalDate.now())
+    fun updateUserPasswordByEmail(email: String, newPassword: String) {
+        mapper.updateUserPasswordByEmail(email, newPassword, LocalDate.now())
+    }
+
+    fun updateUserNicknameByEmail(email: String, newNickname: String) {
+        mapper.updateUserNicknameByEmail(email, newNickname, LocalDate.now())
+    }
+
+    fun updateUserPhoneNumByEmail(email: String, newPhoneNum: String) {
+        mapper.updateUserPhoneNumByEmail(email, newPhoneNum, LocalDate.now())
     }
 
     fun signUp(user: UserDTO): Boolean {

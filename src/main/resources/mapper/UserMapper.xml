@@ -5,29 +5,29 @@
 <mapper namespace="com.tovelop.maphant.mapper.UserMapper">
     <select id="countSameEmails" resultType="Int">
         SELECT COUNT(*)
-        FROM User
+        FROM user
         WHERE email = #{email};
     </select>
     <select id="countSameNickName" resultType="Int">
         SELECT COUNT(*)
-        FROM User
+        FROM user
         WHERE nickname = #{nickName};
     </select>
     <select id="countSamePhoneInt" resultType="Int">
         SELECT COUNT(*)
-        FROM User
-        WHERE phoneInt = #{phoneInt};
+        FROM user
+        WHERE ph_num   = #{phoneInt};
     </select>
     <select id="readUserByEmail" resultType="UserDTO">
         SELECT *
-        FROM User
+        FROM user
         WHERE email IN  <foreach item="email" collection="emails" open="(" separator="," close=")">
         #{email}
     </foreach> ;
     </select>
     <insert id="insertUser">
-        INSERT INTO User (email, password, nickname, name, phoneInt, create_at, role, state, is_agree,
-                          last_modified_date, university_id, sno)
+        INSERT INTO user (email, password, nickname, name, ph_num  , create_at, role, state, is_agree,
+                          last_modified_date, univ_id, sno)
         VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneInt}, #{create_at}, #{role}, #{state}, #{is_agree},
                 #{last_modified_date}, #{university_id}, #{sNo})
     </insert>
@@ -35,48 +35,64 @@
     </update>
     <select id="findEmailBy" resultType="String">
         SELECT email
-        FROM User
-        WHERE phoneInt = #{phoneInt}
+        FROM user
+        WHERE ph_num   = #{phoneInt}
           AND sno = #{sNo}
     </select>
     <select id="findUniversityIdBy" resultType="int">
         SELECT id
-        FROM university
+        FROM univ
         WHERE name = #{universityName}
     </select>
     <select id="findUniversityUrlBy" resultType="String">
         SELECT link
-        FROM university
+        FROM univ
         WHERE id = #{universityId}
     </select>
     <select id="isUniversityExist" resultType="Boolean">
-        SELECT EXISTS(SELECT * FROM university WHERE id = #{universityId})
+        SELECT EXISTS(SELECT * FROM univ WHERE id = #{universityId})
     </select>
     <update id="updateUserState">
-        UPDATE User
+        UPDATE user
         SET state              = #{state},
             last_modified_date = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
-    <update id="updateUserPassword">
-        UPDATE User
+    <update id="updateUserPasswordByEmail">
+        UPDATE user
         SET password           = #{password},
+            last_modified_date = #{lastModifiedDate}
+        WHERE email = #{email}
+    </update>
+    <update id="updateUserNicknameByEmail">
+        UPDATE user
+        SET nickname           = #{nickname},
+            last_modified_date = #{lastModifiedDate}
+        WHERE email = #{email}
+    </update>
+    <update id="updateUserPhoneNumByEmail">
+        UPDATE user
+        SET ph_num             = #{phoneNum},
             last_modified_date = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
     <select id="findPasswordByEmail" resultType="String">
         SELECT password
-        FROM User
+        FROM user
         WHERE email = #{email}
     </select>
     <select id="findStateByUserId" resultType="Char">
         SELECT state
-        FROM User
+        FROM user
         WHERE id = #{userId}
     </select>
     <select id="findNicknameByEmail" resultType="String">
         SELECT nickname
-        FROM User
+        FROM user
         WHERE email = #{email}
+    </select>
+    <select id="getAllCategories" resultType="String">
+        SELECT name
+        FROM category
     </select>
 </mapper>
