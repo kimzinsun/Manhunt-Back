@@ -173,15 +173,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/changeinfo")
     fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidNickname(changeInfoDTO.nickname)) {
-            return ResponseEntity.badRequest().body(Response.error("별명은 3~20자의 영문, 한글, 숫자로 구성해야 합니다."))
-        }
-
-        if (userService.isDuplicateNickname(changeInfoDTO.nickname)) {
-            return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
-        }
-
-
+        //이메일로 회원정보 가져오기
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
