@@ -212,7 +212,6 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-
     @PostMapping("/changepw/sendemail")
     fun changePw(@RequestBody changePw: ChangePasswordDTO): ResponseEntity<ResponseUnit> {
         if (!userService.isEmailValid(changePw.email)) {
