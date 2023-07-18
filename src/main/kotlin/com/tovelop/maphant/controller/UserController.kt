@@ -118,11 +118,6 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return phoneNumValidation
         }
 
-        val passwordValidation = validationPassword(ValidationSignupDTO(password = signupDTO.password))
-        if (!passwordValidation.isSuccess()) {
-            return passwordValidation
-        }
-
         val passwordChkValidation = validationPasswordChk(
             ValidationSignupDTO(
                 password = signupDTO.password, passwordCheck = signupDTO.passwordCheck
