@@ -31,7 +31,8 @@
         VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneInt}, #{create_at}, #{role}, #{state}, #{is_agree},
                 #{last_modified_date}, #{university_id}, #{sNo})
     </insert>
-    <update id="updateUser" databaseId="id">
+    <update id="updateUser" databaseId="id"
+    >
     </update>
     <select id="findEmailBy" resultType="String">
         SELECT email
