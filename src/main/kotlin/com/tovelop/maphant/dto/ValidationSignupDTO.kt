@@ -5,5 +5,7 @@ data class ValidationSignupDTO(
     val nickname: String? = null,
     val phoneNum: String? = null,
     val password: String? = null,
-    val passwordCheck: String? = null
+    val passwordCheck: String? = null,
+    val category: String? = null,
+    val major: String? = null
 )
