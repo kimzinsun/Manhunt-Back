@@ -26,7 +26,7 @@
     </foreach> ;
     </select>
     <insert id="insertUser">
-        INSERT INTO user (email, password, nickname, name, ph_num  , created_at, role, state, is_agree,
+        INSERT INTO user (email, password, nickname, name, ph_num  , created_at, role, state, agreed_at,
                           modified_at, univ_id, sno)
         VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneInt}, #{create_at}, #{role}, #{state}, #{is_agree},
                 #{last_modified_date}, #{university_id}, #{sNo})
