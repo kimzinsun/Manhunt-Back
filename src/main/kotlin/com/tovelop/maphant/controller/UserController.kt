@@ -113,11 +113,6 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return nicknameValidation
         }
 
-        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phoneNum = signupDTO.phoneNum))
-        if (!phoneNumValidation.isSuccess()) {
-            return phoneNumValidation
-        }
-
         val passwordValidation = validationPassword(ValidationSignupDTO(password = signupDTO.password))
         if (!passwordValidation.isSuccess()) {
             return passwordValidation
