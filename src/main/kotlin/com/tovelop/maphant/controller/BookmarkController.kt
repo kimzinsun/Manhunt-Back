@@ -1,6 +1,6 @@
 package com.tovelop.maphant.controller
 
-import com.tovelop.maphant.configure.MockupCustomUserToken
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.service.BookmarkService
 import com.tovelop.maphant.type.response.Response
 import org.springframework.http.ResponseEntity
@@ -18,9 +18,9 @@ class BookmarkController(val bookmarkService: BookmarkService) {
     //북마크 추가 api
     @PostMapping("/{boardId}")
     fun bookmark(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
-        val auth = SecurityContextHolder.getContext().authentication!! as MockupCustomUserToken
+        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
 
-        val bookmarkResult = bookmarkService.insert(auth.principal, boardId)
+        val bookmarkResult = bookmarkService.insert(auth.getUserData().id!!, boardId)
         if (!bookmarkResult) {
             return ResponseEntity.badRequest().body(
                 Response.error<Any>
@@ -34,11 +34,11 @@ class BookmarkController(val bookmarkService: BookmarkService) {
     @GetMapping("/my-list")
     fun showBookmarks(): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
-        if (auth == null || auth !is MockupCustomUserToken || !auth.isAuthenticated) {
+        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body("로그인 안됨")
         }
 
-        val bookmarkList = bookmarkService.showBookmarks(auth.principal)
+        val bookmarkList = bookmarkService.showBookmarks(auth.getUserData().id!!)
         if (bookmarkList.isFailure) {
             return ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         }

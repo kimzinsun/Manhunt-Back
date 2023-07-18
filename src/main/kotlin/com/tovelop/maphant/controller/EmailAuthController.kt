@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/email")
-class EmailAuthController(@Autowired val sendGrid: SendGrid) {
+class EmailAuthController(@Autowired val sendGrid: SendGrid, @Autowired val userService: UserService) {
     @PostMapping("/sendsignup")
-    fun sendauthcode(
-        @RequestBody eamilAuthDTO: EmailAuthDTO
-    ): ResponseEntity<ResponseUnit> {
+    fun sendauthcode(@RequestBody eamilAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
         if (!ValidationHelper.isUniversityEmail(eamilAuthDTO.email))
             return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
+
         sendGrid.sendSignUp(eamilAuthDTO.email)
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -31,9 +31,12 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid) {
     fun confirmEamil(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
         if (emailAuthDTO.authcode.isNullOrEmpty()) return ResponseEntity.badRequest()
             .body(Response.error("인증코드를 입력해 주세요."))
+
         if (!sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authcode))
             return ResponseEntity.badRequest().body(Response.error("인증코드가 일치하지 않습니다."))
-        // state -> 1로 바꿔주기
+
+        userService.updateUserState(emailAuthDTO.email, 1.toChar())
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }

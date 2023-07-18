@@ -46,7 +46,6 @@ class Security {
         return http.build()
     }
 
-    @Bean
     fun authenticationManager(http: HttpSecurity): AuthenticationManager {
         if (this::manager.isInitialized) return this.manager
 
