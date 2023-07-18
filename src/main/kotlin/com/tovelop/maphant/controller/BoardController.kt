@@ -42,7 +42,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
         // 본인 게시글 인지 확인
 
-        boardService.deletePost(post.postId)
+        boardService.deletePost(post.id)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -61,40 +61,11 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun updatePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
         // 현재 로그인 한 사용를 가져옴
         // 게시글 읽어오기
-        val rePost = boardService.readPost(post.postId)
+        //  val rePost = boardService.readPost(post.id)
         // 제목 내용 빈칸인지 확인
         // 본인 게시글 인지 확인
         // 관리자 권한 확인 (관리자는 수정이 가능한가?)
         // 수정
-        boardService.updatePost(post)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-
-    @GetMapping("/search")
-    fun searchPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
-        // 검색어가 포함된 게시글 읽어오기
-        // return: json
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-    @GetMapping("/category")
-    fun readCategory(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
-        // 장르별 게시글 읽어오기
-        // return: json
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-    @GetMapping("/my")
-    fun readMyPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
-        // 내가 쓴 게시글 읽어오기
-
-        // return: json
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-    @PostMapping("/report")
-    fun reportPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
-        // 신고하기
-        // boardService.reportPost(post.postId)
-        // return: json
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-
 }
