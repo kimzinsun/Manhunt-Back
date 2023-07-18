@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController
 class EmailAuthController(@Autowired val sendGrid: SendGrid, @Autowired val userService: UserService) {
     @PostMapping("/sendsignup")
     fun sendAuthCode(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isUniversityEmail(emailAuthDTO.email))
-            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
+        if (!ValidationHelper.isUniversityEmail(emailAuthDTO.email)) return ResponseEntity.badRequest()
+            .body(Response.error("형식에 맞지 않는 이메일입니다."))
 
         sendGrid.sendSignUp(emailAuthDTO.email)
 
@@ -28,11 +28,11 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid, @Autowired val user
 
     @PostMapping("/confirmEmail")
     fun confirmEmail(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
-        if (emailAuthDTO.authcode.isNullOrEmpty()) return ResponseEntity.badRequest()
+        if (emailAuthDTO.authCode.isNullOrEmpty()) return ResponseEntity.badRequest()
             .body(Response.error("인증코드를 입력해 주세요."))
 
-        if (!sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authcode))
-            return ResponseEntity.badRequest().body(Response.error("인증코드가 일치하지 않습니다."))
+        if (!sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authCode)) return ResponseEntity.badRequest()
+            .body(Response.error("인증코드가 일치하지 않습니다."))
 
         userService.updateUserState(emailAuthDTO.email, 1.toChar())
 
