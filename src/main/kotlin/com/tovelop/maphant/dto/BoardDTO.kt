@@ -13,6 +13,4 @@ data class BoardDTO(
     val isAnonymous: Boolean,
     val createAt: LocalDateTime,
     val modifiedAt: LocalDateTime,
-
-
     )
