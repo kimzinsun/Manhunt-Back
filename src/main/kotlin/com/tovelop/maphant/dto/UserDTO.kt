@@ -11,7 +11,6 @@ data class UserDTO(
     val phoneNum: String?,
     val sNo: String,
     val create_at: LocalDate,
-    val role: String,
     val state: String,
     val is_agree: String,
     val last_modified_date: LocalDate,
