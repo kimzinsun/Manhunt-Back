@@ -42,7 +42,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
         // 본인 게시글 인지 확인
 
-        boardService.deletePost(post.postId)
+        boardService.deletePost(post.id)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -61,7 +61,7 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun updatePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
         // 현재 로그인 한 사용를 가져옴
         // 게시글 읽어오기
-        val rePost = boardService.readPost(post.postId)
+        val rePost = boardService.readPost(post.id)
         // 제목 내용 빈칸인지 확인
         // 본인 게시글 인지 확인
         // 관리자 권한 확인 (관리자는 수정이 가능한가?)
