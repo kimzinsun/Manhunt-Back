@@ -138,6 +138,8 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         }
 
         userService.signUp(signupDTO.toUserDTO(universityId, passwordEncoder))
+        sendGrid.sendSignUp(signupDTO.email)
+        
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -184,7 +186,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("별명은 3~20자의 영문, 한글, 숫자로 구성해야 합니다."))
         }
 
-        if (userService.isDuplicateNickname(changeInfoDTO.nickname!!)) {
+        if (userService.isDuplicateNickname(changeInfoDTO.nickname)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
         }
 
@@ -199,7 +201,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         if (!ValidationHelper.isValidPhoneNum(changeInfoDTO.phoneNum!!)) {
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
-        
+
         userService.updateUserPhoneNumByEmail(changeInfoDTO.email, changeInfoDTO.phoneNum)
 
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -243,7 +245,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/changepw/authenticationcode")
     fun authenticationCode(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
-        val result = sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO?.authcode ?: "")
+        val result = sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authcode ?: "")
 
         return if (result) ResponseEntity.ok(Response.stateOnly(true)) else ResponseEntity.badRequest()
             .body(Response.error("인증번호가 일치하지 않습니다."))
