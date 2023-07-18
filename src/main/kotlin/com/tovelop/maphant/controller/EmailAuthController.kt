@@ -1,7 +1,6 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.EmailAuthDTO
-import com.tovelop.maphant.dto.ValidationSignupDTO
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -29,10 +28,10 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid, @Autowired val user
 
     @PostMapping("/confirmEmail")
     fun confirmEamil(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
-        if (emailAuthDTO.authcode.isNullOrEmpty()) return ResponseEntity.badRequest()
+        if (emailAuthDTO.authCode.isNullOrEmpty()) return ResponseEntity.badRequest()
             .body(Response.error("인증코드를 입력해 주세요."))
 
-        if (!sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authcode))
+        if (!sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authCode))
             return ResponseEntity.badRequest().body(Response.error("인증코드가 일치하지 않습니다."))
 
         userService.updateUserState(emailAuthDTO.email, 1.toChar())

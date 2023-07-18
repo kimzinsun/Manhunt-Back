@@ -214,7 +214,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
 
     @PostMapping("/changepw/sendemail")
-    fun changePw(@RequestBody changePw: ChangePwDTO): ResponseEntity<ResponseUnit> {
+    fun changePw(@RequestBody changePw: ChangePasswordDTO): ResponseEntity<ResponseUnit> {
         if (!userService.isEmailValid(changePw.email)) {
             return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
         }
@@ -228,29 +228,29 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/changepw/authenticationcode")
     fun authenticationCode(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
-        val isSendEmail = sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO?.authcode ?: "")
+        val isSendEmail = sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO?.authCode ?: "")
 
         return if (isSendEmail) ResponseEntity.ok(Response.stateOnly(true)) else ResponseEntity.badRequest()
             .body(Response.error("인증번호가 일치하지 않습니다."))
     }
 
     @PostMapping("/changepw/newpassword")
-    fun newPw(@RequestBody newPwDTO: NewPwDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidPassword(newPwDTO.password)) {
+    fun newPw(@RequestBody newPasswordDTO: NewPasswordDTO): ResponseEntity<ResponseUnit> {
+        if (!ValidationHelper.isValidPassword(newPasswordDTO.password)) {
             return ResponseEntity.badRequest()
                 .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
         }
 
-        if (newPwDTO.password != newPwDTO.passwordChk) {
+        if (newPasswordDTO.password != newPasswordDTO.passwordChk) {
             return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
         }
 
-        val ogPwd = userService.findPasswordByEmail(newPwDTO.email)
-        if (passwordEncoder.matches(newPwDTO.passwordChk, ogPwd)) {
+        val ogPwd = userService.findPasswordByEmail(newPasswordDTO.email)
+        if (passwordEncoder.matches(newPasswordDTO.passwordChk, ogPwd)) {
             return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
         }
 
-        userService.updateUserPasswordByEmail(newPwDTO.email, passwordEncoder.encode(newPwDTO.passwordChk))
+        userService.updateUserPasswordByEmail(newPasswordDTO.email, passwordEncoder.encode(newPasswordDTO.passwordChk))
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
