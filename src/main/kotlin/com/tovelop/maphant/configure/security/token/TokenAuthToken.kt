@@ -1,8 +1,7 @@
 package com.tovelop.maphant.configure.security.token
 
 import com.tovelop.maphant.configure.security.UserData
-import com.tovelop.maphant.dto.MockupUserDTO
-import com.tovelop.maphant.dto.UserDTO
+import com.tovelop.maphant.dto.UserDataDTO
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.GrantedAuthority
@@ -28,7 +27,7 @@ class TokenAuthToken(
 
     override fun isAuthenticated() = userData != null
 
-    fun getUserData(): MockupUserDTO {
+    fun getUserData(): UserDataDTO {
         return userData?.getUserData() ?: throw BadCredentialsException("No user")
     }
 }

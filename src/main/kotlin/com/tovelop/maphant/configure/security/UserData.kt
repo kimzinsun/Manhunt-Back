@@ -1,14 +1,13 @@
 package com.tovelop.maphant.configure.security
 
-import com.tovelop.maphant.dto.MockupUserDTO
-import com.tovelop.maphant.dto.UserDTO
+import com.tovelop.maphant.dto.UserDataDTO
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserData(
     private val email: String,
     private val password: String,
-    private val userData: MockupUserDTO,
+    private val userData: UserDataDTO,
 ): UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return mutableListOf()
