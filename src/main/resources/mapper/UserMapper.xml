@@ -13,10 +13,10 @@
         FROM user
         WHERE nickname = #{nickName};
     </select>
-    <select id="countSamePhoneNum" resultType="Int">
+    <select id="countSamePhoneInt" resultType="Int">
         SELECT COUNT(*)
         FROM user
-        WHERE ph_num   = #{phoneNum};
+        WHERE ph_num   = #{phoneInt};
     </select>
     <select id="readUserByEmail" resultType="UserDTO">
         SELECT *
@@ -26,17 +26,18 @@
     </foreach> ;
     </select>
     <insert id="insertUser">
-        INSERT INTO user (email, password, nickname, name, ph_num , sno , create_at, state, is_agree,
-                          last_modified_date, univ_id)
-        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneNum}, #{sNo}, #{create_at}, #{state}, #{is_agree},
-                #{last_modified_date}, #{university_id})
+        INSERT INTO user (email, password, nickname, name, ph_num  , create_at, role, state, is_agree,
+                          last_modified_date, univ_id, sno)
+        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneInt}, #{create_at}, #{role}, #{state}, #{is_agree},
+                #{last_modified_date}, #{university_id}, #{sNo})
     </insert>
-    <update id="updateUser" databaseId="id">
+    <update id="updateUser" databaseId="id"
+    >
     </update>
     <select id="findEmailBy" resultType="String">
         SELECT email
         FROM user
-        WHERE ph_num   = #{phoneNum}
+        WHERE ph_num   = #{phoneInt}
           AND sno = #{sNo}
     </select>
     <select id="findUniversityIdBy" resultType="int">
