@@ -82,8 +82,8 @@ class UserService(val mapper: UserMapper) {
         return ValidationHelper.isUniversityEmail(email)
     }
 
-    fun findEmailBy(sNo: String, phoneNum: String): String? {
-        return mapper.findEmailBy(sNo, phoneNum)
+    fun findEmailBysNo(sNo: String, phoneNum: String): String? {
+        return mapper.findEmailBysNo(sNo, phoneNum)
     }
 
     fun isNicknameValid(nickname: String): Boolean {
@@ -106,7 +106,7 @@ class UserService(val mapper: UserMapper) {
     }
 
     fun isDuplicatePhoneNum(phoneNum: String): Boolean {
-        return mapper.countSamePhoneInt(phoneNum) > 0
+        return mapper.countSamePhoneNum(phoneNum) > 0
     }
 
     fun extractFromEmail(email: String): String? {
