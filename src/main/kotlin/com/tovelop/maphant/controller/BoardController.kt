@@ -1,44 +1,100 @@
 package com.tovelop.maphant.controller
 
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import com.tovelop.maphant.dto.BoardDTO
+import com.tovelop.maphant.service.BoardService
+import com.tovelop.maphant.type.response.Response
+import com.tovelop.maphant.type.response.ResponseUnit
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/board")
-class BoardController {
+class BoardController(@Autowired val boardService: BoardService) {
+
     @GetMapping("/main")
-    fun readBoard() { //
+    fun readBoard(): ResponseEntity<ResponseUnit> {
         // 보드 메인 (선택한 장르의 게시글)
         // 정렬(추천수, 생성 일자)
         // 추천수, 작성자(익명인지), 수정 일자, 제목,
         // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @GetMapping("/boardId")
-    fun readPost() {
-        // 한개의 게시글 읽어오기
+    @PostMapping("/recommend")
+    fun recommendHandle(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 추천수 증가
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/read")
+    fun readPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 한 개의 게시글 읽어오기
         // 제목, 내용, 댓글, 추천수, 수정 일자, 작성자가 로그인한 사람과 같은지 확인
         // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @DeleteMapping("/post/delete")
-    fun deletePost(@RequestBody postId: String) {
+    fun deletePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
         // 게시글 삭제
-        // 게시글 id로 삭제
+        // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
+        // 본인 게시글 인지 확인
 
+        boardService.deletePost(post.postId)
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/add")
-    fun createPost() {
-        // 게시글 추가 (작성자, 생성 시간, 내용)
-        // 보드 스키마 다
+    @PostMapping("/create")
+    fun createPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 제목 내용 빈칸인지 확인
+        if (post.title.isNotBlank() && post.body.isNotBlank()) {
+            boardService.createPost(post)
+            return ResponseEntity.ok(Response.stateOnly(true))
+        } else {
+            return ResponseEntity.ok(Response.stateOnly(false)) // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
+        }
+    }
+
+    @PutMapping("/update")
+    fun updatePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 현재 로그인 한 사용를 가져옴
+        // 게시글 읽어오기
+        val rePost = boardService.readPost(post.postId)
+        // 제목 내용 빈칸인지 확인
+        // 본인 게시글 인지 확인
+        // 관리자 권한 확인 (관리자는 수정이 가능한가?)
+        // 수정
+        boardService.updatePost(post)
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @GetMapping("/search")
+    fun searchPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 검색어가 포함된 게시글 읽어오기
         // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
+    @GetMapping("/category")
+    fun readCategory(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 장르별 게시글 읽어오기
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+    @GetMapping("/my")
+    fun readMyPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 내가 쓴 게시글 읽어오기
 
-
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+    @PostMapping("/report")
+    fun reportPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 신고하기
+        // boardService.reportPost(post.postId)
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
 
 }

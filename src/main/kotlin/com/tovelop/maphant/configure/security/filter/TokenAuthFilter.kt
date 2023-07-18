@@ -20,11 +20,6 @@ class TokenAuthFilter(authenticationManager: AuthenticationManager?)
 
     init {
         this.authenticationManager = authenticationManager
-        this.setAuthenticationSuccessHandler { request, response, authentication ->
-            run {
-                SecurityContextHolder.getContext().authentication = authentication
-            }
-        }
         this.setAuthenticationFailureHandler { request, response, exception ->
             run {
                 val output = mutableMapOf<String, Any>(
@@ -43,7 +38,7 @@ class TokenAuthFilter(authenticationManager: AuthenticationManager?)
         val headerAuth = request?.getHeader("x-auth") ?: throw BadCredentialsException("No auth header")
 
         // time stamp
-        val headerTS = request.getHeader("x-timestamp").toInt() ?: throw BadCredentialsException("No timestamp header")
+        val headerTS = request.getHeader("x-timestamp") ?: throw BadCredentialsException("No timestamp header")
 
         // privKey * timestamp
         val headerSign = request.getHeader("x-sign") ?: throw BadCredentialsException("No sign header")
@@ -54,7 +49,7 @@ class TokenAuthFilter(authenticationManager: AuthenticationManager?)
 //            throw SecurityException("Timestamp expired")
 //        }
 
-        val authReq = TokenAuthToken(headerAuth, headerTS, headerSign)
+        val authReq = TokenAuthToken(headerAuth, headerTS.toInt(), headerSign)
 
         return this.authenticationManager.authenticate(authReq)
     }
@@ -66,5 +61,15 @@ class TokenAuthFilter(authenticationManager: AuthenticationManager?)
         } else {
             chain.doFilter(request, response)
         }
+    }
+
+    override fun successfulAuthentication(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        chain: FilterChain,
+        authResult: Authentication
+    ) {
+        SecurityContextHolder.getContext().authentication = authResult
+        chain.doFilter(request, response)
     }
 }

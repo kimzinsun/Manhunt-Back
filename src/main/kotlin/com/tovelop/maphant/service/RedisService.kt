@@ -20,7 +20,7 @@ class RedisService(@Autowired private val template: RedisTemplate<String, String
     }
 
     fun setnx(key: String, value: String): Boolean {
-        if(template.hasKey(key)) {
+        if (template.hasKey(key)) {
             return false
         }
 
@@ -33,5 +33,9 @@ class RedisService(@Autowired private val template: RedisTemplate<String, String
 //
 //        dataStorage[key] = value
 //        return true
+    }
+
+    fun del(key: String) {
+        template.delete(key)
     }
 }
