@@ -22,7 +22,6 @@ data class SignupDTO(
             phoneNum = null,
             sNo = sNo,
             create_at = LocalDate.now(),
-            role = "user",
             state = "0",
             is_agree = "Y",
             last_modified_date = LocalDate.now(),
