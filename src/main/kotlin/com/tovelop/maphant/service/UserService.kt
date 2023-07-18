@@ -54,9 +54,9 @@ class UserService(val mapper: UserMapper) {
         return null
     }
 
-    fun matchEmail(email: String, universityId: Int?): Boolean {
+    fun matchEmail(email: String, univId: Int?): Boolean {
         val universityName = this.extractFromEmail(email)
-        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(universityId))
+        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(univId))
         return universityName == universityUrl
     }
 
@@ -70,8 +70,8 @@ class UserService(val mapper: UserMapper) {
         mapper.insertUser(user)
     }
 
-    fun findUniversityIdBy(universityName: String): Int? {
-        return mapper.findUniversityIdBy(universityName)
+    fun findUniversityIdBy(univName: String): Int? {
+        return mapper.findUniversityIdBy(univName)
     }
 
     fun isPasswordValid(password: String): Boolean {
@@ -90,11 +90,11 @@ class UserService(val mapper: UserMapper) {
         return ValidationHelper.isAlphaNumericKorean(nickname)
     }
 
-    fun isUniversityValid(universityId: Int?): Boolean {
-        if (universityId == null) {
+    fun isUniversityValid(univId: Int?): Boolean {
+        if (univId == null) {
             return true
         }
-        return mapper.isUniversityExist(universityId)
+        return mapper.isUniversityExist(univId)
     }
 
     fun isDuplicateEmail(email: String): Boolean {

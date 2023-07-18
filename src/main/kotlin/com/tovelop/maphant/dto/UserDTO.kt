@@ -10,9 +10,10 @@ data class UserDTO(
     val name: String,
     val phoneNum: String?,
     val sNo: String,
-    val create_at: LocalDate,
+    val role: String,
     val state: String,
-    val is_agree: String,
-    val last_modified_date: LocalDate,
-    val university_id: Int?
+    val createAt: LocalDate,
+    val agreedAt: LocalDate,
+    val lastmodifiedAt: LocalDate,
+    val univId: Int?
 )
