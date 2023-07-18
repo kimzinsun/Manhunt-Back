@@ -28,12 +28,12 @@
     <insert id="insertUser">
         INSERT INTO user (email, password, nickname, name, ph_num , sno , created_at, state, agreed_at,
                           lastmodified_at, univ_id)
-        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneNum}, #{sNo}, #{create_at}, #{state}, #{is_agree},
-                #{last_modified_date}, #{university_id})
+        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phoneNum}, #{sNo}, #{createAt}, #{state}, #{agreedAt},
+                #{lastmodifiedAt}, #{univId})
     </insert>
     <update id="updateUser" databaseId="id">
     </update>
-    <select id="findEmailBy" resultType="String">
+    <select id="findEmailBysNo" resultType="String">
         SELECT email
         FROM user
         WHERE ph_num   = #{phoneNum}
@@ -42,12 +42,12 @@
     <select id="findUniversityIdBy" resultType="int">
         SELECT id
         FROM univ
-        WHERE name = #{universityName}
+        WHERE name = #{univName}
     </select>
     <select id="findUniversityUrlBy" resultType="String">
         SELECT link
         FROM univ
-        WHERE id = #{universityId}
+        WHERE id = #{univId}
     </select>
     <select id="isUniversityExist" resultType="Boolean">
         SELECT EXISTS(SELECT * FROM univ WHERE id = #{universityId})
@@ -55,25 +55,25 @@
     <update id="updateUserState">
         UPDATE user
         SET state              = #{state},
-            lastmodified_at = #{lastModifiedDate}
+            lastmodified_at = #{lastmodifiedAt}
         WHERE email = #{email}
     </update>
     <update id="updateUserPasswordByEmail">
         UPDATE user
         SET password           = #{password},
-            lastmodified_at = #{lastModifiedDate}
+            lastmodified_at = #{lastmodifiedAt}
         WHERE email = #{email}
     </update>
     <update id="updateUserNicknameByEmail">
         UPDATE user
         SET nickname           = #{nickname},
-            lastmodified_at = #{lastModifiedDate}
+            lastmodified_at = #{lastmodifiedAt}
         WHERE email = #{email}
     </update>
     <update id="updateUserPhoneNumByEmail">
         UPDATE user
         SET ph_num             = #{phoneNum},
-            lastmodified_at = #{lastModifiedDate}
+            lastmodified_at = #{lastmodifiedAt}
         WHERE email = #{email}
     </update>
     <select id="findPasswordByEmail" resultType="String">
