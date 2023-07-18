@@ -55,25 +55,25 @@
     <update id="updateUserState">
         UPDATE user
         SET state              = #{state},
-            last_modified_date = #{lastModifiedDate}
+            modified_at = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
     <update id="updateUserPasswordByEmail">
         UPDATE user
         SET password           = #{password},
-            last_modified_date = #{lastModifiedDate}
+            modified_at = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
     <update id="updateUserNicknameByEmail">
         UPDATE user
         SET nickname           = #{nickname},
-            last_modified_date = #{lastModifiedDate}
+            modified_at = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
     <update id="updateUserPhoneNumByEmail">
         UPDATE user
         SET ph_num             = #{phoneNum},
-            last_modified_date = #{lastModifiedDate}
+            modified_at = #{lastModifiedDate}
         WHERE email = #{email}
     </update>
     <select id="findPasswordByEmail" resultType="String">
