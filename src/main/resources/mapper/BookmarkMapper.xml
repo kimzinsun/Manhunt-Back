@@ -9,7 +9,7 @@
     </insert>
 
     <select id="selectBoardAllById" resultType="BookmarkDTO">
-        SELECT board.id, board.title, board.type
+        SELECT board.id, board.title, board.type_id
         FROM user_bookmark as ub
                  JOIN board on board.id = ub.board_id
         WHERE ub.user_id = #{userId}
