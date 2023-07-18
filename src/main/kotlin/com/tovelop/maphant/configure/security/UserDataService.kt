@@ -14,7 +14,7 @@ class UserDataService: UserDetailsService {
             return UserData(
                 "test@test.com",
                 "\$2a\$10\$jU/ymeUzPM0NKRV.Pa/X4OqzcVrj3K/2Za7gylhPq0HaUxnrcpyZe",
-                MockupUserDTO("1", "test@test.com", "\$2a\$10\$jU/ymeUzPM0NKRV.Pa/X4OqzcVrj3K/2Za7gylhPq0HaUxnrcpyZe", "test"),
+                MockupUserDTO(1, "test@test.com", "\$2a\$10\$jU/ymeUzPM0NKRV.Pa/X4OqzcVrj3K/2Za7gylhPq0HaUxnrcpyZe", "test"),
             )
 
         throw UsernameNotFoundException("Not found")
