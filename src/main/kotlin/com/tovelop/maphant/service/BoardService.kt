@@ -13,14 +13,12 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
 
     }
 
-    fun findPostById(postId: Int):BoardDTO {
-        return BoardDTO(1,1,1,"asdfl","asdf","asdf","asdf",true, LocalDateTime.now(), LocalDateTime.now())
+    fun findPostById(id: Int):BoardDTO {
+        return boardMapper.getBoardById(id)!!
     }
 
     fun updatePost(boardDTO: BoardDTO){
-        val postId = boardDTO.postId
-
-
+        val id = boardDTO.id
     }
 
     fun deletePost(postId: Int) {
