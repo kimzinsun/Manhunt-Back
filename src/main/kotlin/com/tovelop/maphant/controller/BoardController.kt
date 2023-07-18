@@ -28,7 +28,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @GetMapping("/boardId")
+    @PostMapping("/read")
     fun readPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
         // 한 개의 게시글 읽어오기
         // 제목, 내용, 댓글, 추천수, 수정 일자, 작성자가 로그인한 사람과 같은지 확인
@@ -39,8 +39,9 @@ class BoardController(@Autowired val boardService: BoardService) {
     @DeleteMapping("/post/delete")
     fun deletePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
         // 게시글 삭제
-        // 관리자 권한 확인
+        // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
         // 본인 게시글 인지 확인
+
         boardService.deletePost(post.postId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -48,14 +49,23 @@ class BoardController(@Autowired val boardService: BoardService) {
     @PostMapping("/create")
     fun createPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
         // 제목 내용 빈칸인지 확인
-
-        boardService.createPost(post)
-        return ResponseEntity.ok(Response.stateOnly(true))
+        if (post.title.isNotBlank() && post.body.isNotBlank()) {
+            boardService.createPost(post)
+            return ResponseEntity.ok(Response.stateOnly(true))
+        } else {
+            return ResponseEntity.ok(Response.stateOnly(false)) // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
+        }
     }
 
     @PutMapping("/update")
     fun updatePost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 현재 로그인 한 사용를 가져옴
+        // 게시글 읽어오기
+        val rePost = boardService.readPost(post.postId)
         // 제목 내용 빈칸인지 확인
+        // 본인 게시글 인지 확인
+        // 관리자 권한 확인 (관리자는 수정이 가능한가?)
+        // 수정
         boardService.updatePost(post)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -76,6 +86,13 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun readMyPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
         // 내가 쓴 게시글 읽어오기
 
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+    @PostMapping("/report")
+    fun reportPost(@RequestBody post: BoardDTO): ResponseEntity<ResponseUnit> {
+        // 신고하기
+        // boardService.reportPost(post.postId)
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
