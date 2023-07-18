@@ -50,10 +50,10 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/validation/phoneNum")
     fun validationPhonenum(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidPhoneNum(validationSignupDTO.phoneNum!!)) {
+        if (!ValidationHelper.isValidPhoneNum(validationSignupDTO.phNum!!)) {
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
-        if (userService.isDuplicatePhoneNum(validationSignupDTO.phoneNum)) {
+        if (userService.isDuplicatePhoneNum(validationSignupDTO.phNum)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 핸드폰 번호입니다."))
         }
 
@@ -95,8 +95,8 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     }
 
     @PostMapping("/selection/categorymajor")
-    fun selectionCategory(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<ResponseUnit> {
-        userService.insertCategoryMajorByEmail(categoryDTO.email, categoryDTO.category, categoryDTO.major)
+    fun selectionCategory(@RequestBody categoryMajorDTO: CategoryMajorDTO): ResponseEntity<ResponseUnit> {
+        userService.insertCategoryMajorByEmail(categoryMajorDTO.email, categoryMajorDTO.category, categoryMajorDTO.major)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -126,7 +126,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("이름을 형식에 맞춰주세요. ex) 홍길동"))
         }
 
-        val universityId = userService.findUniversityIdBy(signupDTO.universityName)
+        val universityId = userService.findUniversityIdBy(signupDTO.univName)
         if (universityId == null) return ResponseEntity.badRequest().body(Response.error("해당 도메인을 가진 학교가 없습니다."))
         if (!userService.matchEmail(signupDTO.email, universityId)) {
             return ResponseEntity.badRequest().body(Response.error("이메일과 학교 이름을 확인해주세요."))
@@ -159,8 +159,8 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     //개인정보 수정 페이지 접근 전, 본인 확인 절차: 비밀번호 확인
     @PostMapping("/identification")
     fun identification(@RequestBody identificationDTO: IdentificationDTO): ResponseEntity<ResponseUnit> {
-        val ogPwd = userService.findPasswordByEmail(identificationDTO.email)
-        if (!passwordEncoder.matches(identificationDTO.password, ogPwd)) {
+        val oldPassword = userService.findPasswordByEmail(identificationDTO.email)
+        if (!passwordEncoder.matches(identificationDTO.password, oldPassword)) {
             return ResponseEntity.badRequest().body(Response.error("비밀번호를 확인해주세요."))
         }
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -191,33 +191,33 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/changeinfo/phonenum")
     fun changePhonenum(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidPhoneNum(changeInfoDTO.phoneNum!!)) {
+        if (!ValidationHelper.isValidPhoneNum(changeInfoDTO.phNum!!)) {
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
         
-        userService.updateUserPhoneNumByEmail(changeInfoDTO.email, changeInfoDTO.phoneNum)
+        userService.updateUserPhoneNumByEmail(changeInfoDTO.email, changeInfoDTO.phNum)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/changeinfo/pw")
     fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        val ogPwd = userService.findPasswordByEmail(changeInfoDTO.email)
+        val oldPassword = userService.findPasswordByEmail(changeInfoDTO.email)
 
-        if (!ValidationHelper.isValidPassword(changeInfoDTO.password!!)) {
+        if (!ValidationHelper.isValidPassword(changeInfoDTO.newPassword!!)) {
             return ResponseEntity.badRequest()
                 .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
         }
 
-        if (changeInfoDTO.password != changeInfoDTO.passwordChk) {
+        if (changeInfoDTO.newPassword != changeInfoDTO.newPasswordCheck) {
             return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
         }
 
-        if (passwordEncoder.matches(changeInfoDTO.passwordChk, ogPwd)) {
+        if (passwordEncoder.matches(changeInfoDTO.newPasswordCheck, oldPassword)) {
             return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
         }
 
-        userService.updateUserPasswordByEmail(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.passwordChk))
+        userService.updateUserPasswordByEmail(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck))
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
