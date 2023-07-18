@@ -96,7 +96,9 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/selection/categorymajor")
     fun selectionCategory(@RequestBody categoryMajorDTO: CategoryMajorDTO): ResponseEntity<ResponseUnit> {
-        userService.insertCategoryMajorByEmail(categoryMajorDTO.email, categoryMajorDTO.category, categoryMajorDTO.major)
+        userService.insertCategoryMajorByEmail(
+            categoryMajorDTO.email, categoryMajorDTO.category, categoryMajorDTO.major
+        )
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -132,6 +134,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("이메일과 학교 이름을 확인해주세요."))
         }
 
+        sendGrid.sendSignUp(signupDTO.email)
         userService.signUp(signupDTO.toUserDTO(univId, passwordEncoder))
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -169,7 +172,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("별명은 3~20자의 영문, 한글, 숫자로 구성해야 합니다."))
         }
 
-        if (userService.isDuplicateNickname(changeInfoDTO.nickname!!)) {
+        if (userService.isDuplicateNickname(changeInfoDTO.nickname)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
         }
 
@@ -184,7 +187,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         if (!ValidationHelper.isValidPhoneNum(changeInfoDTO.phNum!!)) {
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
-        
+
         userService.updateUserPhoneNumByEmail(changeInfoDTO.email, changeInfoDTO.phNum)
 
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -207,7 +210,9 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
         }
 
-        userService.updateUserPasswordByEmail(changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck))
+        userService.updateUserPasswordByEmail(
+            changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
+        )
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -227,7 +232,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     @PostMapping("/changepw/authenticationcode")
     fun authenticationCode(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
-        val isSendEmail = sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO?.authCode ?: "")
+        val isSendEmail = sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authCode ?: "")
 
         return if (isSendEmail) ResponseEntity.ok(Response.stateOnly(true)) else ResponseEntity.badRequest()
             .body(Response.error("인증번호가 일치하지 않습니다."))

@@ -31,10 +31,10 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid, @Autowired val user
         if (emailAuthDTO.authCode.isNullOrEmpty()) return ResponseEntity.badRequest()
             .body(Response.error("인증코드를 입력해 주세요."))
 
-        if (!sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authCode))
-            return ResponseEntity.badRequest().body(Response.error("인증코드가 일치하지 않습니다."))
+        if (!sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authCode)) return ResponseEntity.badRequest()
+            .body(Response.error("인증코드가 일치하지 않습니다."))
 
-        userService.updateUserState(emailAuthDTO.email, 1.toChar())
+        userService.updateUserState(emailAuthDTO.email, 1)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
