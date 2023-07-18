@@ -3,9 +3,8 @@ package com.tovelop.maphant.dto
 data class ChangeInfoDTO(
     val email: String,
     val nickname: String?,
-    val nowPassword: String?,
-    val password: String?,
-    val passwordChk: String?,
-    val phoneNum: String?
-
+    val oldPassword: String?,
+    val newPassword: String?,
+    val newPasswordCheck: String?,
+    val phNum: String?
 )
