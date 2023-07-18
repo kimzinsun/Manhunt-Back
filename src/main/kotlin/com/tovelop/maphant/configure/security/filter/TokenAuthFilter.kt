@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.stereotype.Component
 
-@Component
 class TokenAuthFilter(authenticationManager: AuthenticationManager?)
     : AbstractAuthenticationProcessingFilter("/**", authenticationManager) {
 
