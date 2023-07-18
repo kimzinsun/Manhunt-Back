@@ -81,7 +81,7 @@
         FROM user
         WHERE email = #{email}
     </select>
-    <select id="findStateByUserId" resultType="Char">
+    <select id="findStateByUserId" resultType="Int">
         SELECT state
         FROM user
         WHERE id = #{userId}

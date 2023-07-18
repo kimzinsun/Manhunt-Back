@@ -18,13 +18,13 @@ interface UserMapper {
     fun findUniversityIdBy(univName: String): Int?
     fun isUniversityExist(univId: Int): Boolean
     fun findUniversityUrlBy(univId: Int?): String
-    fun updateUserState(email: String, state: Char, lastmodifiedAt: LocalDate)
+    fun updateUserState(email: String, state: Int, lastmodifiedAt: LocalDate)
     fun updateUserPasswordByEmail(email: String, password: String, lastmodifiedAt: LocalDate)
     fun updateUserNicknameByEmail(email: String, password: String, lastmodifiedAt: LocalDate)
     fun updateUserPhoneNumByEmail(email: String, password: String, lastmodifiedAt: LocalDate)
     fun findPasswordByEmail(email: String): String
     fun findNicknameByEmail(email: String): String
-    fun findStateByUserId(userId: Int): Char
+    fun findStateByUserId(userId: Int): Int
     fun getAllCategories(): List<String>
     fun getAllMajors(): List<String>
     fun getAllUnivNames(): List<String>

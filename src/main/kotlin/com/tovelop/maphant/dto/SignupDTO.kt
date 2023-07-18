@@ -23,7 +23,7 @@ data class SignupDTO(
             sno = sno,
             createdAt = LocalDate.now(),
             role = "user",
-            state = "0",
+            state = 0,
             agreedAt = LocalDate.now(),
             lastmodifiedAt = LocalDate.now(),
             univId = univId

@@ -21,10 +21,10 @@ class UserService(val mapper: UserMapper) {
     fun getAllCategories() = mapper.getAllCategories()
     fun getAllMajors() = mapper.getAllMajors()
     fun getAllUnivNames() = mapper.getAllUnivNames()
-    fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == '1'
+    fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == 1
     fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
     fun findNicknameByEmail(email: String) = mapper.findNicknameByEmail(email)
-    fun updateUserState(email: String, state: Char) {
+    fun updateUserState(email: String, state: Int) {
         mapper.updateUserState(email, state, LocalDate.now())
     }
 
