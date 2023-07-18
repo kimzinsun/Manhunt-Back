@@ -3,12 +3,12 @@ package com.tovelop.maphant.configure.security.provider
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.tovelop.maphant.configure.security.UserData
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
-import com.tovelop.maphant.dto.MockupUserDTO
+import com.tovelop.maphant.dto.UserDataDTO
 import com.tovelop.maphant.service.RedisService
 import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
-import java.util.Optional
 
 @Component
 class TokenAuthProvider(
@@ -21,20 +21,23 @@ class TokenAuthProvider(
         val token = authentication as TokenAuthToken
 
         if(token.isExpired()) {
-            throw SecurityException("Token expired")
+//            throw SecurityException("Token expired")
+            throw BadCredentialsException("Token expired")
         }
 
         val principal = token.principal
         val credentials = token.credentials
 
-        val userToken = redis.get(principal) ?: throw SecurityException("No user")
+//        val userToken = redis.get(principal) ?: throw SecurityException("No user")
+        val userToken = redis.get(principal) ?: throw BadCredentialsException("No user")
 
         if(credentials.third != token.createToken(credentials.second, userToken.substringBefore('|'))) {
-            throw SecurityException("Invalid token")
+//            throw SecurityException("Invalid token")
+            throw BadCredentialsException("Invalid token")
         }
 
         val objMapper = ObjectMapper()
-        val user = objMapper.readValue(userToken.substringAfter('|'), MockupUserDTO::class.java)
+        val user = objMapper.readValue(userToken.substringAfter('|'), UserDataDTO::class.java)
         val userData = UserData(user.email, user.password, user)
 
         return TokenAuthToken(principal, credentials.second, credentials.third, userData)
