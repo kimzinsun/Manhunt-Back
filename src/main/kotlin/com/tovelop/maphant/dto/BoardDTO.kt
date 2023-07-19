@@ -3,7 +3,7 @@ package com.tovelop.maphant.dto
 import java.time.LocalDateTime
 
 data class BoardDTO(
-    val parentId: Int,
+    val parentId: Int?,
     val categoryId: Int,
     val userId: Int,
     val typeId: Int,
@@ -18,5 +18,5 @@ data class BoardDTO(
     val commentCnt: Int,
     val likeCnt: Int,
     val reportCnt: Int,
-    val imagesUrl: String
+    val imagesUrl: String?
 )
