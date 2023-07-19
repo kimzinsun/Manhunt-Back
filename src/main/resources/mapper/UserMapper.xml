@@ -18,7 +18,7 @@
         FROM user
         WHERE ph_num   = #{phoneNum};
     </select>
-    <select id="readAllColumnVal" resultType="UserDTO">
+    <select id="findUserByEmail" resultType="UserDTO">
         SELECT *
         FROM user
         WHERE email IN  <foreach item="email" collection="emails" open="(" separator="," close=")">

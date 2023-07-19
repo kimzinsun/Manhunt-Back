@@ -1,6 +1,5 @@
 package com.tovelop.maphant.service
 
-import com.sendgrid.helpers.mail.objects.Email
 import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.UserMapper
 import com.tovelop.maphant.utils.ValidationHelper
@@ -62,7 +61,7 @@ class UserService(val mapper: UserMapper) {
 
     fun getUser(emails: List<String>): UserDTO? {
         // 사용자 조회 로직
-        return mapper.readAllColumnVal(emails).firstOrNull()
+        return mapper.findUserByEmail(emails).firstOrNull()
     }
 
     fun insertUser(user: UserDTO) {
