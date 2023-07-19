@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.tovelop.maphant.dto.NotificationResponseDTO
 import com.tovelop.maphant.service.NotificationService
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/notifications")
@@ -17,8 +18,17 @@ class NotificationController(private val notificationService: NotificationServic
                 etc = ObjectMapper().readValue(it.etc, Map::class.java),
                 title = it.title,
                 body = it.body,
-                createdAt = it.createdAt
+                createdAt = it.createdAt,
+                readAt = it.readAt
             )
         }
+    }
+
+    @GetMapping("{userId}/{notificationId}")
+    fun updateNotification(
+        @PathVariable userId: Int,
+        @PathVariable notificationId: Int
+    ) {
+        notificationService.updateNotification(notificationId)
     }
 }

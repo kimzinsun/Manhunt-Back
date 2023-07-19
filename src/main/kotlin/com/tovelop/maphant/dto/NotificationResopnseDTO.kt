@@ -7,7 +7,8 @@ data class NotificationDBDTO(
     val etc: String,
     val title: String,
     val body: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val readAt: LocalDateTime?
 )
 
 data class NotificationResponseDTO(
@@ -15,5 +16,6 @@ data class NotificationResponseDTO(
     val etc: Map<*, *>,
     val title: String,
     val body: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val readAt: LocalDateTime?
 )

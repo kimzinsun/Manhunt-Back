@@ -8,5 +8,4 @@ data class FcmMessageDTO(
     val title: String,
     val body: String,
     val etc: Map<String, String>, // send more key-value (ex. chatting service - sender, message, etc...)*/
-    val createdAt: LocalDateTime? = LocalDateTime.now()
 )
