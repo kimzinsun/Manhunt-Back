@@ -1,6 +1,5 @@
 package com.tovelop.maphant.service
 
-import com.sendgrid.helpers.mail.objects.Email
 import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.UserMapper
 import com.tovelop.maphant.utils.ValidationHelper
@@ -21,10 +20,10 @@ class UserService(val mapper: UserMapper) {
     fun getAllCategories() = mapper.getAllCategories()
     fun getAllMajors() = mapper.getAllMajors()
     fun getAllUnivNames() = mapper.getAllUnivNames()
-    fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == '1'
+    fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == 1
     fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
     fun findNicknameByEmail(email: String) = mapper.findNicknameByEmail(email)
-    fun updateUserState(email: String, state: Char) {
+    fun updateUserState(email: String, state: Int) {
         mapper.updateUserState(email, state, LocalDate.now())
     }
 
@@ -62,7 +61,7 @@ class UserService(val mapper: UserMapper) {
 
     fun getUser(emails: List<String>): UserDTO? {
         // 사용자 조회 로직
-        return mapper.readAllColumnVal(emails).firstOrNull()
+        return mapper.findUserByEmail(emails).firstOrNull()
     }
 
     fun insertUser(user: UserDTO) {
