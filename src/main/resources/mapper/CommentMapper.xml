@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.CommentMapper">
+    <select id="findAllComment" resultType="commentDTO">
+        SELECT *
+        FROM comment
+                 JOIN board ON board.id = comment.board_id
+        WHERE board_id = ${board_id}
+    </select>
+    <insert id="insertComment">
+        INSERT INTO comment(board_id, userId, body, created_at, isAnonymous)
+        VALUES (#{board_id}, #{userId}, #{body}, #{created_at}, #{isAnonymous})
+    </insert>
+    <delete id="deleteComment">
+        DELETE
+        FROM comment
+        WHERE id = #{id}
+    </delete>
+    <update id="updateComment">
+        UPDATE comment
+        SET body = #{body}
+        WHERE id = #{id}
+    </update>
+    <select id="cntComment" resultType="Int">
+        SELECT COUNT(*)
+        FROM comment
+                 JOIN board ON board.id = comment.board_id
+        WHERE board_id = ${board_id}
+    </select>
+    <insert id="insertCommentLike">
+        INSERT INTO comment_like(commentId, userId)
+        VALUES (#{comment_id}, #{user_id})
+    </insert>
+    <select id="findCommentLike">
+        SELECT *
+        FROM comment_like
+                 JOIN comment ON comment.id = comment_like.commentId
+        WHERE comment_like.commentId = #{comment_id}
+          AND comment_like.userId = #{user_id}
+    </select>
+    <select id="cntCommentLike" resultType="Int">
+        SELECT COUNT(*)
+        FROM comment_like
+                 JOIN comment ON comment.id = comment_like.commentId
+        WHERE comment_like.commentId = #{comment_id}
+    </select>
+    <delete id="deleteCommentLike">
+        DELETE
+        FROM comment_like
+        WHERE commentId = #{comment_id} JOIN comment
+        ON comment.id = comment_like.commentId AND comment_like.userId = #{user_id}
+    </delete>
+    <insert id="commentReport">
+        INSERT INTO comment_report(comment_id, user_id)
+        VALUES (#{comment_id}, #{user_id})
+    </insert>
+    <select id="findCommentReport">
+        SELECT *
+        FROM comment_report
+                 JOIN comment ON comment.id = comment_report.comment_id
+        WHERE comment_report.comment_id = #{comment_id}
+          AND comment_report.user_id = #{user_id}
+    </select>
+    <select id="cntCommentReport" resultType="Int">
+        SELECT COUNT(*)
+        FROM comment_report
+                 JOIN comment ON comment.id = comment_report.comment_id
+        WHERE comment_report.comment_id = #{comment_id}
+    </select>
+
+</mapper>
