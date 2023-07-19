@@ -13,7 +13,7 @@ class PollController {
     @PostMapping("/") // 투표 생성
     fun createPoll(@RequestBody poll: PollDTO): ResponseEntity<Any> {
         println(poll)
-
+        println("slkdfjklsdjf")
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
