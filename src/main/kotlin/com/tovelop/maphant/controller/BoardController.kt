@@ -58,11 +58,11 @@ class BoardController(@Autowired val boardService: BoardService) {
         if(auth == null || auth !is TokenAuthToken || !auth.isAuthenticated){
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
+        // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
+        // 본인 게시글 인지 확인
         if(auth.getUserData().role != "admin" || auth.getUserData().id != post.userId){
             return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
         }
-        // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
-        // 본인 게시글 인지 확인
         boardService.deletePost(post.id)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -70,22 +70,29 @@ class BoardController(@Autowired val boardService: BoardService) {
     @PostMapping("/create")
     fun createPost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
         // 제목 내용 빈칸인지 확인
-        if (post.title.isNotBlank() && post.body.isNotBlank()) {
+        return if (post.title.isNotBlank() && post.body.isNotBlank()) {
             boardService.createPost(post)
-            return ResponseEntity.ok(Response.stateOnly(true))
+            ResponseEntity.ok(Response.stateOnly(true))
         } else {
-            return ResponseEntity.ok(Response.stateOnly(false)) // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
+            ResponseEntity.ok(Response.stateOnly(false)) // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
         }
     }
 
     @PutMapping("/update")
     fun updatePost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
-        // 현재 로그인 한 사용를 가져옴
+        // 현재 로그인한 사용자 정보 가져오기
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         // 게시글 읽어오기
         val rePost = boardService.readPost(post.id)
-        // 제목 내용 빈칸인지 확인
-        // 본인 게시글 인지 확인
-        // 관리자 권한 확인 (관리자는 수정이 가능한가?)
+        // 제목 및 내용 빈칸 확인xw
+        if (post.title.isEmpty() || post.body.isEmpty()) {
+            return ResponseEntity.badRequest().body(Response.error<Unit>("제목과 내용을 입력해주세요."))
+        }
+        // 본인 게시글 확인
+        if (rePost == null || rePost.userId != auth.getUserData().id) {
+            return ResponseEntity.badRequest().body(Response.error<Unit>("권한이 없습니다."))
+        }
+
         // 수정
         boardService.updatePost(post)
         return ResponseEntity.ok(Response.stateOnly(true))
