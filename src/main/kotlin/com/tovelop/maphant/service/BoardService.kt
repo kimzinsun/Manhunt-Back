@@ -14,8 +14,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
 
     fun readPost(postId: Int)  {
-
-
+        val post = boardMapper.readPost(postId)
     }
 
     fun updatePost(boardDTO: BoardDTO) {
