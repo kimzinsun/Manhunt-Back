@@ -1,7 +1,7 @@
 package com.tovelop.maphant.controller
 
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
-import com.tovelop.maphant.dto.SetPostDTO
 import com.tovelop.maphant.service.BoardService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -71,7 +71,7 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun createPost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
         // 제목 내용 빈칸인지 확인
         return if (post.title.isNotBlank() && post.body.isNotBlank()) {
-            boardService.createPost(post)
+            boardService.createPost(post.toBoardDTO())
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
             ResponseEntity.ok(Response.stateOnly(false)) // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
@@ -84,7 +84,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         // 게시글 읽어오기
         val rePost = boardService.readPost(post.id)
-        // 제목 및 내용 빈칸 확인xw
+        // 제목 및 내용 빈칸 확인
         if (post.title.isEmpty() || post.body.isEmpty()) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("제목과 내용을 입력해주세요."))
         }
