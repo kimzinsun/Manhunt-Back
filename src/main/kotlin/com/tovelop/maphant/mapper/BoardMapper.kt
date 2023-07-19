@@ -6,10 +6,11 @@ import org.springframework.stereotype.Repository
 
 @Mapper
 @Repository
-class BoardMapper {
-    fun createPost(boardDTO: BoardDTO) {}
-    fun readPost(boardDTO: BoardDTO) {}
-    fun updatePost(boardDTO: BoardDTO) {}
-    fun deletePost(boardDTO: BoardDTO) {}
-
+interface BoardMapper {
+    fun createPost(boardDTO: BoardDTO)
+//    fun readPost(boardDTO: BoardDTO) {}
+//    fun updatePost(boardDTO: BoardDTO) {}
+//    fun deletePost(boardDTO: BoardDTO) {}
+    fun getIsHideByPostId(postId: Int): Int
+    fun getUserIdByPostId(postId: Int): Int
 }
