@@ -22,15 +22,15 @@ data class SetPostDTO(
             title = title,
             body = body,
             state = 0,
-            isHide = isHide,
-            isComplete = isComplete,
+            isHide = isHide, // 익명여부
+            isComplete = isComplete, // 체택인데 기본 0?
             isAnonymous = isAnonymous,
             createAt = LocalDateTime.now(),
             modifiedAt = LocalDateTime.now(),
             commentCnt = 0,
             likeCnt = 0,
             reportCnt = 0,
-            imagesUrl = null
+            imagesUrl = null // 이미지는 s3? 물어보고 수정
         )
     }
 }
