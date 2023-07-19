@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository
 @Repository
 interface BoardMapper {
     fun createPost(boardDTO: BoardDTO)
-//    fun readPost(boardDTO: BoardDTO) {}
-//    fun updatePost(boardDTO: BoardDTO) {}
-//    fun deletePost(boardDTO: BoardDTO) {}
+    fun readPost(postId: Int): BoardDTO
+    fun updatePost(boardDTO: BoardDTO)
+    fun deletePost(postId: Int)
     fun getIsHideByPostId(postId: Int): Int
     fun getUserIdByPostId(postId: Int): Int
 }

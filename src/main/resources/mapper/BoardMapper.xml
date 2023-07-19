@@ -17,4 +17,9 @@
         from board
         where id = #{postId}
     </select>
+    <select id="readPost" resultType="BoardDTO">
+        select *
+        from board
+        where id = #{postId}
+    </select>
 </mapper>
