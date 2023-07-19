@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository
 @Repository
 class BoardMapper {
     fun createPost(boardDTO: BoardDTO) {}
-    fun readPost(boardDTO: BoardDTO) {}
-    fun updatePost(boardDTO: BoardDTO) {}
-    fun deletePost(boardDTO: BoardDTO) {}
+//    fun readPost(boardDTO: BoardDTO) {}
+//    fun updatePost(boardDTO: BoardDTO) {}
+//    fun deletePost(boardDTO: BoardDTO) {}
 
 }

@@ -8,9 +8,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class BoardService(@Autowired val boardMapper: BoardMapper) {
-    fun createPost(boardDTO: BoardDTO) {
-//        val board = BoardDTO()
-//        return boardMapper.createPost(board)
+    fun createPost() {
+
     }
 
     fun readPost(postId: Int)  {
@@ -19,7 +18,6 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
 
     fun updatePost(boardDTO: BoardDTO) {
-        val postId = boardDTO.postId
 
 
     }
