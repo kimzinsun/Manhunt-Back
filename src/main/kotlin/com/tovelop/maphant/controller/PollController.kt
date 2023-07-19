@@ -16,4 +16,10 @@ class PollController {
 
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
+
+    @PostMapping("/increase")
+    fun increaseOption(): ResponseEntity<Any> {
+        println("!!!!!!")
+        return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
 }
