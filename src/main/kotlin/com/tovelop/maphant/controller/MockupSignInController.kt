@@ -5,6 +5,7 @@ import com.tovelop.maphant.configure.MockupCustomUserToken
 import com.tovelop.maphant.configure.security.UserData
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.MockupUserDTO
+import com.tovelop.maphant.dto.UserDataDTO
 import com.tovelop.maphant.type.response.Response
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,7 +31,7 @@ class TestSignInController {
     }
 
     @GetMapping("")
-    fun getUser(): ResponseEntity<Response<MockupUserDTO>> {
+    fun getUser(): ResponseEntity<Response<UserDataDTO>> {
         val auth = SecurityContextHolder.getContext().authentication
         if(auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
             return ResponseEntity.ok(Response.success(auth.getUserData()))
