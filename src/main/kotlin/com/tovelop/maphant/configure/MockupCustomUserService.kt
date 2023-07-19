@@ -20,7 +20,7 @@ class MockupCustomUserService : UserDetailsService {
                 sno = "2017648070",
                 createdAt = LocalDate.now(),
                 role = "user",
-                state = "1",
+                state = 1,
                 agreedAt = LocalDate.now(),
                 lastmodifiedAt = LocalDate.now(),
                 univId = 123
