@@ -1,5 +1,5 @@
 package com.tovelop.maphant.dto
 
-data class MessageDto(
+data class SmsMessageReqDto(
     val to: String,
 )

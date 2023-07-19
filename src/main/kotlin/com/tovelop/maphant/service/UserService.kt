@@ -54,9 +54,9 @@ class UserService(val mapper: UserMapper) {
         return null
     }
 
-    fun matchEmail(email: String, universityId: Int?): Boolean {
+    fun matchEmail(email: String, univId: Int?): Boolean {
         val universityName = this.extractFromEmail(email)
-        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(universityId))
+        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(univId))
         return universityName == universityUrl
     }
 
@@ -70,8 +70,8 @@ class UserService(val mapper: UserMapper) {
         mapper.insertUser(user)
     }
 
-    fun findUniversityIdBy(universityName: String): Int? {
-        return mapper.findUniversityIdBy(universityName)
+    fun findUniversityIdBy(univName: String): Int? {
+        return mapper.findUniversityIdBy(univName)
     }
 
     fun isPasswordValid(password: String): Boolean {
@@ -82,19 +82,19 @@ class UserService(val mapper: UserMapper) {
         return ValidationHelper.isUniversityEmail(email)
     }
 
-    fun findEmailBy(sNo: String, phoneNum: String): String? {
-        return mapper.findEmailBy(sNo, phoneNum)
+    fun findEmailBysNo(sNo: String, phoneNum: String): String? {
+        return mapper.findEmailBysNo(sNo, phoneNum)
     }
 
     fun isNicknameValid(nickname: String): Boolean {
         return ValidationHelper.isAlphaNumericKorean(nickname)
     }
 
-    fun isUniversityValid(universityId: Int?): Boolean {
-        if (universityId == null) {
+    fun isUniversityValid(univId: Int?): Boolean {
+        if (univId == null) {
             return true
         }
-        return mapper.isUniversityExist(universityId)
+        return mapper.isUniversityExist(univId)
     }
 
     fun isDuplicateEmail(email: String): Boolean {
@@ -106,7 +106,7 @@ class UserService(val mapper: UserMapper) {
     }
 
     fun isDuplicatePhoneNum(phoneNum: String): Boolean {
-        return mapper.countSamePhoneInt(phoneNum) > 0
+        return mapper.countSamePhoneNum(phoneNum) > 0
     }
 
     fun extractFromEmail(email: String): String? {

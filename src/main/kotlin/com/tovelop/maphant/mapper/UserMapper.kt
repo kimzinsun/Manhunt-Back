@@ -11,17 +11,17 @@ interface UserMapper {
     fun insertUser(user: UserDTO)
     fun countSameEmails(email: String): Int
     fun countSameNickName(nickName: String): Int
-    fun countSamePhoneInt(phoneInt: String): Int
+    fun countSamePhoneNum(phNum: String): Int
     fun readAllColumnVal(emails: List<String>): List<UserDTO>
-    fun findEmailBy(sNo: String, phoneInt: String): String?
+    fun findEmailBysNo(sno: String, phNum: String): String?
     fun updateUserByEmail(id: Int)
-    fun findUniversityIdBy(universityName: String): Int?
-    fun isUniversityExist(universityId: Int): Boolean
-    fun findUniversityUrlBy(universityId: Int?): String
-    fun updateUserState(email: String, state: Char, lastModifiedDate: LocalDate)
-    fun updateUserPasswordByEmail(email: String, password: String, lastModifiedDate: LocalDate)
-    fun updateUserNicknameByEmail(email: String, password: String, lastModifiedDate: LocalDate)
-    fun updateUserPhoneNumByEmail(email: String, password: String, lastModifiedDate: LocalDate)
+    fun findUniversityIdBy(univName: String): Int?
+    fun isUniversityExist(univId: Int): Boolean
+    fun findUniversityUrlBy(univId: Int?): String
+    fun updateUserState(email: String, state: Char, lastmodifiedAt: LocalDate)
+    fun updateUserPasswordByEmail(email: String, password: String, lastmodifiedAt: LocalDate)
+    fun updateUserNicknameByEmail(email: String, password: String, lastmodifiedAt: LocalDate)
+    fun updateUserPhoneNumByEmail(email: String, password: String, lastmodifiedAt: LocalDate)
     fun findPasswordByEmail(email: String): String
     fun findNicknameByEmail(email: String): String
     fun findStateByUserId(userId: Int): Char

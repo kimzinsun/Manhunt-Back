@@ -1,5 +1,5 @@
 package com.tovelop.maphant.dto
 
-data class ChangePwDTO (
+data class ChangePasswordDTO (
     val email: String
 )

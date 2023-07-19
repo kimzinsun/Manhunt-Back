@@ -47,26 +47,20 @@ class SendGrid(@Autowired val redisService: RedisService) {
             request.body = mail.build()
 
             val response: Response = sg.api(request)
-            println(response.statusCode)
-            println(response.body)
-            println(response.headers)
         } catch (e: Exception) {
             throw e
         }
     }
 
     fun saveEmailToken(email: String): String {
-        val random = (0..999999).random().toString().padStart(4, '0')
+        val random = RandomGenerator.generateRandomNumber(6)
         val isEmailExist = redisService.get(email) == null
 
-        return if (isEmailExist) {
+        if (isEmailExist)
             redisService.del(email)
-            redisService.set(email, random)
-            random
-        } else {
-            redisService.set(email, random)
-            random
-        }
+
+        redisService.set(email, random)
+        return random
     }
 
     fun confirmEmailToken(email: String, token: String): Boolean {

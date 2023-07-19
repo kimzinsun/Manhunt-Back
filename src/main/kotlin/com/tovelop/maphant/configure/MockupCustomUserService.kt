@@ -16,14 +16,14 @@ class MockupCustomUserService : UserDetailsService {
                 password = "Password123!",
                 nickname = "NickName",
                 name = "User Name",
-                phoneNum = "1234567890",
-                sNo = "2017648070",
-                create_at = LocalDate.now(),
+                phNum = "1234567890",
+                sno = "2017648070",
+                createdAt = LocalDate.now(),
                 role = "user",
                 state = "1",
-                is_agree = "Yes",
-                last_modified_date = LocalDate.now(),
-                university_id = 123
+                agreedAt = LocalDate.now(),
+                lastmodifiedAt = LocalDate.now(),
+                univId = 123
             )
         )
         else throw UsernameNotFoundException("User not found")

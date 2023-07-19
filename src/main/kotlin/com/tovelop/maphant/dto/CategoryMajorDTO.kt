@@ -1,6 +1,6 @@
 package com.tovelop.maphant.dto
 
-data class CategoryDTO(
+data class CategoryMajorDTO(
     val email: String,
     val category: String,
     val major: String
