@@ -9,24 +9,30 @@ import org.springframework.stereotype.Service
 @Service
 class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun createPost() {
-
+        val boardDTO = BoardDTO()
+        boardMapper.createPost(boardDTO)
     }
 
-    fun readPost(postId: Int)  {
+//    fun readPost(postId: Int)  {
+//
+//    }
+//
+//    fun updatePost(boardDTO: BoardDTO) {
+//
+//    }
+//
+//    fun deletePost(postId: Int) {
+//
+//    }
 
-
+    fun getIsHideByPostId(postId: Int): Boolean{
+        val isHide = boardMapper.getIsHideByPostId(postId)
+        return isHide==1
     }
 
-    fun updatePost(boardDTO: BoardDTO) {
-
-
+    fun getUserIdByPostId(postId: Int): Int{
+        return boardMapper.getUserIdByPostId(postId)
     }
-
-    fun deletePost(postId: Int) {
-
-    }
-
-
 }
 
 

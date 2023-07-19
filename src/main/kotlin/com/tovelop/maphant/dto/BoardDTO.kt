@@ -17,5 +17,6 @@ data class BoardDTO(
     val modifiedAt: LocalDateTime,
     val commentCnt: Int,
     val likeCnt: Int,
-    val reportCnt: Int
-    )
+    val reportCnt: Int,
+    val imagesUrl: String
+)
