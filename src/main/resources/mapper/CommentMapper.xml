@@ -52,9 +52,9 @@
         WHERE commentId = #{comment_id} JOIN comment
         ON comment.id = comment_like.commentId AND comment_like.userId = #{user_id}
     </delete>
-    <insert id="commentReport">
-        INSERT INTO comment_report(comment_id, user_id)
-        VALUES (#{comment_id}, #{user_id})
+    <insert id="insertCommentReport">
+        INSERT INTO comment_report(comment_id, user_id, reason)
+        VALUES (#{comment_id}, #{user_id}, #{reason})
     </insert>
     <select id="findCommentReport">
         SELECT *
