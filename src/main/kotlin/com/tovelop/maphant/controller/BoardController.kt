@@ -31,19 +31,19 @@ class BoardController(@Autowired val boardService: BoardService) {
     }
 
     @PostMapping("/{postId}")
-    fun readPost(@PathVariable("postId") postId:Int): ResponseEntity<Any> {
+    fun readPost(@PathVariable("postId") postId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
         val post = boardService.readPost(postId)
-        if(auth == null || auth !is TokenAuthToken || !auth.isAuthenticated){
+        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
 
-        if(post == null){
+        if (post == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
 
-        if(post.ishide==1){
-            if(post.userId != auth.getUserData().id){
+        if (boardService.getIsHideByPostId(postId)) {
+            if (post.userId != auth.getUserData().id) {
                 return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
             }
         }
@@ -55,12 +55,12 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun deletePost(@RequestBody post: SetPostDTO): ResponseEntity<Any> {
         // 게시글 삭제
         val auth = SecurityContextHolder.getContext().authentication
-        if(auth == null || auth !is TokenAuthToken || !auth.isAuthenticated){
+        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
         // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
         // 본인 게시글 인지 확인
-        if(auth.getUserData().role != "admin" || auth.getUserData().id != post.userId){
+        if (auth.getUserData().role != "admin" || auth.getUserData().id != post.userId) {
             return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
         }
         boardService.deletePost(post.id)
@@ -79,12 +79,15 @@ class BoardController(@Autowired val boardService: BoardService) {
     }
 
     @PutMapping("/update")
-    fun updatePost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
+    fun updatePost(@RequestBody post: UpdatePostDTO): ResponseEntity<ResponseUnit> {
         // 현재 로그인한 사용자 정보 가져오기
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         // 게시글 읽어오기
         val rePost = boardService.readPost(post.id)
         // 제목 및 내용 빈칸 확인
+        if (rePost.isComplete == 1) {
+            return ResponseEntity.badRequest().body(Response.error<Unit>("채택된 글은 수정이 불가합니다."))
+        }
         if (post.title.isEmpty() || post.body.isEmpty()) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("제목과 내용을 입력해주세요."))
         }
@@ -104,12 +107,14 @@ class BoardController(@Autowired val boardService: BoardService) {
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
+
     @GetMapping("/category")
     fun readCategory(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
         // 장르별 게시글 읽어오기
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
+
     @GetMapping("/my")
     fun readMyPost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
         // 내가 쓴 게시글 읽어오기
@@ -117,6 +122,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
+
     @PostMapping("/report")
     fun reportPost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
         // 신고하기
