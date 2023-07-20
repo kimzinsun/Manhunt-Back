@@ -33,7 +33,7 @@
         where id = #{postId}
     </delete>
     <select id="isModified" resultType="BoardTimeDTO">
-        select create_at, modified_at
+        select created_at, modified_at
         from board
         where id = #{postId}
     </select>

@@ -13,8 +13,6 @@ data class BoardDTO(
     val isHide: Int,
     val isComplete: Int,
     val isAnonymous: Int,
-    val createAt: LocalDateTime,
-    val modifiedAt: LocalDateTime,
     val commentCnt: Int,
     val likeCnt: Int,
     val reportCnt: Int,
