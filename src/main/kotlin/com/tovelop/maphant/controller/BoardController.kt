@@ -38,11 +38,10 @@ class BoardController(@Autowired val boardService: BoardService) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
 
-        if (post == null) {
+        if (post == null || boardService.getIsHideByPostId(postId) == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
-
-        if (boardService.getIsHideByPostId(postId)) {
+        if (boardService.getIsHideByPostId(postId)!!) {
             if (post.userId != auth.getUserData().id) {
                 return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
             }
@@ -101,7 +100,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         }
 
         // 수정
-       // boardService.updatePost(post)
+        // boardService.updatePost(post)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
