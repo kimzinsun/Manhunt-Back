@@ -3,16 +3,16 @@ package com.tovelop.maphant.dto
 import java.time.LocalDateTime
 
 data class SetPostDTO(
-    val postId:Int?,
+    val id: Int,
     val parentId: Int?,
     val categoryId: Int,
     val userId: Int,
     val typeId: Int,
     val title: String,
     val body: String,
-    val isHide: Boolean,
-    val isComplete: Boolean,
-    val isAnonymous: Boolean
+    val isHide: Int,
+    val isComplete: Int,
+    val isAnonymous: Int
 ) {
     fun toBoardDTO(): BoardDTO {
         return BoardDTO(
