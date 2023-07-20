@@ -5,10 +5,7 @@ import com.tovelop.maphant.service.PollService
 import com.tovelop.maphant.type.response.Response
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/poll")
@@ -19,8 +16,8 @@ class PollController(val pollService: PollService) {
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-    @PostMapping("/increase")
-    fun selectOption(pollId: Int, pollOption: String): ResponseEntity<Any> {
+    @PostMapping("/{poll_id}")
+    fun selectOption(@PathVariable("poll_id") pollId: Int, @RequestBody pollOption: String): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
 
         val optionResult = pollService.increaseOptionCount(auth.getUserData().id!!, pollId, pollOption)
