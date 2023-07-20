@@ -3,7 +3,6 @@ package com.tovelop.maphant.dto
 import java.time.LocalDateTime
 
 data class SetPostDTO(
-    val id: Int,
     val parentId: Int?,
     val categoryId: Int,
     val userId: Int,
