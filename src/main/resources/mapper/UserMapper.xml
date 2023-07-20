@@ -28,8 +28,8 @@
     <insert id="insertUser">
         INSERT INTO user (email, password, nickname, name, ph_num , sno , role, created_at, state, agreed_at,
                           lastmodified_at, univ_id)
-        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phNum}, #{sno}, #{role}, #{createdAt}, #{state}, #{agreedAt},
-                #{lastmodifiedAt}, #{univId})
+        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phNum}, #{sno}, #{role}, NOW(), #{state}, NOW(),
+                NOW(), #{univId})
     </insert>
     <update id="updateUser" databaseId="id">
     </update>
@@ -55,25 +55,25 @@
     <update id="updateUserState">
         UPDATE user
         SET state              = #{state},
-            lastmodified_at = #{lastmodifiedAt}
+            lastmodified_at = NOW()
         WHERE email = #{email}
     </update>
     <update id="updateUserPasswordByEmail">
         UPDATE user
         SET password           = #{password},
-            lastmodified_at = #{lastmodifiedAt}
+            lastmodified_at = NOW()
         WHERE email = #{email}
     </update>
     <update id="updateUserNicknameByEmail">
         UPDATE user
         SET nickname           = #{nickname},
-            lastmodified_at = #{lastmodifiedAt}
+            lastmodified_at = NOW()
         WHERE email = #{email}
     </update>
     <update id="updateUserPhoneNumByEmail">
         UPDATE user
         SET ph_num             = #{phNum},
-            lastmodified_at = #{lastmodifiedAt}
+            lastmodified_at = NOW()
         WHERE email = #{email}
     </update>
     <select id="findPasswordByEmail" resultType="String">

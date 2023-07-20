@@ -4,7 +4,6 @@ import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.UserMapper
 import com.tovelop.maphant.utils.ValidationHelper
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 
 @Service
@@ -24,19 +23,19 @@ class UserService(val mapper: UserMapper) {
     fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
     fun findNicknameByEmail(email: String) = mapper.findNicknameByEmail(email)
     fun updateUserState(email: String, state: Int) {
-        mapper.updateUserState(email, state, LocalDate.now())
+        mapper.updateUserState(email, state)
     }
 
     fun updateUserPasswordByEmail(email: String, newPassword: String) {
-        mapper.updateUserPasswordByEmail(email, newPassword, LocalDate.now())
+        mapper.updateUserPasswordByEmail(email, newPassword)
     }
 
     fun updateUserNicknameByEmail(email: String, newNickname: String) {
-        mapper.updateUserNicknameByEmail(email, newNickname, LocalDate.now())
+        mapper.updateUserNicknameByEmail(email, newNickname)
     }
 
     fun updateUserPhoneNumByEmail(email: String, newPhoneNum: String) {
-        mapper.updateUserPhoneNumByEmail(email, newPhoneNum, LocalDate.now())
+        mapper.updateUserPhoneNumByEmail(email, newPhoneNum)
     }
 
     fun signUp(user: UserDTO): Boolean {
