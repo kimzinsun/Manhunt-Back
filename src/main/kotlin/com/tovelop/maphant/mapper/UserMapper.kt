@@ -32,4 +32,6 @@ interface UserMapper {
     fun findUserIdByUserEmail(email: String): Int
     fun findCategoryIdByCategoryName(categoryName: String): Int
     fun findMajorIdByMajorName(majorName: String): Int
+
+    fun findIdBy(userId: Int): String
 }
