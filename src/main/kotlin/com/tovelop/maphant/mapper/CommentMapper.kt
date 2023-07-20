@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 interface CommentMapper {
     fun findAllComment(boardId: Int): List<CommentDTO>
     fun insertComment(commentDTO: CommentDTO)
-    fun deleteComment(commentId: Int)
+    fun deleteComment(userId: Int, commentId: Int)
     fun updateComment(commentDTO: CommentDTO)
     fun cntComment(boardId: Int): Int
     fun insertCommentLike(userId: Int, commentId: Int)
