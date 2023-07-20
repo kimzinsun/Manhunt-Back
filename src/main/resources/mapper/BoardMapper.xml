@@ -5,7 +5,7 @@
 <mapper namespace="com.tovelop.maphant.mapper.LogMapper">
     <insert id="insertBoard">
         INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete, is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
-        VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, #{createAt}, #{modifiedAt}, #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
+        VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), NOW(), #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
     </insert>
     <select id="getIsHideByPostId" resultType="java.lang.Integer">
         select is_hide
@@ -19,6 +19,21 @@
     </select>
     <select id="readPost" resultType="BoardDTO">
         select *
+        from board
+        where id = #{postId}
+    </select>
+    <update id="updatePost">
+        update board
+        set title = #{title}, body=#{body}, is_hide=#{isHide}, modified_at=NOW()
+        where id = #{postId}
+    </update>
+    <delete id="deletePost">
+        update board
+        set state = 1
+        where id = #{postId}
+    </delete>
+    <select id="isModified" resultType="BoardTimeDTO">
+        select create_at, modified_at
         from board
         where id = #{postId}
     </select>
