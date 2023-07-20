@@ -11,7 +11,7 @@ class CommentService(val commentMapper: CommentMapper) {
     fun insertComment(commentDTO: CommentDTO) = commentMapper.insertComment(commentDTO)
 
 
-    fun deleteComment(commentId: Int) = commentMapper.deleteComment(commentId)
+    fun deleteComment(userId: Int, commentId: Int) = commentMapper.deleteComment(userId, commentId)
 
     fun updateComment(commentDTO: CommentDTO) = commentMapper.updateComment(commentDTO)
 
