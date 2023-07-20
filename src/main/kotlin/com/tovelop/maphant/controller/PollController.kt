@@ -1,7 +1,9 @@
 package com.tovelop.maphant.controller
 
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.type.response.Response
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,8 +20,10 @@ class PollController {
     }
 
     @PostMapping("/increase")
-    fun increaseOption(): ResponseEntity<Any> {
-        println("!!!!!!")
+    fun selectOption(): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
+        
+
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 }
