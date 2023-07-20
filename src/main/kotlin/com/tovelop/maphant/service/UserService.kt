@@ -4,6 +4,7 @@ import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.UserMapper
 import com.tovelop.maphant.utils.ValidationHelper
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 
 @Service
@@ -19,23 +20,23 @@ class UserService(val mapper: UserMapper) {
     fun getAllCategories() = mapper.getAllCategories()
     fun getAllMajors() = mapper.getAllMajors()
     fun getAllUnivNames() = mapper.getAllUnivNames()
-    fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == '1'
+    fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == 1
     fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
     fun findNicknameByEmail(email: String) = mapper.findNicknameByEmail(email)
-    fun updateUserState(email: String, state: Char) {
-        mapper.updateUserState(email, state)
+    fun updateUserState(email: String, state: Int) {
+        mapper.updateUserState(email, state, LocalDate.now())
     }
 
     fun updateUserPasswordByEmail(email: String, newPassword: String) {
-        mapper.updateUserPasswordByEmail(email, newPassword)
+        mapper.updateUserPasswordByEmail(email, newPassword, LocalDate.now())
     }
 
     fun updateUserNicknameByEmail(email: String, newNickname: String) {
-        mapper.updateUserNicknameByEmail(email, newNickname)
+        mapper.updateUserNicknameByEmail(email, newNickname, LocalDate.now())
     }
 
     fun updateUserPhoneNumByEmail(email: String, newPhoneNum: String) {
-        mapper.updateUserPhoneNumByEmail(email, newPhoneNum)
+        mapper.updateUserPhoneNumByEmail(email, newPhoneNum, LocalDate.now())
     }
 
     fun signUp(user: UserDTO): Boolean {
@@ -60,7 +61,7 @@ class UserService(val mapper: UserMapper) {
 
     fun getUser(emails: List<String>): UserDTO? {
         // 사용자 조회 로직
-        return mapper.readAllColumnVal(emails).firstOrNull()
+        return mapper.findUserByEmail(emails).firstOrNull()
     }
 
     fun insertUser(user: UserDTO) {

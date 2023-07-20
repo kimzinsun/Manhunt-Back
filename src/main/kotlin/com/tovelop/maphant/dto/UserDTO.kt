@@ -4,16 +4,16 @@ import java.time.LocalDate
 
 data class UserDTO(
     val id: Int? = null,
+    val univId: Int?,
     val email: String,
     var password: String,
     val nickname: String,
     val name: String,
-    val phoneNum: String?,
-    val sNo: String,
+    val sno: String,
+    val phNum: String?,
+    val state: Int,
     val role: String,
-    val state: String,
-    val createdAt: LocalDate,
     val agreedAt: LocalDate,
-    val lastmodifiedAt: LocalDate,
-    val univId: Int?
+    val createdAt: LocalDate,
+    val lastmodifiedAt: LocalDate
 )
