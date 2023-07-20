@@ -10,4 +10,6 @@ interface PollMapper {
 
     fun insertPoll(poll: PollDTO)
 
+    fun insertPollUser(userId: Int, pollId: Int, pollOption: String)
+
 }
