@@ -3,6 +3,7 @@ package com.tovelop.maphant.mapper
 import com.tovelop.maphant.dto.UserDTO
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 
 @Mapper
 @Repository
@@ -10,11 +11,25 @@ interface UserMapper {
     fun insertUser(user: UserDTO)
     fun countSameEmails(email: String): Int
     fun countSameNickName(nickName: String): Int
-    fun countSamePhoneInt(phoneInt: String): Int
-    fun readAllColumnVal(emails: List<String>): List<UserDTO>
-    fun findEmailBy(studentNum: Int, phoneInt: String): String
+    fun countSamePhoneNum(phNum: String): Int
+    fun findUserByEmail(emails: List<String>): List<UserDTO>
+    fun findEmailBysNo(sno: String, phNum: String): String?
     fun updateUserByEmail(id: Int)
-
-    fun isUniversityExist(universityId: Int): Boolean
-
+    fun findUniversityIdBy(univName: String): Int?
+    fun isUniversityExist(univId: Int): Boolean
+    fun findUniversityUrlBy(univId: Int?): String
+    fun updateUserState(email: String, state: Int, lastmodifiedAt: LocalDate)
+    fun updateUserPasswordByEmail(email: String, password: String, lastmodifiedAt: LocalDate)
+    fun updateUserNicknameByEmail(email: String, nickname: String, lastmodifiedAt: LocalDate)
+    fun updateUserPhoneNumByEmail(email: String, phNum: String, lastmodifiedAt: LocalDate)
+    fun findPasswordByEmail(email: String): String
+    fun findNicknameByEmail(email: String): String
+    fun findStateByUserId(userId: Int): Int
+    fun getAllCategories(): List<String>
+    fun getAllMajors(): List<String>
+    fun getAllUnivNames(): List<String>
+    fun insertCategoryIdMajorIdByUserId(userId: Int, categoryId: Int, majorId: Int)
+    fun findUserIdByUserEmail(email: String): Int
+    fun findCategoryIdByCategoryName(categoryName: String): Int
+    fun findMajorIdByMajorName(majorName: String): Int
 }
