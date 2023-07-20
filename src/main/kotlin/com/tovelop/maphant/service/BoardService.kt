@@ -16,9 +16,13 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return boardMapper.readPost(postId)
     }
 
-    fun updatePost(boardDTO: BoardDTO) {}
+    fun updatePost(boardDTO: BoardDTO) {
+        boardMapper.updatePost(boardDTO)
+    }
 
-    fun deletePost(postId: Int) {}
+    fun deletePost(postId: Int) {
+        boardMapper.deletePost(postId)
+    }
 
     fun getIsHideByPostId(postId: Int): Boolean{
         val isHide = boardMapper.getIsHideByPostId(postId)
