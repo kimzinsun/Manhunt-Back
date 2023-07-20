@@ -3,6 +3,7 @@ package com.tovelop.maphant.dto
 import java.time.LocalDateTime
 
 data class SetPostDTO(
+    val postId:Int?,
     val parentId: Int?,
     val categoryId: Int,
     val userId: Int,
@@ -25,8 +26,6 @@ data class SetPostDTO(
             isHide = isHide, // 익명여부
             isComplete = isComplete, // 체택인데 기본 0?
             isAnonymous = isAnonymous,
-            createAt = LocalDateTime.now(),
-            modifiedAt = LocalDateTime.now(),
             commentCnt = 0,
             likeCnt = 0,
             reportCnt = 0,
