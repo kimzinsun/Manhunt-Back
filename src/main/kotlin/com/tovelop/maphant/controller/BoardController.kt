@@ -84,6 +84,10 @@ class BoardController(@Autowired val boardService: BoardService) {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         // 게시글 읽어오기
         val rePost = boardService.readPost(post.id)
+        // 게시글이 존재하지 않는 경우
+        if (rePost == null) {
+            return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
+        }
         // 제목 및 내용 빈칸 확인
         if (rePost.isComplete == 1) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("채택된 글은 수정이 불가합니다."))
@@ -92,12 +96,12 @@ class BoardController(@Autowired val boardService: BoardService) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("제목과 내용을 입력해주세요."))
         }
         // 본인 게시글 확인
-        if (rePost == null || rePost.userId != auth.getUserData().id) {
+        if (rePost.userId != auth.getUserData().id) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("권한이 없습니다."))
         }
 
         // 수정
-        boardService.updatePost(post)
+       // boardService.updatePost(post)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
