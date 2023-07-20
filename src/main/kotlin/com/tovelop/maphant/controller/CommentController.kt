@@ -62,11 +62,11 @@ class CommentController(@Autowired val commentService: CommentService) {
         return ResponseEntity.ok().body(Response.success(commentId))
     }
 
-//    @PostMapping("/find-like")
-//    fun findCommentLike(userId: Int, commentId: Int): ResponseEntity<Response<Int>> {
-//        commentService.findCommentLike(userId, commentId)
-//        return ResponseEntity.ok().body(Response.success(commentId))
-//    }
+    @PostMapping("/find-like")
+    fun findCommentLike(userId: Int, commentId: Int): ResponseEntity<Response<Int>> {
+        commentService.findCommentLike(userId, commentId)
+        return ResponseEntity.ok().body(Response.success(commentId))
+    }
 
     @GetMapping("/cnt-like")
     fun cntCommentLike(commentId: Int): ResponseEntity<Response<Int>> {
@@ -92,9 +92,4 @@ class CommentController(@Autowired val commentService: CommentService) {
         return ResponseEntity.ok().body(Response.success(commentId))
     }
 
-//    @GetMapping("/cnt-report")
-//    fun cntCommentReport(commentId: Int): ResponseEntity<Response<Int>> {
-//        commentService.cntCommentReport(commentId)
-//        return ResponseEntity.ok().body(Response.success(commentId))
-//    }
 }

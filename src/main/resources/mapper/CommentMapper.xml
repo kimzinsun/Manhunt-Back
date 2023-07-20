@@ -10,8 +10,8 @@
         WHERE board_id = ${board_id}
     </select>
     <insert id="insertComment">
-        INSERT INTO comment(board_id, userId, body, created_at, isAnonymous)
-        VALUES (#{board_id}, #{userId}, #{body}, #{created_at}, #{isAnonymous})
+        INSERT INTO comment(board_id, user_id, body, created_at,
+                            is_anonymous VALUES (#{board_id}, #{userId}, #{body}, #{created_at}, #{is_anonymous})
     </insert>
     <delete id="deleteComment">
         DELETE
@@ -21,13 +21,19 @@
     <update id="updateComment">
         UPDATE comment
         SET body = #{body}
-        WHERE id = #{id}
+        WHERE board_id = #{borad_id}
+          AND id = #{id}
     </update>
     <select id="cntComment" resultType="Int">
         SELECT COUNT(*)
         FROM comment
                  JOIN board ON board.id = comment.board_id
         WHERE board_id = ${board_id}
+    </select>
+    <select id="getCommentById">
+        SELECT *
+        FROM comment
+        WHERE id = #{id}
     </select>
     <insert id="insertCommentLike">
         INSERT INTO comment_like(commentId, userId)
@@ -62,12 +68,6 @@
                  JOIN comment ON comment.id = comment_report.comment_id
         WHERE comment_report.comment_id = #{comment_id}
           AND comment_report.user_id = #{user_id}
-    </select>
-    <select id="cntCommentReport" resultType="Int">
-        SELECT COUNT(*)
-        FROM comment_report
-                 JOIN comment ON comment.id = comment_report.comment_id
-        WHERE comment_report.comment_id = #{comment_id}
     </select>
 
 </mapper>
