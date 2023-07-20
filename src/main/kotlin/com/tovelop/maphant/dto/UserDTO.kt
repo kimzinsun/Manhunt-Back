@@ -12,7 +12,7 @@ data class UserDTO(
     val sNo: String,
     val role: String,
     val state: String,
-    val createAt: LocalDate,
+    val createdAt: LocalDate,
     val agreedAt: LocalDate,
     val lastmodifiedAt: LocalDate,
     val univId: Int?
