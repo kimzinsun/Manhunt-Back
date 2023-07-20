@@ -12,7 +12,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         boardMapper.createPost(boardDTO)
     }
 
-    fun readPost(postId: Int): BoardDTO {
+    fun readPost(postId: Int): BoardDTO? {
         return boardMapper.readPost(postId)
     }
 
@@ -24,12 +24,12 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         boardMapper.deletePost(postId)
     }
 
-    fun getIsHideByPostId(postId: Int): Boolean{
+    fun getIsHideByPostId(postId: Int): Boolean? {
         val isHide = boardMapper.getIsHideByPostId(postId)
         return isHide==1
     }
 
-    fun getUserIdByPostId(postId: Int): Int{
+    fun getUserIdByPostId(postId: Int): Int?{
         return boardMapper.getUserIdByPostId(postId)
     }
     fun isModified(postId: Int): Boolean {
