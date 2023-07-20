@@ -50,8 +50,8 @@ class BoardController(@Autowired val boardService: BoardService) {
         return ResponseEntity.ok(Response.success(post))
     }
 
-    @DeleteMapping("/post/delete")
-    fun deletePost(@RequestBody post: SetPostDTO): ResponseEntity<Any> {
+    @DeleteMapping("/{postId}")
+    fun deletePost(@PathVariable("postId") postId: Int): ResponseEntity<Any> {
         // 게시글 삭제
         val auth = SecurityContextHolder.getContext().authentication
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
@@ -59,10 +59,10 @@ class BoardController(@Autowired val boardService: BoardService) {
         }
         // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
         // 본인 게시글 인지 확인
-        if (auth.getUserData().role != "admin" || auth.getUserData().id != post.userId) {
+        if (auth.getUserData().role != "admin" || auth.getUserData().id != boardService.getUserIdByPostId(postId)) {
             return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
         }
-        boardService.deletePost(post.id)
+        boardService.deletePost(postId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
