@@ -6,27 +6,27 @@ import java.time.LocalDate
 data class SignupDTO(
     val email: String,
     val password: String,
-    val passwordChk: String,
+    val passwordCheck: String,
     val nickname: String,
     val name: String,
-    val sNo: String,
-    val phoneNo: String,
-    val universityId: Int?
+    val sno: String,
+    val phNum: String?,
+    val univName: String
 ) {
-    fun toUserDTO(passwordEncoder: PasswordEncoder): UserDTO {
+    fun toUserDTO(univId: Int, passwordEncoder: PasswordEncoder): UserDTO {
         return UserDTO(
             email = email,
             password = passwordEncoder.encode(password),
             nickname = nickname,
             name = name,
-            phoneInt = phoneNo,
-            sNo = sNo,
-            create_at = LocalDate.now(),
+            phNum = null,
+            sno = sno,
+            createdAt = LocalDate.now(),
             role = "user",
-            state = "0",
-            is_agree = "Y",
-            last_modified_date = LocalDate.now(),
-            university_id = universityId
+            state = 0,
+            agreedAt = LocalDate.now(),
+            lastmodifiedAt = LocalDate.now(),
+            univId = univId
         )
     }
 }

@@ -2,7 +2,6 @@ package com.tovelop.maphant.configure
 
 import com.tovelop.maphant.dto.UserDTO
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import java.time.LocalDate
@@ -17,14 +16,14 @@ class MockupCustomUserService : UserDetailsService {
                 password = "Password123!",
                 nickname = "NickName",
                 name = "User Name",
-                phoneInt = "1234567890",
-                sNo = "2017648070",
-                create_at = LocalDate.now(),
+                phNum = "1234567890",
+                sno = "2017648070",
+                createdAt = LocalDate.now(),
                 role = "user",
-                state = "1",
-                is_agree = "Yes",
-                last_modified_date = LocalDate.now(),
-                university_id = 123
+                state = 1,
+                agreedAt = LocalDate.now(),
+                lastmodifiedAt = LocalDate.now(),
+                univId = 123
             )
         )
         else throw UsernameNotFoundException("User not found")

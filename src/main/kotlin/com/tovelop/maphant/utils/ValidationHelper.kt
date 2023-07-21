@@ -27,8 +27,13 @@ class ValidationHelper {
         }
 
         fun isValidName(name: String): Boolean {
-            return name.matches(Regex("^[가-힣]{2,10}$"))
+            return if (name.matches(Regex("^[가-힣]{2,10}$"))) {
+                true // 한국어 이름 패턴에 맞는 경우
+            } else {
+                name.matches(Regex("^[a-zA-Z\\s]{1,30}$")) // 영어 이름 패턴에 맞는 경우
+            }
         }
+
 
         fun isUniversityEmail(email: String): Boolean {
             return email.matches(Regex("^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\\.)+(ac.kr)$")) || email.matches(Regex("^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\\.)+(edu)$"))

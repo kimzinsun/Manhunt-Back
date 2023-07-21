@@ -1,6 +1,9 @@
 package com.tovelop.maphant.configure.security
 
-import com.tovelop.maphant.configure.MockupCustomUserService
+import com.tovelop.maphant.configure.security.filter.LoginAuthFilter
+import com.tovelop.maphant.configure.security.filter.TokenAuthFilter
+import com.tovelop.maphant.configure.security.provider.LoginAuthProvider
+import com.tovelop.maphant.configure.security.provider.TokenAuthProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,17 +19,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 class Security {
-    @Autowired
-    lateinit var mockupCustomUserService: MockupCustomUserService
     lateinit var manager: AuthenticationManager
+
+    @Autowired
+    lateinit var loginAuthProvider: LoginAuthProvider
+
+    @Autowired
+    lateinit var tokenAuthProvider: TokenAuthProvider
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http.csrf { it.disable() }.authorizeHttpRequests { authorize ->
             authorize.anyRequest().permitAll()
-        }.addFilterAfter(
-            MockupFilter(mockupCustomUserService, authenticationManager(http)),
+        }.addFilterBefore(
+            LoginAuthFilter(authenticationManager(http)),
             UsernamePasswordAuthenticationFilter::class.java
+        ).addFilterAfter(
+            TokenAuthFilter(authenticationManager(http)),
+            LoginAuthFilter::class.java
         ).sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             it.disable()
@@ -36,12 +46,12 @@ class Security {
         return http.build()
     }
 
-    @Bean
     fun authenticationManager(http: HttpSecurity): AuthenticationManager {
         if (this::manager.isInitialized) return this.manager
 
-        val managerBuilder = http.getSharedObject(AuthenticationManagerBuilder::class.java)!!
-        managerBuilder.userDetailsService(mockupCustomUserService)
+        val managerBuilder = http.getSharedObject(AuthenticationManagerBuilder::class.java)
+        managerBuilder.authenticationProvider(loginAuthProvider)
+        managerBuilder.authenticationProvider(tokenAuthProvider)
 
         this.manager = managerBuilder.build()
         return this.manager

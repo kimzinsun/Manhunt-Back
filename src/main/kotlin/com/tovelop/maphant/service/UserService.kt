@@ -8,48 +8,59 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserService(val mapper: UserMapper) {
-    fun signUp(user: UserDTO): Boolean {
-        // 회원 가입 로직
-        if (!isEmailValid(user.email)) {
-            return false
-        }
-        // 이미 bcrypt등으로 해싱 되어 있어서 검증 불가.
-        // 검증 하겠다고 한다면, bcrypt등이 적용 되어있는지 확인하는 코드가 필요
-        // if (!isPasswordValid(user.password)) {
-        //     return false
-        // }
-        if (!isNicknameValid(user.nickname)) {
-            return false
-        }
-        if (!isUniversityValid(user.university_id)) {
-            return false
-        }
-        if (isDuplicateEmail(user.email)) {
-            return false
-        }
-        if (isDuplicateNickname(user.nickname)) {
-            return false
-        }
-        if (isDuplicatePhoneNum(user.phoneInt)) {
-            return false
-        }
+    fun insertCategoryMajorByEmail(email: String, category: String, major: String) {
+        mapper.insertCategoryIdMajorIdByUserId(
+            mapper.findUserIdByUserEmail(email),
+            mapper.findCategoryIdByCategoryName(category),
+            mapper.findMajorIdByMajorName(major)
+        )
+    }
 
+    fun getAllCategories() = mapper.getAllCategories()
+    fun getAllMajors() = mapper.getAllMajors()
+    fun getAllUnivNames() = mapper.getAllUnivNames()
+    fun isValidatedEmail(userId: Int) = mapper.findStateByUserId(userId) == 1
+    fun findPasswordByEmail(email: String) = mapper.findPasswordByEmail(email)
+    fun findNicknameByEmail(email: String) = mapper.findNicknameByEmail(email)
+    fun updateUserState(email: String, state: Int) {
+        mapper.updateUserState(email, state)
+    }
+
+    fun updateUserPasswordByEmail(email: String, newPassword: String) {
+        mapper.updateUserPasswordByEmail(email, newPassword)
+    }
+
+    fun updateUserNicknameByEmail(email: String, newNickname: String) {
+        mapper.updateUserNicknameByEmail(email, newNickname)
+    }
+
+    fun updateUserPhoneNumByEmail(email: String, newPhoneNum: String) {
+        mapper.updateUserPhoneNumByEmail(email, newPhoneNum)
+    }
+
+    fun signUp(user: UserDTO): Boolean {
         insertUser(user)
         return true
     }
 
     fun login(email: String, password: String): String? {
         // 로그인 로직
-        val user = getUser(email)
+        val user = getUser(listOf(email))
         if (user != null && user.password == password) {
             return user.id.toString()
         }
         return null
     }
 
-    fun getUser(email: String): UserDTO? {
+    fun matchEmail(email: String, univId: Int?): Boolean {
+        val universityName = this.extractFromEmail(email)
+        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(univId))
+        return universityName == universityUrl
+    }
+
+    fun getUser(emails: List<String>): UserDTO? {
         // 사용자 조회 로직
-        return mapper.readAllColumnVal(listOf(email)).firstOrNull()
+        return mapper.findUserByEmail(emails).firstOrNull()
     }
 
     fun insertUser(user: UserDTO) {
@@ -57,6 +68,9 @@ class UserService(val mapper: UserMapper) {
         mapper.insertUser(user)
     }
 
+    fun findUniversityIdBy(univName: String): Int? {
+        return mapper.findUniversityIdBy(univName)
+    }
 
     fun isPasswordValid(password: String): Boolean {
         return ValidationHelper.isValidPassword(password)
@@ -66,16 +80,19 @@ class UserService(val mapper: UserMapper) {
         return ValidationHelper.isUniversityEmail(email)
     }
 
+    fun findEmailBysNo(sNo: String, phoneNum: String): String? {
+        return mapper.findEmailBysNo(sNo, phoneNum)
+    }
+
     fun isNicknameValid(nickname: String): Boolean {
         return ValidationHelper.isAlphaNumericKorean(nickname)
     }
 
-    fun isUniversityValid(universityId: Int?): Boolean {
-        if (universityId == null) {
+    fun isUniversityValid(univId: Int?): Boolean {
+        if (univId == null) {
             return true
         }
-
-        return mapper.isUniversityExist(universityId)
+        return mapper.isUniversityExist(univId)
     }
 
     fun isDuplicateEmail(email: String): Boolean {
@@ -85,8 +102,21 @@ class UserService(val mapper: UserMapper) {
     fun isDuplicateNickname(nickname: String): Boolean {
         return mapper.countSameNickName(nickname) > 0
     }
+
     fun isDuplicatePhoneNum(phoneNum: String): Boolean {
-        return mapper.countSamePhoneInt(phoneNum) > 0
+        return mapper.countSamePhoneNum(phoneNum) > 0
+    }
+
+    fun extractFromEmail(email: String): String? {
+        val pattern = Regex("""(?<=@)[^.]+\.(ac\.kr|edu)""")
+        val matchResult = pattern.find(email)
+        return matchResult?.value
+    }
+
+    fun extractFromUrl(url: String): String? {
+        val pattern = """(?<=\/\/|www\.)[^\.]+\.(ac\.kr|edu)""".toRegex()
+        val matchResult = pattern.find(url)
+        return matchResult?.value
     }
 
 }

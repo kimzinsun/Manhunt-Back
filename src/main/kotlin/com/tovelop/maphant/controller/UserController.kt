@@ -5,6 +5,7 @@ import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.SendGrid
 import com.tovelop.maphant.utils.ValidationHelper
 import com.tovelop.maphant.utils.isSuccess
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/user")
-class SignupController(@Autowired val userService: UserService) {
+class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid) {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
 
@@ -28,7 +29,7 @@ class SignupController(@Autowired val userService: UserService) {
         }
 
         if (userService.isDuplicateEmail(validationSignupDTO.email)) {
-            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
+            return ResponseEntity.badRequest().body(Response.error("이미 가입이 되어있는 이메일 입니다."))
         }
 
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -36,23 +37,23 @@ class SignupController(@Autowired val userService: UserService) {
 
     @PostMapping("/validation/nickname")
     fun validationNickname(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidNickname(validationSignupDTO.nickName!!)) {
-            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 별명입니다."))
+        if (!ValidationHelper.isValidNickname(validationSignupDTO.nickname!!)) {
+            return ResponseEntity.badRequest().body(Response.error("별명은 3~20자의 영문, 한글, 숫자로 구성해야 합니다."))
         }
 
-        if (userService.isDuplicateNickname(validationSignupDTO.nickName)) {
+        if (userService.isDuplicateNickname(validationSignupDTO.nickname)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
         }
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/validation/phoneNum")
-    fun validationPhonenum(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        if (!ValidationHelper.isValidPhoneNum(validationSignupDTO.phoneNum!!)) {
+    @PostMapping("/validation/phnum")
+    fun validationPhNum(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
+        if (!ValidationHelper.isValidPhoneNum(validationSignupDTO.phNum!!)) {
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
-        if (userService.isDuplicatePhoneNum(validationSignupDTO.phoneNum)) {
+        if (userService.isDuplicatePhoneNum(validationSignupDTO.phNum)) {
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 핸드폰 번호입니다."))
         }
 
@@ -63,56 +64,78 @@ class SignupController(@Autowired val userService: UserService) {
     fun validationPassword(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
         if (!ValidationHelper.isValidPassword(validationSignupDTO.password!!)) {
             return ResponseEntity.badRequest()
-                .body(Response.error("비밀번호는 영문 소문자, 대문자, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
         }
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/validation/passwordCheck")
-    fun validationPasswordChk(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
-        if (validationSignupDTO.password != validationSignupDTO.passwordChk) {
+    @PostMapping("/validation/passwordcheck")
+    fun validationPasswordCheck(@RequestBody validationSignupDTO: ValidationSignupDTO): ResponseEntity<ResponseUnit> {
+        if (validationSignupDTO.password != validationSignupDTO.passwordCheck) {
             return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
         }
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
+    @PostMapping("/universitylist")
+    fun listUniversity(): ResponseEntity<Response<List<String>>> {
+        return ResponseEntity.ok().body(Response.success(userService.getAllUnivNames()))
+    }
+
+    @PostMapping("/categorylist")
+    fun listCategory(): ResponseEntity<Response<List<String>>> {
+        return ResponseEntity.ok().body(Response.success(userService.getAllCategories()))
+    }
+
+    @PostMapping("/majorlist")
+    fun listMajor(): ResponseEntity<Response<List<String>>> {
+        return ResponseEntity.ok().body(Response.success(userService.getAllMajors()))
+    }
+
+    @PostMapping("/selection/categorymajor")
+    fun selectionCategory(@RequestBody categoryMajorDTO: CategoryMajorDTO): ResponseEntity<ResponseUnit> {
+        userService.insertCategoryMajorByEmail(
+            categoryMajorDTO.email, categoryMajorDTO.category, categoryMajorDTO.major
+        )
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
     @PostMapping("/signup")
-    fun signup(@RequestBody signup: SignupDTO): ResponseEntity<ResponseUnit> {
-        val emailValidation = validationEmail(ValidationSignupDTO(email = signup.email))
+    fun signup(@RequestBody signupDTO: SignupDTO): ResponseEntity<ResponseUnit> {
+        val emailValidation = validationEmail(ValidationSignupDTO(email = signupDTO.email))
         if (!emailValidation.isSuccess()) {
             return emailValidation
         }
 
-        val nicknameValidation = validationNickname(ValidationSignupDTO(nickName = signup.nickname))
+        val nicknameValidation = validationNickname(ValidationSignupDTO(nickname = signupDTO.nickname))
         if (!nicknameValidation.isSuccess()) {
             return nicknameValidation
         }
 
-        val phoneNumValidation = validationPhonenum(ValidationSignupDTO(phoneNum = signup.phoneNo))
-        if (!phoneNumValidation.isSuccess()) {
-            return phoneNumValidation
-        }
-
-        val passwordValidation = validationPassword(ValidationSignupDTO(password = signup.password))
-        if (!passwordValidation.isSuccess()) {
-            return passwordValidation
-        }
-
-        val passwordChkValidation =
-            validationPasswordChk(ValidationSignupDTO(password = signup.password, passwordChk = signup.passwordChk))
+        val passwordChkValidation = validationPasswordCheck(
+            ValidationSignupDTO(
+                password = signupDTO.password, passwordCheck = signupDTO.passwordCheck
+            )
+        )
         if (!passwordChkValidation.isSuccess()) {
             return passwordChkValidation
         }
 
-        if (!ValidationHelper.isValidName(signup.name)) {
+        if (!ValidationHelper.isValidName(signupDTO.name)) {
             return ResponseEntity.badRequest().body(Response.error("이름을 형식에 맞춰주세요. ex) 홍길동"))
         }
 
-        // 이메일 인증 코드 발송 (feat-sendgrid)
+        val univId = userService.findUniversityIdBy(signupDTO.univName)
+        if (univId == null) return ResponseEntity.badRequest().body(Response.error("해당 도메인을 가진 학교가 없습니다."))
+        if (!userService.matchEmail(signupDTO.email, univId)) {
+            return ResponseEntity.badRequest().body(Response.error("이메일과 학교 이름을 확인해주세요."))
+        }
 
-        userService.signUp(signup.toUserDTO(passwordEncoder))
+        sendGrid.sendSignUp(signupDTO.email)
+        userService.signUp(signupDTO.toUserDTO(univId, passwordEncoder))
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -126,40 +149,113 @@ class SignupController(@Autowired val userService: UserService) {
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-
-    @PostMapping("/findemail")
-    fun findEmail(@RequestBody findEmail: FindEmailDTO): ResponseEntity<Response<Map<String, String>>> {
-        //학번, 전화번호 DB 체크
-        val email = "a@ks.ac.kr"
-
-        return ResponseEntity.ok(Response.success(mutableMapOf("email" to email)))
+    //개인정보 수정 페이지 접근 전, 본인 확인 절차: 비밀번호 확인
+    @PostMapping("/changeinfo/identification")
+    fun identification(@RequestBody identificationDTO: IdentificationDTO): ResponseEntity<ResponseUnit> {
+        val oldPassword = userService.findPasswordByEmail(identificationDTO.email)
+        if (!passwordEncoder.matches(identificationDTO.password, oldPassword)) {
+            return ResponseEntity.badRequest().body(Response.error("비밀번호를 확인해주세요."))
+        }
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/changepw")
-    fun ChangePw(@RequestBody changePw: ChangePwDTO): ResponseEntity<ResponseUnit> {
-        //이메일 DB 체크
-        if (true /*이메일이 일치하지 않을 때*/) {
-            return ResponseEntity.badRequest().body(Response.error("유효하지 않은 이메일입니다."))
+    @PostMapping("/changeinfo/olddata")
+    fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<Response<UserDTO>> {
+        val userData = userService.getUser(listOf(changeInfoDTO.email))!!
+
+        return ResponseEntity.ok().body(Response.success(userData))
+    }
+
+    @PostMapping("/changeinfo/nickname")
+    fun changeInfoNickname(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        if (!ValidationHelper.isValidNickname(changeInfoDTO.nickname!!)) {
+            return ResponseEntity.badRequest().body(Response.error("별명은 3~20자의 영문, 한글, 숫자로 구성해야 합니다."))
         }
 
-        // You might have to handle signService.sendEmail() based on its implementation and return type.
+        if (userService.isDuplicateNickname(changeInfoDTO.nickname)) {
+            return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
+        }
+
+        //email로 nickname db저장
+        userService.updateUserNicknameByEmail(changeInfoDTO.email, changeInfoDTO.nickname)
 
         return ResponseEntity.ok(Response.stateOnly(true))
-        // 여기서 내 이메일을 session을 넘겨줄지, 아니면 data에 email을 넘겨줄지 결정 해야함.
+    }
+
+    @PostMapping("/changeinfo/phnum")
+    fun changePhonenum(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        if (!ValidationHelper.isValidPhoneNum(changeInfoDTO.phNum!!)) {
+            return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
+        }
+
+        userService.updateUserPhoneNumByEmail(changeInfoDTO.email, changeInfoDTO.phNum)
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/changeinfo/password")
+    fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val oldPassword = userService.findPasswordByEmail(changeInfoDTO.email)
+
+        if (!ValidationHelper.isValidPassword(changeInfoDTO.newPassword!!)) {
+            return ResponseEntity.badRequest()
+                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+        }
+
+        if (changeInfoDTO.newPassword != changeInfoDTO.newPasswordCheck) {
+            return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
+        }
+
+        if (passwordEncoder.matches(changeInfoDTO.newPasswordCheck, oldPassword)) {
+            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
+        }
+
+        userService.updateUserPasswordByEmail(
+            changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
+        )
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/changepw/sendemail")
+    fun changePw(@RequestBody changePw: ChangePasswordDTO): ResponseEntity<ResponseUnit> {
+        if (!userService.isEmailValid(changePw.email)) {
+            return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
+        }
+
+        if (userService.isDuplicateEmail(changePw.email)) {
+            sendGrid.sendChangePW(changePw.email)
+        }
+
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/changepw/authenticationcode")
-    fun authenticationCode(@RequestBody newPw: NewPwDTO) {
-        //인증번호 확인
-        // You might have to handle this method based on its implementation and return type.
+    fun authenticationCode(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
+        val isSendEmail = sendGrid.confirmEmailToken(emailAuthDTO.email, emailAuthDTO.authCode ?: "")
+
+        return if (isSendEmail) ResponseEntity.ok(Response.stateOnly(true)) else ResponseEntity.badRequest()
+            .body(Response.error("인증번호가 일치하지 않습니다."))
     }
 
-    @PostMapping("/newpw")
-    fun newPw(@RequestBody newPw: NewPwDTO): ResponseEntity<ResponseUnit> {
-        //패스워드 입력, 검증
-        // You might have to handle userService related function based on its implementation and return type.
+    @PostMapping("/changepw/newpassword")
+    fun newPw(@RequestBody newPasswordDTO: NewPasswordDTO): ResponseEntity<ResponseUnit> {
+        if (!ValidationHelper.isValidPassword(newPasswordDTO.password)) {
+            return ResponseEntity.badRequest()
+                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+        }
 
-        //DB 패스워드 치환
+        if (newPasswordDTO.password != newPasswordDTO.passwordChk) {
+            return ResponseEntity.badRequest().body(Response.error("비밀번호와 비밀번호 확인이 동일하지 않습니다."))
+        }
+
+        val ogPwd = userService.findPasswordByEmail(newPasswordDTO.email)
+        if (passwordEncoder.matches(newPasswordDTO.passwordChk, ogPwd)) {
+            return ResponseEntity.badRequest().body(Response.error("기존 비밀번호입니다."))
+        }
+
+        userService.updateUserPasswordByEmail(newPasswordDTO.email, passwordEncoder.encode(newPasswordDTO.passwordChk))
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }
