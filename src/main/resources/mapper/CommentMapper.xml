@@ -23,13 +23,6 @@
         SET body = #{body}
         WHERE id = #{id}
     </update>
-    <!--    <select id="cntComment" resultType="Int">-->
-    <!--        SELECT COUNT(*)-->
-    <!--        FROM comment-->
-    <!--                 JOIN board ON board.id = comment.board_id-->
-    <!--        WHERE board_id = ${board_id}-->
-    <!--    </select>-->
-    <!--    board에서 처리-->
     <select id="getCommentById">
         SELECT *
         FROM comment

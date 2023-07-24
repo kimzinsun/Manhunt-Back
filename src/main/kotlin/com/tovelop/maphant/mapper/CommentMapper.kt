@@ -11,12 +11,11 @@ interface CommentMapper {
     fun insertComment(commentDTO: CommentDTO)
     fun deleteComment(userId: Int, commentId: Int)
     fun updateComment(commentDTO: CommentDTO)
-    fun cntComment(boardId: Int): Int
     fun insertCommentLike(userId: Int, commentId: Int)
     fun findCommentLike(userId: Int, commentId: Int): Int
     fun cntCommentLike(commentId: Int): Int
     fun deleteCommentLike(userId: Int, commentId: Int)
     fun insertCommentReport(userId: Int, commentId: Int, reportReason: String)
     fun findCommentReport(userId: Int, commentId: Int): Int
-    fun cntCommentReport(commentId: Int): Int
+    fun getCommentById(commentId: Int): CommentDTO
 }
