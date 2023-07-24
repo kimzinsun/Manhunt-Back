@@ -70,7 +70,7 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun createPost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
         // 제목 내용 빈칸인지 확인
         return if (post.title.isNotBlank() && post.body.isNotBlank()) {
-            boardService.createBoard(post.toBoardDTO())
+            boardService.insertBoard(post.toBoardDTO())
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
             ResponseEntity.ok(Response.stateOnly(false)) // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.

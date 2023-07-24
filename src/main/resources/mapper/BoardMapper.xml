@@ -3,12 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.BoardMapper">
-    <insert id="createBoard">
+    <insert id="insertBoard">
         INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete, is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
         VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), NOW(), #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
     </insert>
     <select id="findBoard" resultType="BoardDTO">
-        select *
+        select (parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete, is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
         from board
         where id = #{boardId}
     </select>
