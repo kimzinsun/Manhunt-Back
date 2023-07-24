@@ -46,6 +46,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun insertUserReport(postId: Int, userId: Int, reportId: Int) {
         boardMapper.insertUserReport(postId, userId, reportId)
     }
+    fun searchPost(keyWord: String): List<BoardDTO> {
+        return boardMapper.searchPost(keyWord)
+    }
 }
 
 
