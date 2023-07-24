@@ -41,7 +41,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         boardMapper.insertUserLike(postId, userId)
     }
     fun deleteUserLike(postId: Int, userId: Int) {
-        boardMapper.insertUserLike(postId, userId)
+        boardMapper.deleteUserLike(postId, userId)
     }
     fun insertUserReport(postId: Int, userId: Int, reportId: Int) {
         boardMapper.insertUserReport(postId, userId, reportId)
