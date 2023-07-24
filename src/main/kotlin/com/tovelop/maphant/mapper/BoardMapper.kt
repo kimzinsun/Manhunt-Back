@@ -19,4 +19,5 @@ interface BoardMapper {
     fun insertUserLike(postId: Int, userId: Int)
     fun deleteUserLike(postId: Int, userId: Int)
     fun insertUserReport(postId: Int, userId: Int, reportId: Int)
+    fun searchPost(keyWord: String): List<BoardDTO>
 }

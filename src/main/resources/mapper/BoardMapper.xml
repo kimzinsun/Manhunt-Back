@@ -48,4 +48,9 @@
     <insert id="insertUserReport">
         insert into board_report(board_id, user_id, report_id) values (#{postId}, #{UserId}, #{reportId})
     </insert>
+    <select id="searchPost" resultType="BoardDTO">
+        select *
+        from board
+        where title like '%#{keyWord}%' or body like '%#{keyWord}%'
+    </select>
 </mapper>
