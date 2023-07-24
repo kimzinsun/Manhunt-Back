@@ -1,6 +1,7 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.UploadLogDTO
+import com.tovelop.maphant.mapper.ProfileMapper
 import com.tovelop.maphant.utils.UploadUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -9,7 +10,7 @@ import java.time.LocalDate
 import java.util.ArrayList
 
 @Service
-class UploadLogService(private val uploadUtils: UploadUtils) {
+class UploadLogService(private val uploadUtils: UploadUtils, private val profileMapper: ProfileMapper) {
     @Transactional
     fun storeUrl(userId:Int, imageUrls: List<String>, files: List<MultipartFile>): ArrayList<UploadLogDTO> {
         val dtoList = ArrayList<UploadLogDTO>()
@@ -32,4 +33,22 @@ class UploadLogService(private val uploadUtils: UploadUtils) {
 
         return dtoList
     }
+
+    @Transactional
+    fun storeOneUrl(userId: Int, imageUrl: String, file: MultipartFile): UploadLogDTO {
+        if (uploadUtils.isNotImageFile(file.originalFilename as String))
+            throw IllegalArgumentException("png, jpeg, jpg에 해당하는 파일만 업로드할 수 있습니다.");
+        val storeUrlDto = UploadLogDTO(
+            number = 0, //Auto Increment 사용시에 없어도 될듯
+            user_id = userId,
+            file_size = file.size,
+            upload_date = LocalDate.now(),
+            url = imageUrl,
+        )
+        /* TODO Mapper 이용해 db 저장 하기 */
+        profileMapper.updateProfileImage(userId, file)
+
+        return storeUrlDto
+    }
+
 }
