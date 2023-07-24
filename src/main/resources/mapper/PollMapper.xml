@@ -17,6 +17,27 @@
         VALUES (#{userId}, #{pollId}, #{pollOption}, now());
     </insert>
 
+    <update id="updatePollUser">
+        UPDATE poll_user
+        SET poll_option = #{pollOption}
+        WHERE user_id = #{userId}
+          and poll_id = #{pollId};
+    </update>
+
+    <select id="prevOptionId" resultType="int">
+        SELECT poll_option
+        FROM poll_user
+        WHERE user_id = #{userId}
+          and poll_id = #{pollId};
+    </select>
+
+    <update id="decreaseCount">
+        UPDATE poll_option
+        SET option_cnt = option_cnt - 1
+        WHERE id = #{optionId}
+          and poll_id = #{pollId};
+    </update>
+
     <update id="updateCount">
         UPDATE poll_option
         SET option_cnt = option_cnt + 1

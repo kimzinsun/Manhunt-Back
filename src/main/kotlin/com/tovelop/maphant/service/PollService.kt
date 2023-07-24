@@ -13,7 +13,14 @@ class PollService(val pollMapper: PollMapper) {
             pollMapper.insertPollUser(userId, pollId, pollOption)
             pollMapper.updateCount(pollOption, pollId)
         } catch (e: Exception) {
-            return false
+            if (e.cause is java.sql.SQLIntegrityConstraintViolationException) {
+                val prevOptionId = pollMapper.prevOptionId(userId, pollId)
+                pollMapper.decreaseCount(prevOptionId, pollId)
+                pollMapper.updatePollUser(userId, pollId, pollOption)
+                pollMapper.updateCount(pollOption, pollId)
+            } else {
+                return false
+            }
         }
         return true
     }
