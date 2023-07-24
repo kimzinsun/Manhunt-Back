@@ -14,8 +14,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun findBoardList(findBoardDTO: FindBoardDTO): List<PageBoardDTO> {
         return boardMapper.findBoardList(findBoardDTO);
     }
-    fun createBoard(boardDTO: BoardDTO) {
-        boardMapper.createBoard(boardDTO)
+    fun insertBoard(boardDTO: BoardDTO) {
+        boardMapper.insertBoard(boardDTO)
     }
 
     fun findBoard(boardId: Int): BoardDTO? {
