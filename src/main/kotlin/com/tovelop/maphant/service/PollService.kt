@@ -2,6 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.PollDTO
 import com.tovelop.maphant.mapper.PollMapper
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,9 +18,15 @@ class PollService(val pollMapper: PollMapper) {
     }
 
     fun createPoll(poll: PollDTO) {
-//        println("${poll.boardId}, ${poll.title}, ${poll.expireDateTime}")
-//        val result = pollMapper.insertPoll(poll.id, poll.boardId, poll.title, poll.expireDateTime)
-        pollMapper.insertPoll(poll)
-        poll.options.forEach { pollMapper.insertPollOption(poll.id!!, it) }
+        try {
+            pollMapper.insertPoll(poll)
+            poll.options.forEach { pollMapper.insertPollOption(poll.id!!, it) }
+        } catch (e: Exception) {
+            if(e.cause is java.sql.SQLIntegrityConstraintViolationException) {
+                throw BadCredentialsException("이미 투표가 생성되어 있습니다.")
+            } else {
+                e.printStackTrace()
+            }
+        }
     }
 }
