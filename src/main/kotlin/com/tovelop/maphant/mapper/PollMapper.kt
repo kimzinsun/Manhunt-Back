@@ -15,4 +15,6 @@ interface PollMapper {
 
     fun insertPollUser(userId: Int, pollId: Int, pollOption: Int)
 
+    fun updateCount(optionId: Int, pollId: Int)
+
 }

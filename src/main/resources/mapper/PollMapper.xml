@@ -16,4 +16,11 @@
         INSERT INTO poll_user(user_id, poll_id, poll_option, created_at)
         VALUES (#{userId}, #{pollId}, #{pollOption}, now());
     </insert>
+
+    <update id="updateCount">
+        UPDATE poll_option
+        SET option_cnt = option_cnt + 1
+        WHERE id = #{optionId}
+          and poll_id = #{pollId};
+    </update>
 </mapper>
