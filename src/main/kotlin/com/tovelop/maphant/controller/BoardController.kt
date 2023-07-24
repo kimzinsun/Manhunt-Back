@@ -33,7 +33,7 @@ class BoardController(@Autowired val boardService: BoardService) {
     @PostMapping("/{postId}")
     fun readPost(@PathVariable("postId") postId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
-        val post = boardService.readBoard(postId)
+        val post = boardService.findBoard(postId)
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
@@ -82,7 +82,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         // 현재 로그인한 사용자 정보 가져오기
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         // 게시글 읽어오기
-        val rePost = boardService.readBoard(post.id)
+        val rePost = boardService.findBoard(post.id)
         // 게시글이 존재하지 않는 경우
         if (rePost == null) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))

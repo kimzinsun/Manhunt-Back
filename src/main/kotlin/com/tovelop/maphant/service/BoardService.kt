@@ -1,6 +1,8 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.BoardDTO
+import com.tovelop.maphant.dto.FindBoardDTO
+import com.tovelop.maphant.dto.PageBoardDTO
 import com.tovelop.maphant.dto.UpdateBoardDTO
 import com.tovelop.maphant.mapper.BoardMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,12 +11,15 @@ import org.springframework.stereotype.Service
 
 @Service
 class BoardService(@Autowired val boardMapper: BoardMapper) {
+    fun findBoardList(findBoardDTO: FindBoardDTO): List<PageBoardDTO> {
+        return boardMapper.findBoardList(findBoardDTO);
+    }
     fun createBoard(boardDTO: BoardDTO) {
         boardMapper.createBoard(boardDTO)
     }
 
-    fun readBoard(boardId: Int): BoardDTO? {
-        return boardMapper.readBoard(boardId)
+    fun findBoard(boardId: Int): BoardDTO? {
+        return boardMapper.findBoard(boardId)
     }
 
     fun updateBoard(updateBoardDTO: UpdateBoardDTO) {
