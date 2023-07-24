@@ -13,20 +13,43 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
-
     @GetMapping("/main")
     fun readBoard(): ResponseEntity<ResponseUnit> {
         // 보드 메인 (선택한 장르의 게시글)
         // 정렬(추천수, 생성 일자)
         // 추천수, 작성자(익명인지), 수정 일자, 제목,
         // return: json
+        println(0)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/recommend")
-    fun recommendHandle(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
-        // 추천수 증가
-        // return: json
+    data class LikeDTO(val postId: Int, val userId: Int)
+
+    @PostMapping("/like/{postId}")
+    fun insertLikePost(@PathVariable("postId") postId: Int): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication
+        val post = boardService.findBoard(postId)
+        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
+        }
+        if (post == null) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
+        }
+        boardService.insertBoardLike(postId, auth.getUserData().id)
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @DeleteMapping("/like/{postId}")
+    fun deleteLikePost(@PathVariable("postId") postId: Int): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication
+        val post = boardService.findBoard(postId)
+        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
+        }
+        if (post == null) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
+        }
+        boardService.deleteBoardLike(postId, post.userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -37,7 +60,6 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
-
         if (post == null || boardService.getIsHideByBoardId(postId) == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
@@ -46,7 +68,6 @@ class BoardController(@Autowired val boardService: BoardService) {
                 return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
             }
         }
-
         return ResponseEntity.ok(Response.success(post))
     }
 
@@ -73,7 +94,8 @@ class BoardController(@Autowired val boardService: BoardService) {
             boardService.insertBoard(post.toBoardDTO())
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
-            ResponseEntity.ok(Response.stateOnly(false)) // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
+            ResponseEntity.ok(Response.stateOnly(false))
+            // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
         }
     }
 
@@ -94,13 +116,13 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (post.title.isEmpty() || post.body.isEmpty()) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("제목과 내용을 입력해주세요."))
         }
+
         // 본인 게시글 확인
         if (rePost.userId != auth.getUserData().id) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("권한이 없습니다."))
         }
-
         // 수정
-        // boardService.updatePost(post)
+        boardService.updateBoard(post)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -121,7 +143,6 @@ class BoardController(@Autowired val boardService: BoardService) {
     @GetMapping("/my")
     fun readMyPost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
         // 내가 쓴 게시글 읽어오기
-
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -133,5 +154,4 @@ class BoardController(@Autowired val boardService: BoardService) {
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-
 }
