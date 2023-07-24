@@ -46,7 +46,7 @@ class UploadLogService(private val uploadUtils: UploadUtils, private val profile
             url = imageUrl,
         )
         /* TODO Mapper 이용해 db 저장 하기 */
-        profileMapper.updateProfileImage(userId, file)
+        profileMapper.updateProfileImage(userId, imageUrl)
 
         return storeUrlDto
     }
