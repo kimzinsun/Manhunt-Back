@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.BoardMapper">
+    <insert id="insertBoard">
+        INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete, is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
+        VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), NOW(), #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
+    </insert>
+    <select id="findBoard" resultType="BoardDTO">
+        select *
+        from board
+        where id = #{boardId}
+    </select>
+    <update id="updateBoard">
+        update board
+        set title = #{title}, body=#{body}, is_hide=#{isHide}, modified_at=NOW()
+        where id = #{boardId}
+    </update>
+    <update id="deleteBoard">
+        update board
+        set state = 1
+        where id = #{boardId}
+    </update>
+    <select id="getIsHideByBoardId" resultType="java.lang.Integer">
+        select is_hide
+        from board
+        where id = #{boardId}
+    </select>
+    <select id="getUserIdByBoardId" resultType="java.lang.Integer">
+        select user_id
+        from board
+        where id = #{boardId}
+    </select>
+    <select id="isModified" resultType="BoardTimeDTO">
+        select created_at, modified_at
+        from board
+        where id = #{boardId}
+    </select>
+    <insert id="insertBoardLike">
+        insert into board_like(board_id, user_id) values (#{boardId}, #{userId})
+    </insert>
+
+    <delete id="deleteBoardLike">
+        delete from board_like
+        where board_id = #{boardId} and user_id = #{userId}
+    </delete>
+    <insert id="insertBoardReport">
+        insert into board_report(board_id, user_id, report_id) values (#{boardId}, #{userId}, #{reportId})
+    </insert>
+    <select id="findBoardByKeyword" resultType="BoardDTO">
+        select *
+        from board
+        where title like '%#{keyword}%' or body like '%#{keyword}%'
+    </select>
+</mapper>
