@@ -16,4 +16,7 @@ interface BoardMapper {
     fun getIsHideByPostId(postId: Int): Int?
     fun getUserIdByPostId(postId: Int): Int?
     fun isModified(postId: Int): BoardTimeDTO
+    fun insertUserLike(postId: Int, userId: Int)
+    fun deleteUserLike(postId: Int, userId: Int)
+    fun insertUserReport(postId: Int, userId: Int, reportId: Int)
 }

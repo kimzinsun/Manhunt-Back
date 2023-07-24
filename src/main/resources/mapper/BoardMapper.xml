@@ -37,4 +37,15 @@
         from board
         where id = #{postId}
     </select>
+    <insert id="insertUserLike">
+        insert into board_like(board_id, user_id) values (#{postId}, #{UserId})
+    </insert>
+
+    <delete id="deleteUserLike">
+        delete from board_like
+        where board_id = #{postId} and user_id = #{userId}
+    </delete>
+    <insert id="insertUserReport">
+        insert into board_report(board_id, user_id, report_id) values (#{postId}, #{UserId}, #{reportId})
+    </insert>
 </mapper>

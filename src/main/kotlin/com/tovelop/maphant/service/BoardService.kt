@@ -37,6 +37,15 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         val boardTimeDTO = boardMapper.isModified(postId)
         return boardTimeDTO.createAt == boardTimeDTO.modifiedAt
     }
+    fun insertUserLike(postId: Int, userId: Int) {
+        boardMapper.insertUserLike(postId, userId)
+    }
+    fun deleteUserLike(postId: Int, userId: Int) {
+        boardMapper.insertUserLike(postId, userId)
+    }
+    fun insertUserReport(postId: Int, userId: Int, reportId: Int) {
+        boardMapper.insertUserReport(postId, userId, reportId)
+    }
 }
 
 
