@@ -44,7 +44,7 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("com.sendgrid:sendgrid-java:4.9.3")
-
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.withType<KotlinCompile> {
