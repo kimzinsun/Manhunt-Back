@@ -1,6 +1,6 @@
 package com.tovelop.maphant.dto
 
-data class UpdatePostDTO(
+data class UpdateBoardDTO(
     val id: Int,
     val title: String,
     val body: String,

@@ -1,7 +1,9 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.BoardDTO
-import com.tovelop.maphant.dto.UpdatePostDTO
+import com.tovelop.maphant.dto.FindBoardDTO
+import com.tovelop.maphant.dto.PageBoardDTO
+import com.tovelop.maphant.dto.UpdateBoardDTO
 import com.tovelop.maphant.mapper.BoardMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -9,45 +11,48 @@ import org.springframework.stereotype.Service
 
 @Service
 class BoardService(@Autowired val boardMapper: BoardMapper) {
-    fun createPost(boardDTO: BoardDTO) {
-        boardMapper.createPost(boardDTO)
+    fun findBoardList(findBoardDTO: FindBoardDTO): List<PageBoardDTO> {
+        return boardMapper.findBoardList(findBoardDTO);
+    }
+    fun createBoard(boardDTO: BoardDTO) {
+        boardMapper.createBoard(boardDTO)
     }
 
-    fun readPost(postId: Int): BoardDTO? {
-        return boardMapper.readPost(postId)
+    fun findBoard(boardId: Int): BoardDTO? {
+        return boardMapper.findBoard(boardId)
     }
 
-    fun updatePost(updatePostDTO: UpdatePostDTO) {
-        boardMapper.updatePost(updatePostDTO)
+    fun updateBoard(updateBoardDTO: UpdateBoardDTO) {
+        boardMapper.updateBoard(updateBoardDTO)
     }
 
-    fun deletePost(postId: Int) {
-        boardMapper.deletePost(postId)
+    fun deleteBoard(boardId: Int) {
+        boardMapper.deleteBoard(boardId)
     }
 
-    fun getIsHideByPostId(postId: Int): Boolean? {
-        val isHide = boardMapper.getIsHideByPostId(postId)
+    fun getIsHideByBoardId(boardId: Int): Boolean? {
+        val isHide = boardMapper.getIsHideByBoardId(boardId)
         return isHide==1
     }
 
-    fun getUserIdByPostId(postId: Int): Int?{
-        return boardMapper.getUserIdByPostId(postId)
+    fun getUserIdByBoardId(boardId: Int): Int?{
+        return boardMapper.getUserIdByBoardId(boardId)
     }
-    fun isModified(postId: Int): Boolean {
-        val boardTimeDTO = boardMapper.isModified(postId)
+    fun isModified(boardId: Int): Boolean {
+        val boardTimeDTO = boardMapper.isModified(boardId)
         return boardTimeDTO.createAt == boardTimeDTO.modifiedAt
     }
-    fun insertUserLike(postId: Int, userId: Int) {
-        boardMapper.insertUserLike(postId, userId)
+    fun insertBoardLike(boardId: Int, userId: Int) {
+        boardMapper.insertBoardLike(boardId, userId)
     }
-    fun deleteUserLike(postId: Int, userId: Int) {
-        boardMapper.deleteUserLike(postId, userId)
+    fun deleteBoardLike(boardId: Int, userId: Int) {
+        boardMapper.deleteBoardLike(boardId, userId)
     }
-    fun insertUserReport(postId: Int, userId: Int, reportId: Int) {
-        boardMapper.insertUserReport(postId, userId, reportId)
+    fun insertBoardReport(boardId: Int, userId: Int, reportId: Int) {
+        boardMapper.insertBoardReport(boardId, userId, reportId)
     }
-    fun searchPost(keyWord: String): List<BoardDTO> {
-        return boardMapper.searchPost(keyWord)
+    fun findBoardByKeyword(keyword: String): List<BoardDTO> {
+        return boardMapper.findBoardByKeyword(keyword)
     }
 }
 
