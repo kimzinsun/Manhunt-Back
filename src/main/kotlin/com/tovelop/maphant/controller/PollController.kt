@@ -18,7 +18,7 @@ class PollController(val pollService: PollService) {
     }
 
     @PostMapping("/{poll_id}")
-    fun selectOption(@PathVariable("poll_id") pollId: Int, @RequestBody pollOption: String): ResponseEntity<Any> {
+    fun selectOption(@PathVariable("poll_id") pollId: Int, @RequestBody pollOption: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
 
         val optionResult = pollService.increaseOptionCount(auth.getUserData().id!!, pollId, pollOption)

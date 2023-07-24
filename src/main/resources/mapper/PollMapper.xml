@@ -9,6 +9,11 @@
     </insert>
     <insert id="insertPollOption">
         INSERT INTO poll_option(id, poll_id, option_name, option_cnt)
-        VALUES(null, #{pollId}, #{option}, 0);
+        VALUES (null, #{pollId}, #{option}, 0);
+    </insert>
+
+    <insert id="insertPollUser">
+        INSERT INTO poll_user(user_id, poll_id, poll_option, created_at)
+        VALUES (#{userId}, #{pollId}, #{pollOption}, now());
     </insert>
 </mapper>
