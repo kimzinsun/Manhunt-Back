@@ -9,4 +9,5 @@ data class CommentDTO(
     val body: String,
     val is_anonymous: Boolean,
     val created_at: LocalDateTime,
+    val like_cnt: Int,
 )

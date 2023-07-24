@@ -21,53 +21,48 @@
     <update id="updateComment">
         UPDATE comment
         SET body = #{body}
-        WHERE board_id = #{borad_id}
-          AND id = #{id}
+        WHERE id = #{id}
     </update>
-    <select id="cntComment" resultType="Int">
-        SELECT COUNT(*)
-        FROM comment
-                 JOIN board ON board.id = comment.board_id
-        WHERE board_id = ${board_id}
-    </select>
+    <!--    <select id="cntComment" resultType="Int">-->
+    <!--        SELECT COUNT(*)-->
+    <!--        FROM comment-->
+    <!--                 JOIN board ON board.id = comment.board_id-->
+    <!--        WHERE board_id = ${board_id}-->
+    <!--    </select>-->
+    <!--    board에서 처리-->
     <select id="getCommentById">
         SELECT *
         FROM comment
         WHERE id = #{id}
     </select>
     <insert id="insertCommentLike">
-        INSERT INTO comment_like(commentId, userId)
+        INSERT INTO comment_like(comment_id, user_id)
         VALUES (#{comment_id}, #{user_id})
     </insert>
     <select id="findCommentLike">
         SELECT *
         FROM comment_like
-                 JOIN comment ON comment.id = comment_like.commentId
-        WHERE comment_like.commentId = #{comment_id}
-          AND comment_like.userId = #{user_id}
+        WHERE comment_like.comment_id = #{comment_id}
     </select>
     <select id="cntCommentLike" resultType="Int">
         SELECT COUNT(*)
         FROM comment_like
-                 JOIN comment ON comment.id = comment_like.commentId
-        WHERE comment_like.commentId = #{comment_id}
+        WHERE comment_like.comment_id = #{comment_id}
     </select>
     <delete id="deleteCommentLike">
         DELETE
         FROM comment_like
-        WHERE commentId = #{comment_id} JOIN comment
-        ON comment.id = comment_like.commentId AND comment_like.userId = #{user_id}
+        WHERE comment_id = #{comment_id}
+          AND user_id = #{user_id}
     </delete>
     <insert id="insertCommentReport">
-        INSERT INTO comment_report(comment_id, user_id, reason)
-        VALUES (#{comment_id}, #{user_id}, #{reason})
+        INSERT INTO comment_report(comment_id, user_id, report_id)
+        VALUES (#{comment_id}, #{user_id}, #{report_id})
     </insert>
     <select id="findCommentReport">
         SELECT *
         FROM comment_report
-                 JOIN comment ON comment.id = comment_report.comment_id
         WHERE comment_report.comment_id = #{comment_id}
-          AND comment_report.user_id = #{user_id}
     </select>
 
 </mapper>
