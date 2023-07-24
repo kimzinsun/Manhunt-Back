@@ -33,15 +33,15 @@ class BoardController(@Autowired val boardService: BoardService) {
     @PostMapping("/{postId}")
     fun readPost(@PathVariable("postId") postId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
-        val post = boardService.readPost(postId)
+        val post = boardService.readBoard(postId)
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
 
-        if (post == null || boardService.getIsHideByPostId(postId) == null) {
+        if (post == null || boardService.getIsHideByBoardId(postId) == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
-        if (boardService.getIsHideByPostId(postId)!!) {
+        if (boardService.getIsHideByBoardId(postId)!!) {
             if (post.userId != auth.getUserData().id) {
                 return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
             }
@@ -59,10 +59,10 @@ class BoardController(@Autowired val boardService: BoardService) {
         }
         // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
         // 본인 게시글 인지 확인
-        if (auth.getUserData().role != "admin" || auth.getUserData().id != boardService.getUserIdByPostId(postId)) {
+        if (auth.getUserData().role != "admin" || auth.getUserData().id != boardService.getUserIdByBoardId(postId)) {
             return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
         }
-        boardService.deletePost(postId)
+        boardService.deleteBoard(postId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -70,7 +70,7 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun createPost(@RequestBody post: SetPostDTO): ResponseEntity<ResponseUnit> {
         // 제목 내용 빈칸인지 확인
         return if (post.title.isNotBlank() && post.body.isNotBlank()) {
-            boardService.createPost(post.toBoardDTO())
+            boardService.createBoard(post.toBoardDTO())
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
             ResponseEntity.ok(Response.stateOnly(false)) // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
@@ -78,11 +78,11 @@ class BoardController(@Autowired val boardService: BoardService) {
     }
 
     @PutMapping("/update")
-    fun updatePost(@RequestBody post: UpdatePostDTO): ResponseEntity<ResponseUnit> {
+    fun updatePost(@RequestBody post: UpdateBoardDTO): ResponseEntity<ResponseUnit> {
         // 현재 로그인한 사용자 정보 가져오기
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         // 게시글 읽어오기
-        val rePost = boardService.readPost(post.id)
+        val rePost = boardService.readBoard(post.id)
         // 게시글이 존재하지 않는 경우
         if (rePost == null) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
