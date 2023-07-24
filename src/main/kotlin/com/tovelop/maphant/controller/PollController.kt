@@ -1,6 +1,7 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
+import com.tovelop.maphant.dto.PollDTO
 import com.tovelop.maphant.service.PollService
 import com.tovelop.maphant.type.response.Response
 import org.springframework.http.ResponseEntity
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 class PollController(val pollService: PollService) {
     @PostMapping("/") // 투표 생성
     fun createPoll(@RequestBody poll: PollDTO): ResponseEntity<Any> {
-        println(poll)
+        pollService.createPoll(poll)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 

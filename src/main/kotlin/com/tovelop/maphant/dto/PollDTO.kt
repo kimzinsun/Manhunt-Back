@@ -1,9 +1,9 @@
-package com.tovelop.maphant.controller
+package com.tovelop.maphant.dto
 
 import java.time.LocalDateTime
 
 data class PollDTO(
-    val id: Int?,
+    val id: Int? = null,
     val boardId: Int,
     val title: String,
     val options: List<String>,

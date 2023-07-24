@@ -1,5 +1,6 @@
 package com.tovelop.maphant.service
 
+import com.tovelop.maphant.dto.PollDTO
 import com.tovelop.maphant.mapper.PollMapper
 import org.springframework.stereotype.Service
 
@@ -13,5 +14,12 @@ class PollService(val pollMapper: PollMapper) {
             return false
         }
         return true
+    }
+
+    fun createPoll(poll: PollDTO) {
+//        println("${poll.boardId}, ${poll.title}, ${poll.expireDateTime}")
+//        val result = pollMapper.insertPoll(poll.id, poll.boardId, poll.title, poll.expireDateTime)
+        pollMapper.insertPoll(poll)
+        poll.options.forEach { pollMapper.insertPollOption(poll.id!!, it) }
     }
 }
