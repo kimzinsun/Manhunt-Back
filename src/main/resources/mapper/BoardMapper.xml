@@ -64,7 +64,7 @@
         where title like '%'+#{keyword}+'%' or body like '%'+#{keyword}+'%'
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
-        select title, created_at, user.nickname, comment_cnt, like_cnt
+        select boards.id, title, created_at, modified_at, user.nickname, comment_cnt, like_cnt
         from (select *
             from (select *
                 from board
