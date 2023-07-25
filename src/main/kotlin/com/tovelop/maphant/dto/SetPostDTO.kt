@@ -15,6 +15,7 @@ data class SetPostDTO(
 ) {
     fun toBoardDTO(): BoardDTO {
         return BoardDTO(
+            id=null,
             parentId = parentId,
             categoryId = categoryId,
             userId = userId,
@@ -28,7 +29,9 @@ data class SetPostDTO(
             commentCnt = 0,
             likeCnt = 0,
             reportCnt = 0,
-            imagesUrl = null // 이미지는 s3? 물어보고 수정
+            imagesUrl = null, // 이미지는 s3? 물어보고 수정
+            createdAt= null,
+            modifiedAt= null,
         )
     }
 }
