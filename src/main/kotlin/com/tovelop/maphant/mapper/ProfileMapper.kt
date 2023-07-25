@@ -4,6 +4,7 @@ import com.tovelop.maphant.dto.BoardDTO
 import com.tovelop.maphant.dto.ProfileDto
 import com.tovelop.maphant.dto.ProfileImageDto
 import com.tovelop.maphant.dto.UploadLogDTO
+import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.response.SuccessResponse
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
@@ -24,8 +25,12 @@ interface ProfileMapper {
     //회원의 모든 작성글 목록 불러오기(board로 옮겨야함)
     fun findAllBoardsById(userId:Int): List<BoardDTO>
 
+    fun findAllBoardByIdWithPaging(userId: Int, pagingDto: PagingDto): List<BoardDTO>
+
     //회원의 모든 작성 댓글 목록 불러오기(comment로 옮겨야함)
     fun findAllCommentsById(userId: Int)
 
     fun insertProfile(userId: Int, imageUrl: String): Boolean
+
+    fun getBoardCount(userId: Int): Int
 }

@@ -6,11 +6,14 @@ import com.tovelop.maphant.dto.ProfileImageDto
 import com.tovelop.maphant.dto.UserDataDTO
 import com.tovelop.maphant.service.AwsS3Service
 import com.tovelop.maphant.service.ProfileService
+import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.SuccessResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -45,10 +48,10 @@ class ProfileController (
     }
 
     @GetMapping("/board")
-    fun getPostsList(): ResponseEntity<Response<List<BoardDTO>>>{
+    fun getBoardList(@ModelAttribute pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<BoardDTO>>>{
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
         val userId:Int = auth.getUserData().id!!
 
-        return ResponseEntity.ok().body(Response.success(profileService.getBoardsList(userId)));
+        return ResponseEntity.ok().body(Response.success(profileService.getBoardsList(userId,pagingDto)));
     }
 }

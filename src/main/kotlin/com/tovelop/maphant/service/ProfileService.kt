@@ -4,12 +4,16 @@ import com.tovelop.maphant.dto.BoardDTO
 import com.tovelop.maphant.dto.ProfileImageDto
 import com.tovelop.maphant.dto.UploadLogDTO
 import com.tovelop.maphant.mapper.ProfileMapper
+import com.tovelop.maphant.type.paging.Pagination
+import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.SuccessResponse
 import com.tovelop.maphant.utils.UploadUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
+import java.util.Collections
 
 @Service
 class ProfileService (
@@ -23,8 +27,16 @@ class ProfileService (
     }
 
     //유저가 작성한 글 목록 불러오기
-    fun getBoardsList(userId: Int):List<BoardDTO>{
-        return profileMapper.findAllBoardsById(userId)
+    fun getBoardsList(userId: Int, pagingDto: PagingDto):PagingResponse<BoardDTO>{
+        val count = profileMapper.getBoardCount(userId);
+        if(count < 1) {
+            return PagingResponse(Collections.emptyList(),null);
+        }
+
+        val pagination = Pagination(count,pagingDto);
+        val boards = profileMapper.findAllBoardByIdWithPaging(userId,pagingDto);
+
+        return PagingResponse(boards,pagination);
     }
 
     @Transactional
