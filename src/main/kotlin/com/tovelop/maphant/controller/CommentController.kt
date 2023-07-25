@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 data class commentRequest(
     val userId: Int,
-    val commentId: Int
+    val commentId: Int,
 )
 
 @RestController
@@ -69,8 +69,8 @@ class CommentController(@Autowired val commentService: CommentService) {
     }
 
 
-    @GetMapping("/cnt-like")
-    fun cntCommentLike(@RequestBody commentId: Int): ResponseEntity<ResponseUnit> {
+    @GetMapping("/cnt-like/{commentId}")
+    fun cntCommentLike(@PathVariable commentId: Int): ResponseEntity<ResponseUnit> {
         commentService.cntCommentLike(commentId)
         println(commentService.cntCommentLike(commentId))
         return ResponseEntity.ok().body(Response.stateOnly(true))
