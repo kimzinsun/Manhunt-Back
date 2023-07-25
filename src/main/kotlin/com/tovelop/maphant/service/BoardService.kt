@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service
 @Service
 class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun findBoardList(findBoardDTO: FindBoardDTO): List<PageBoardDTO> {
-        return boardMapper.findBoardList(findBoardDTO);
+        val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
+        return boardMapper.findBoardList(findBoardDTO, startRow);
     }
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
