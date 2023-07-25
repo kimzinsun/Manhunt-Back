@@ -115,6 +115,11 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return nicknameValidation
         }
 
+        val passwordValidation = validationPassword(ValidationSignupDTO(password = signupDTO.password))
+        if (!passwordValidation.isSuccess()){
+            return ResponseEntity.badRequest().body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+        }
+
         val passwordChkValidation = validationPasswordCheck(
             ValidationSignupDTO(
                 password = signupDTO.password, passwordCheck = signupDTO.passwordCheck
