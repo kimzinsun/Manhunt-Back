@@ -1,8 +1,6 @@
 package com.tovelop.maphant.mapper
 
 import com.tovelop.maphant.dto.CommentDTO
-import com.tovelop.maphant.dto.CommentLikeDTO
-import com.tovelop.maphant.dto.CommentReportDTO
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
