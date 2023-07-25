@@ -14,28 +14,36 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
-    @GetMapping("/main/{category}/{boardType}")
+    @GetMapping("/main/{category}/{boardType}/{sortStandard}")
     fun readBoardList(
         @PathVariable("category") category: String,
         @PathVariable("boardType") boardType: String,
-        @RequestParam sortStandard: Int,
+        @PathVariable("sortStandard") sortStandard: String,
+        @RequestBody findBoardDTO: FindBoardDTO,
         @RequestParam pageNum: Int,
         @RequestParam pageSize: Int
-    ): ResponseEntity<ResponseUnit> {
+    ): ResponseEntity<Any> {
          //pageNum과 pageSize는 양의 정수
         if (pageNum <= 0) {
-            return ResponseEntity.badRequest().body(Response.error("pageNum가 일치하지 않습니다."))
+            return ResponseEntity.badRequest().body(Response.error<Any>("pageNum가 일치하지 않습니다."))
         }
         if (pageSize <= 0) {
-            return ResponseEntity.badRequest().body(Response.error("pageSize가 일치하지 않습니다."))
+            return ResponseEntity.badRequest().body(Response.error<Any>("pageSize가 일치하지 않습니다."))
         }
-        if() {
+        /*if (sortStandard < 1 || sortStandard > 3) {
+            // sortStandard 값이 유효하지 않은 경우
+            return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortStandard 값입니다."))
+        }*/
+        /*if() {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
-            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 카테고리나 게시판 유형입니다."))
+            return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 카테고리나 게시판 유형입니다."))
+        }*/
+        val boardList = boardService.findBoardList(findBoardDTO)
+        return if(boardList.isEmpty()) {
+            ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
+        } else {
+            ResponseEntity.ok().body(Response.success(boardList))
         }
-        return boardService.h(category, boardType, sortStandard, pageNum, pageSize)?.let {
-            ResponseEntity.ok(Response.success(it))
-        } ?: ResponseEntity.badRequest().body(Response.error("게시글이 존재하지 않습니다."))
     }
 
     @PostMapping("/like/{boardId}")
@@ -132,8 +140,6 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (reBoard.userId != auth.getUserData().id) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("권한이 없습니다."))
         }
-        // 수정
-        board.title = "(수정됨) ${board.title}"
         boardService.updateBoard(board)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
