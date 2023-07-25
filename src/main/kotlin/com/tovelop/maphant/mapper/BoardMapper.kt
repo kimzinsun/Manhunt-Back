@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository
 @Mapper
 @Repository
 interface BoardMapper {
-    fun findBoardList(findBoardDTO: FindBoardDTO): List<PageBoardDTO>
+    fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int
+    fun getCategoryIdByCategoryName(categoryName: String): Int
+    fun findBoardList(findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int, boardTypeId: Int): List<PageBoardDTO>
     fun insertBoard(boardDTO: BoardDTO): Unit
     fun findBoard(boardId: Int): BoardDTO?
     fun updateBoard(updateBoardDTO: UpdateBoardDTO)
