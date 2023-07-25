@@ -46,7 +46,16 @@
     </update>
 
     <select id="getPollIdByBoardId" resultType="int">
-        SELECT poll.id FROM poll, board
+        SELECT poll.id
+        FROM poll,
+             board
         WHERE board_id = board.id
+    </select>
+
+    <select id="selectPollInfoById" resultType="map">
+        SELECT po.option_name, po.option_cnt
+        FROM poll
+                 JOIN poll_option po on poll.id = po.poll_id
+        WHERE poll.id = #{pollId}
     </select>
 </mapper>
