@@ -228,7 +228,9 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("형식에 맞지 않는 이메일입니다."))
         }
 
-        if (userService.isDuplicateEmail(changePw.email)) {
+        if (!userService.isDuplicateEmail(changePw.email)) {
+            return ResponseEntity.badRequest().body(Response.error("유저 정보가 없습니다."))
+        } else{
             sendGrid.sendChangePW(changePw.email)
         }
 
