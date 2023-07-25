@@ -64,11 +64,13 @@
         where title like '%'+#{keyword}+'%' or body like '%'+#{keyword}+'%'
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
-        select *
-        where (select *
-            from board
-            where category_id = #{categoryId} and type_id = #{boardTypeId}
-            order by #{sortCriterion})
-        limit #{pageSize} offset #{startRow}
+        select title, created_at, user.nickname, comment_cnt, like_cnt
+        from (select *
+            from (select *
+                from board
+                where category_id = #{categoryId} and type_id = #{boardTypeId}
+                order by #{sortCriterion})
+            limit #{pageSize} offset #{startRow})
+            boards join user on boards.user_id = user.id
     </select>
 </mapper>
