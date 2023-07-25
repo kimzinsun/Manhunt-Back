@@ -46,22 +46,22 @@
     <select id="cntCommentLike" resultType="Int">
         SELECT COUNT(*)
         FROM comment_like
-        WHERE comment_like.comment_id = #{comment_id}
+        WHERE comment_like.comment_id = #{commentId}
     </select>
     <delete id="deleteCommentLike">
         DELETE
         FROM comment_like
-        WHERE comment_id = #{comment_id}
-          AND user_id = #{user_id}
+        WHERE comment_id = #{commentId}
+          AND user_id = #{userId}
     </delete>
     <insert id="insertCommentReport">
         INSERT INTO comment_report(comment_id, user_id, report_id)
-        VALUES (#{comment_id}, #{user_id}, #{report_id})
+        VALUES (#{commentId}, #{userId}, #{reportId})
     </insert>
     <select id="findCommentReport">
         SELECT *
         FROM comment_report
-        WHERE comment_report.comment_id = #{comment_id}
+        WHERE comment_report.comment_id = #{commentId}
     </select>
 
 </mapper>
