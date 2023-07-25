@@ -43,7 +43,7 @@
         FROM comment_like
         WHERE comment_like.comment_id = #{commentId}
     </select>
-    <select id="cntCommentLike" resultType="Int">
+    <select id="cntCommentLike">
         SELECT COUNT(*)
         FROM comment_like
         WHERE comment_like.comment_id = #{commentId}
