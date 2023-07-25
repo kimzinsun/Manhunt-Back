@@ -124,6 +124,7 @@ class BoardController(@Autowired val boardService: BoardService) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("권한이 없습니다."))
         }
         // 수정
+        post.title = "(수정됨) ${post.title}"
         boardService.updateBoard(post)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
