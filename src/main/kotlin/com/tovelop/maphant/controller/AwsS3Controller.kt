@@ -1,5 +1,6 @@
 package com.tovelop.maphant.controller
 
+import com.tovelop.maphant.configure.MockupCustomUserToken
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.UploadLogDTO
 import com.tovelop.maphant.service.AwsS3Service
