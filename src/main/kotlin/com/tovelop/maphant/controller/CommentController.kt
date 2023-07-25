@@ -9,6 +9,10 @@ import org.springframework.data.annotation.Id
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+data class commentRequest(
+    val userId: Int,
+    val commentId: Int
+)
 
 @RestController
 @RequestMapping("/comment")
@@ -51,20 +55,21 @@ class CommentController(@Autowired val commentService: CommentService) {
     }
 
     @PostMapping("/insert-like")
-    fun insertCommentLike(userId: Int, commentId: Int): ResponseEntity<ResponseUnit> {
+    fun insertCommentLike(@RequestBody commentRequest: commentRequest): ResponseEntity<ResponseUnit> {
 //        if (commentService.findCommentLike(userId, commentId) != 0) {
 //            return ResponseEntity.badRequest().body(Response.error("이미 좋아요를 누른 댓글입니다."))
 //        }
-        commentService.insertCommentLike(userId, commentId)
+        commentService.insertCommentLike(commentRequest.userId, commentRequest.commentId)
         return ResponseEntity.ok().body(Response.stateOnly(true))
         // TODO : 여기부터 수정하기
     }
 
     @PostMapping("/find-like")
-    fun findCommentLike(userId: Int, commentId: Int): ResponseEntity<Response<Int>> {
-        commentService.findCommentLike(userId, commentId)
-        return ResponseEntity.ok().body(Response.success(commentId))
+    fun findCommentLike(@RequestBody commentRequest: commentRequest): ResponseEntity<Response<Int>> {
+        commentService.findCommentLike(commentRequest.userId, commentRequest.commentId)
+        return ResponseEntity.ok().body(Response.success(commentRequest.commentId))
     }
+
 
     @GetMapping("/cnt-like")
     fun cntCommentLike(commentId: Int): ResponseEntity<Response<Int>> {
