@@ -9,21 +9,25 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import java.util.Locale.Category
 
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
-    @GetMapping("/main")
-    fun readBoard(): ResponseEntity<ResponseUnit> {
+    @GetMapping("/main/{category}/{boardType}")
+    fun readBoard(
+        @PathVariable("category") category: String,
+        @PathVariable("boardType") boardType: String,
+        @RequestParam sortStandard: Int,
+        @RequestParam pageNum: Int,
+        @RequestParam pageSize: Int
+    ): ResponseEntity<ResponseUnit> {
         // 보드 메인 (선택한 장르의 게시글)
-        // 정렬(추천수, 생성 일자)
+        // 인자:정렬(날씨, 추천수, 생성 일자) 기준, 카테고리, 계열, 페이지 #, 페이지 사이즈,
         // 추천수, 작성자(익명인지), 수정 일자, 제목,
         // return: json
-        println(0)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-
-    data class LikeDTO(val postId: Int, val userId: Int)
 
     @PostMapping("/like/{postId}")
     fun insertLikePost(@PathVariable("postId") postId: Int): ResponseEntity<Any> {
@@ -105,10 +109,8 @@ class BoardController(@Autowired val boardService: BoardService) {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         // 게시글 읽어오기
         val rePost = boardService.findBoard(post.id)
+            ?: return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
         // 게시글이 존재하지 않는 경우
-        if (rePost == null) {
-            return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
-        }
         // 제목 및 내용 빈칸 확인
         if (rePost.isComplete == 1) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("채택된 글은 수정이 불가합니다."))
