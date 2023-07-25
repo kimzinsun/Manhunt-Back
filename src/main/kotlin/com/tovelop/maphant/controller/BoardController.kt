@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
-    @GetMapping("/main/{category}/{boardType}/{sortStandard}")
+    @PostMapping("/main")
     fun readBoardList(
-        @PathVariable("category") category: String,
-        @PathVariable("boardType") boardType: String,
-        @PathVariable("sortStandard") sortStandard: String,
+        @RequestBody category: String,
+        @RequestBody boardType: String,
+        @RequestBody sortStandard: String,
         @RequestBody findBoardDTO: FindBoardDTO,
         @RequestParam pageNum: Int,
         @RequestParam pageSize: Int
