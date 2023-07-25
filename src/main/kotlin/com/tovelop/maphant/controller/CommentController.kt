@@ -1,8 +1,6 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.CommentDTO
-import com.tovelop.maphant.dto.CommentLikeDTO
-import com.tovelop.maphant.dto.CommentReportDTO
 import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -90,11 +88,11 @@ class CommentController(@Autowired val commentService: CommentService) {
     }
 
     @PostMapping("/report")
-    fun insertCommentReport(userId: Int, commentId: Int, reportReason: String): ResponseEntity<ResponseUnit> {
-//        if (commentService.findCommentReport(userId, commentId) != 0) {
-//            return ResponseEntity.badRequest().body(Response.error("이미 신고한 댓글입니다."))
-//        }
-        commentService.insertCommentReport(userId, commentId, reportReason)
+    fun insertCommentReport(@RequestBody commentRequest: commentRequest): ResponseEntity<ResponseUnit> {
+        if (commentService.findCommentReport(commentRequest.userId, commentRequest.commentId) != null) {
+            return ResponseEntity.badRequest().body(Response.error("이미 신고한 댓글입니다."))
+        }
+        commentService.insertCommentReport(commentRequest.userId, commentRequest.commentId, commentRequest.reportId!!)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
