@@ -7,6 +7,7 @@ import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.annotation.Id
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
