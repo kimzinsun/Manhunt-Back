@@ -56,7 +56,7 @@
     </delete>
     <insert id="insertCommentReport">
         INSERT INTO comment_report(comment_id, user_id, report_id)
-        VALUES (#{commentId}, #{userId}, #{reportId})
+        VALUES (#{commentId}, #{userId}, #{reportReason})
     </insert>
     <select id="findCommentReport">
         SELECT *

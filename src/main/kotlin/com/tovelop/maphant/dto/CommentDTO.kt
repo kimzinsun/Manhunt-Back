@@ -11,3 +11,14 @@ data class CommentDTO(
     val created_at: LocalDateTime,
     val like_cnt: Int,
 )
+
+data class CommentRequest(
+    val userId: Int,
+    val commentId: Int
+)
+
+data class ReportComment(
+    val userId: Int,
+    val commentId: Int,
+    val reportReason: Int
+)
