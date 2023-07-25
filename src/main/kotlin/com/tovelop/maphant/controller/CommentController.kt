@@ -1,17 +1,19 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.CommentDTO
+import com.tovelop.maphant.dto.CommentLikeDTO
+import com.tovelop.maphant.dto.CommentReportDTO
 import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.annotation.Id
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 data class commentRequest(
     val userId: Int,
-    val commentId: Int
+    val commentId: Int,
+    val reportId: Int?
 )
 
 @RestController
@@ -33,13 +35,14 @@ class CommentController(@Autowired val commentService: CommentService) {
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-    @DeleteMapping("/delete")
-    fun deleteComment(@RequestBody commentRequest: commentRequest): ResponseEntity<ResponseUnit> {
+    @DeleteMapping("/delete/{userId}/{commentId}")
+    fun deleteComment(@PathVariable userId: Int, @PathVariable commentId: Int): ResponseEntity<ResponseUnit> {
 //        val comment = commentService.getCommentById(commentId)
 //        if (comment.user_id != userId) {
 //            return ResponseEntity.badRequest().body(Response.error("자신의 댓글만 삭제할 수 있습니다."))
 //        }
-        commentService.deleteComment(commentRequest.userId, commentRequest.commentId)
+        // TODO : 자신의 댓글만 삭제 할 수 있도록 수정하기
+        commentService.deleteComment(userId, commentId)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
@@ -55,50 +58,56 @@ class CommentController(@Autowired val commentService: CommentService) {
 
     @PostMapping("/insert-like")
     fun insertCommentLike(@RequestBody commentRequest: commentRequest): ResponseEntity<ResponseUnit> {
-//        if (commentService.findCommentLike(commentRequest.userId, commentRequest.commentId) != 0) {
+//        if (commentService.findCommentLike(userId, commentId) != 0) {
 //            return ResponseEntity.badRequest().body(Response.error("이미 좋아요를 누른 댓글입니다."))
 //        }
         commentService.insertCommentLike(commentRequest.userId, commentRequest.commentId)
         return ResponseEntity.ok().body(Response.stateOnly(true))
+        // TODO : 여기부터 수정하기
     }
 
     @PostMapping("/find-like")
-    fun findCommentLike(@RequestBody commentRequest: commentRequest): ResponseEntity<Response<Int>> {
-        commentService.findCommentLike(commentRequest.userId, commentRequest.commentId)
-        return ResponseEntity.ok().body(Response.success(commentRequest.commentId))
+    fun findCommentLike(@RequestBody commentRequest: commentRequest): ResponseEntity<Response<List<CommentLikeDTO>>> {
+        val comment = commentService.findCommentLike(commentRequest.userId, commentRequest.commentId)
+        return ResponseEntity.ok().body(Response.success(comment))
     }
 
 
     @GetMapping("/cnt-like")
-    fun cntCommentLike(@RequestBody commentId: Int): ResponseEntity<ResponseUnit> {
+    fun cntCommentLike(commentId: Int): ResponseEntity<Response<Int>> {
         commentService.cntCommentLike(commentId)
-        println(commentService.cntCommentLike(commentId))
-        return ResponseEntity.ok().body(Response.stateOnly(true))
+        return ResponseEntity.ok().body(Response.success(commentId))
     }
 
     @PostMapping("/delete-like")
-    fun deleteCommentLike(@RequestBody commentRequest: commentRequest): ResponseEntity<ResponseUnit> {
-//        val comment = commentService.getCommentById(commentRequest.commentId)
-//        if (comment.user_id != commentRequest.userId) {
+    fun deleteCommentLike(userId: Int, commentId: Int): ResponseEntity<ResponseUnit> {
+//        val comment = commentService.getCommentById(commentId)
+//        if (comment.user_id != userId) {
 //            return ResponseEntity.badRequest().body(Response.error("자신의 댓글만 취소할 수 있습니다."))
 //        }
-        commentService.deleteCommentLike(commentRequest.userId, commentRequest.commentId)
+        commentService.deleteCommentLike(userId, commentId)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
     @PostMapping("/report")
-    fun insertCommentReport(userId: Int, commentId: Int, reportReason: String): ResponseEntity<ResponseUnit> {
-//        if (commentService.findCommentReport(userId, commentId) != 0) {
-//            return ResponseEntity.badRequest().body(Response.error("이미 신고한 댓글입니다."))
-//        }
-        commentService.insertCommentReport(userId, commentId, reportReason)
+    fun insertCommentReport(
+        @RequestBody commentRequest: commentRequest
+    ): ResponseEntity<ResponseUnit> {
+        if (commentService.findCommentReport(commentRequest.userId, commentRequest.commentId) != null) {
+            return ResponseEntity.badRequest().body(Response.error("이미 신고한 댓글입니다."))
+        }
+        commentService.insertCommentReport(
+            commentRequest.userId,
+            commentRequest.commentId,
+            commentRequest.reportId!!
+        )
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
     @PostMapping("/find-report")
-    fun findCommentReport(userId: Int, commentId: Int): ResponseEntity<Response<Int>> {
-        commentService.findCommentReport(userId, commentId)
-        return ResponseEntity.ok().body(Response.success(commentId))
+    fun findCommentReport(@RequestBody commentRequest: commentRequest): ResponseEntity<Response<List<CommentReportDTO>>> {
+        val comment = commentService.findCommentReport(commentRequest.userId, commentRequest.commentId)
+        return ResponseEntity.ok().body(Response.success(comment))
     }
 
 }

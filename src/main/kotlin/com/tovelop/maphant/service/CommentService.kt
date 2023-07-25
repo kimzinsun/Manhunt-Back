@@ -3,7 +3,6 @@ package com.tovelop.maphant.service
 import com.tovelop.maphant.dto.CommentDTO
 import com.tovelop.maphant.mapper.CommentMapper
 import org.springframework.stereotype.Service
-import javax.xml.stream.events.Comment
 
 @Service
 class CommentService(val commentMapper: CommentMapper) {
@@ -24,8 +23,8 @@ class CommentService(val commentMapper: CommentMapper) {
 
     fun deleteCommentLike(userId: Int, commentId: Int) = commentMapper.deleteCommentLike(userId, commentId)
 
-    fun insertCommentReport(userId: Int, commentId: Int, reportReason: String) =
-        commentMapper.insertCommentReport(userId, commentId, reportReason)
+    fun insertCommentReport(userId: Int, commentId: Int, reportId: Int) =
+        commentMapper.insertCommentReport(userId, commentId, reportId)
 
     fun findCommentReport(userId: Int, commentId: Int) = commentMapper.findCommentReport(userId, commentId)
 

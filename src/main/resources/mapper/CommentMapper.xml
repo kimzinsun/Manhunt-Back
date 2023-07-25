@@ -42,6 +42,7 @@
         SELECT *
         FROM comment_like
         WHERE comment_like.comment_id = #{commentId}
+          AND comment_like.user_id = #{userId}
     </select>
     <select id="cntCommentLike" resultType="Int">
         SELECT COUNT(*)
@@ -62,6 +63,7 @@
         SELECT *
         FROM comment_report
         WHERE comment_report.comment_id = #{commentId}
+          AND comment_report.user_id = #{userId}
     </select>
 
 </mapper>
