@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/poll")
 class PollController(val pollService: PollService) {
+
+    @GetMapping("/{board_id}")
+    @ResponseBody
+    fun getPoll(@PathVariable("board_id") boardId: Int) =
+        mutableMapOf("poll_id" to pollService.getPollIdByBoardId(boardId))
     @PostMapping("/") // 투표 생성
     fun createPoll(@RequestBody poll: PollDTO): ResponseEntity<Any> {
         pollService.createPoll(poll)

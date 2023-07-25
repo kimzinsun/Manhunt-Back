@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.PollMapper">
     <insert id="insertPoll" useGeneratedKeys="true" keyProperty="id" parameterType="com.tovelop.maphant.dto.PollDTO">
-        INSERT INTO poll(id, board_id, title, expire_date)
-        VALUES (#{id}, #{boardId}, #{title}, #{expireDateTime});
+        INSERT INTO poll(id, board_id, title, expire_date, state)
+        VALUES (#{id}, #{boardId}, #{title}, #{expireDateTime}, #{state});
     </insert>
     <insert id="insertPollOption">
         INSERT INTO poll_option(id, poll_id, option_name, option_cnt)
@@ -44,4 +44,9 @@
         WHERE id = #{optionId}
           and poll_id = #{pollId};
     </update>
+
+    <select id="getPollIdByBoardId" resultType="int">
+        SELECT poll.id FROM poll, board
+        WHERE board_id = board.id
+    </select>
 </mapper>

@@ -23,4 +23,6 @@ interface PollMapper {
 
     fun updateCount(optionId: Int, pollId: Int)
 
+    fun getPollIdByBoardId(boardId: Int): Int
+
 }

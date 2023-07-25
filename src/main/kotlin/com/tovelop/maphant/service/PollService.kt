@@ -37,4 +37,8 @@ class PollService(val pollMapper: PollMapper) {
             }
         }
     }
+
+    fun getPollIdByBoardId(boardId: Int): Int {
+        return pollMapper.getPollIdByBoardId(boardId)
+    }
 }
