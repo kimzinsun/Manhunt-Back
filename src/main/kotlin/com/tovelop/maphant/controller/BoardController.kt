@@ -16,23 +16,22 @@ import org.springframework.web.bind.annotation.*
 class BoardController(@Autowired val boardService: BoardService) {
     @PostMapping("/main")
     fun readBoardList(
-        @RequestBody category: String,
-        @RequestBody boardType: String,
-        @RequestBody sortStandard: String,
         @RequestBody findBoardDTO: FindBoardDTO,
-        @RequestParam pageNum: Int,
+        @RequestParam page: Int,
         @RequestParam pageSize: Int
     ): ResponseEntity<Any> {
          //pageNum과 pageSize는 양의 정수
-        if (pageNum <= 0) {
+        if (page <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageNum가 일치하지 않습니다."))
         }
         if (pageSize <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageSize가 일치하지 않습니다."))
         }
-        /*if (sortStandard < 1 || sortStandard > 3) {
+        findBoardDTO.page = page
+        findBoardDTO.pageSize = pageSize
+        /*if (sortCriterion < 1 || sortCriterion > 3) {
             // sortStandard 값이 유효하지 않은 경우
-            return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortStandard 값입니다."))
+            return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
         }*/
         /*if() {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
