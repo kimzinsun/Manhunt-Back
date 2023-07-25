@@ -3,6 +3,16 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.BoardMapper">
+    <select id="getBoardTypeIdByBoardTypeName" resultType="Int">
+        select id
+        from board_type
+        where name = #{boardTypeName};
+    </select>
+    <select id="getCategoryIdByCategoryName" resultType="Int">
+        select id
+        from category
+        where name = #{categoryName};
+    </select>
     <insert id="insertBoard">
         INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete, is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
         VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), NOW(), #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
@@ -51,11 +61,14 @@
     <select id="findBoardByKeyword" resultType="BoardDTO">
         select *
         from board
-        where title like '%#{keyword}%' or body like '%#{keyword}%'
+        where title like '%'+#{keyword}+'%' or body like '%'+#{keyword}+'%'
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
         select *
-        from board
-        where category_id = #{}
+        where (select *
+            from board
+            where category_id = #{categoryId} and type_id = #{boardTypeId}
+            order by #{sortCriterion})
+        limit #{pageSize} offset #{startRow}
     </select>
 </mapper>

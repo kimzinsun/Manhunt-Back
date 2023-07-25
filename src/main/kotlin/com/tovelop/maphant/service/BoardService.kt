@@ -11,9 +11,18 @@ import org.springframework.stereotype.Service
 
 @Service
 class BoardService(@Autowired val boardMapper: BoardMapper) {
+    fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
+        return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
+    }
+    fun getCategoryIdByCategoryName(categoryName: String): Int {
+        return boardMapper.getCategoryIdByCategoryName(categoryName)
+    }
+
     fun findBoardList(findBoardDTO: FindBoardDTO): List<PageBoardDTO> {
         val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
-        return boardMapper.findBoardList(findBoardDTO, startRow);
+        val categoryId = boardMapper.getCategoryIdByCategoryName(findBoardDTO.category)
+        val boardTypeId = boardMapper.getBoardTypeIdByBoardTypeName(findBoardDTO.boardType)
+        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId, boardTypeId);
     }
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
