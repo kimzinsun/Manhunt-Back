@@ -1,6 +1,5 @@
 package com.tovelop.maphant.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.PollDTO
 import com.tovelop.maphant.service.PollService
@@ -41,10 +40,14 @@ class PollController(val pollService: PollService) {
 
     @GetMapping("/my-poll/{poll_id}")
     @ResponseBody
-    fun pollInfo(@PathVariable("poll_id") pollId: Int): String {
-        val objMapper = ObjectMapper()
-        return objMapper.writeValueAsString(
-            mutableMapOf("poll" to pollService.getPoll(pollId))
-        )
+    fun pollInfo(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
+        val optionList = pollService.getPoll(pollId)
+
+        if (optionList.isFailure) {
+            return ResponseEntity.badRequest().body(
+                Response.error<Any>("Parse Error")
+            )
+        }
+        return ResponseEntity.ok().body(Response.success(optionList.getOrNull()))
     }
 }

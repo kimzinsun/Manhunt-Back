@@ -42,7 +42,7 @@ class PollService(val pollMapper: PollMapper) {
         return pollMapper.getPollIdByBoardId(boardId)
     }
 
-    fun getPoll(pollId: Int): List<Map<String, Int>> {
-        return pollMapper.selectPollInfoById(pollId)
+    fun getPoll(pollId: Int): Result<List<Map<String, Int>>> {
+        return Result.runCatching { pollMapper.selectPollInfoById(pollId) }
     }
 }
