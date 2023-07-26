@@ -73,10 +73,10 @@
             limit #{findBoardDTO.pageSize} offset #{startRow}) as
             boards join user on boards.user_id = user.id
     </select>
-    <select id="isInCategory" resultType="String">
-        select category
-        from board
-        where category = #{category}
+    <select id="isInCategory" resultType="Int">
+        select category_id
+        from category
+        where name = #{category}
     </select>
     <select id="isInBoardtype" resultType="String">
         select name
