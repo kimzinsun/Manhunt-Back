@@ -7,12 +7,13 @@ import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.annotation.Id
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/comment")
-class CommentController(@Autowired val commentService: CommentService) { // TODO : 조건 추가?
+class CommentController(@Autowired val commentService: CommentService) {
 
     @GetMapping("/list/{boardId}")
     fun findAllComment(@PathVariable boardId: Int): ResponseEntity<Response<List<CommentDTO>>> {
@@ -107,4 +108,5 @@ class CommentController(@Autowired val commentService: CommentService) { // TODO
         commentService.findCommentReport(commentRequest.userId, commentRequest.commentId)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
+
 }

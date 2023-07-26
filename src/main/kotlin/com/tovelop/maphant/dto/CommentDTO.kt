@@ -12,13 +12,12 @@ data class CommentDTO(
     val like_cnt: Int,
 )
 
-data class CommentRequest(
-    val userId: Int,
-    val commentId: Int
+data class CommentLikeDTO(
+    val user_id: Int,
+    val comment_id: Int,
 )
 
-data class ReportComment(
-    val userId: Int,
-    val commentId: Int,
-    val reportReason: Int
+data class CommentReportDTO(
+    val user_id: Int,
+    val comment_id: Int
 )
