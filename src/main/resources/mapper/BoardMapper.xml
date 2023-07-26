@@ -64,7 +64,7 @@
         where title like '%'+#{keyword}+'%' or body like '%'+#{keyword}+'%'
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
-        select select pageBoards.board_id, pageBoards.title, pageBoards.created_at, pageBoards.modified_at, pageBoards.nickname, pageBoards.comment_cnt, pageBoards.like_cnt, pageBoards.is_anonymous, pageBoards.is_hide, board_like.user_id
+        select pageBoards.board_id, pageBoards.title, pageBoards.created_at, pageBoards.modified_at, pageBoards.nickname, pageBoards.comment_cnt, pageBoards.like_cnt, pageBoards.is_anonymous, pageBoards.is_hide, board_like.user_id
         from (select boards.board_id, boards.title, boards.created_at, boards.modified_at, boards.user_id, user.nickname, boards.comment_cnt, boards.like_cnt, boards.is_hide, boards.is_anonymous
             from (select board.id as board_id, board.title, board.created_at, board.modified_at, board.user_id, board.comment_cnt, board.like_cnt, board.is_hide, board.is_anonymous
                 from (select *
