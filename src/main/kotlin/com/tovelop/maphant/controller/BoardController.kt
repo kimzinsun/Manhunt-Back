@@ -18,19 +18,15 @@ class BoardController(@Autowired val boardService: BoardService) {
 
     @PostMapping("/main")
     fun readBoardList(
-        @RequestBody findBoardDTO: FindBoardDTO,
-        @RequestParam page: Int,
-        @RequestParam pageSize: Int
+        @RequestBody findBoardDTO: FindBoardDTO
     ): ResponseEntity<Any> {
         //pageNum과 pageSize는 양의 정수
-        if (page <= 0) {
+        if (findBoardDTO.page <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageNum가 일치하지 않습니다."))
         }
-        if (pageSize <= 0) {
+        if (findBoardDTO.pageSize <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageSize가 일치하지 않습니다."))
         }
-        findBoardDTO.page = page
-        findBoardDTO.pageSize = pageSize
         if (findBoardDTO.sortCriterion !in categoryMap.keys) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
