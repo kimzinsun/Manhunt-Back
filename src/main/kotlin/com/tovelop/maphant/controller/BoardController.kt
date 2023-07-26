@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
+    val categoryMap = mapOf("createdAt" to "created_at", "likeCnt" to "like_cnt")
+
     @PostMapping("/main")
     fun readBoardList(
         @RequestBody findBoardDTO: FindBoardDTO,
         @RequestParam page: Int,
         @RequestParam pageSize: Int
     ): ResponseEntity<Any> {
-         //pageNum과 pageSize는 양의 정수
+        //pageNum과 pageSize는 양의 정수
         if (page <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageNum가 일치하지 않습니다."))
         }
@@ -29,16 +31,16 @@ class BoardController(@Autowired val boardService: BoardService) {
         }
         findBoardDTO.page = page
         findBoardDTO.pageSize = pageSize
-        /*if (sortCriterion < 1 || sortCriterion > 3) {
+        if (findBoardDTO.sortCriterion !in categoryMap.keys) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
-        }*/
-        /*if() {
+        }
+        if (!boardService.isInCategory(findBoardDTO.category) || !boardService.isInBoardtype(findBoardDTO.boardType)) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 카테고리나 게시판 유형입니다."))
-        }*/
+        }
         val boardList = boardService.findBoardList(findBoardDTO)
-        return if(boardList.isEmpty()) {
+        return if (boardList.isEmpty()) {
             ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         } else {
             ResponseEntity.ok().body(Response.success(boardList))
@@ -144,7 +146,8 @@ class BoardController(@Autowired val boardService: BoardService) {
     }
 
     @GetMapping("/search")
-    fun searchBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
+    fun searchBoard(@RequestParam content:String): ResponseEntity<ResponseUnit> {
+        boardService.findBoardByKeyword(content)
         // 검색어가 포함된 게시글 읽어오기
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
