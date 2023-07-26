@@ -23,14 +23,4 @@ class TestSignInController {
 
         return ResponseEntity.unprocessableEntity().body(Response.error("Invalid credentials"))
     }
-
-    @GetMapping("")
-    fun getUser(): ResponseEntity<Response<UserDataDTO>> {
-        val auth = SecurityContextHolder.getContext().authentication
-        if(auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
-            return ResponseEntity.ok(Response.success(auth.getUserData()))
-        }
-
-        return ResponseEntity.unprocessableEntity().body(Response.error("Invalid credentials"))
-    }
 }
