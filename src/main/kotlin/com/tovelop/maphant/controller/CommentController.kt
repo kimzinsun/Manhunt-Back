@@ -1,8 +1,6 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.CommentDTO
-import com.tovelop.maphant.dto.CommentRequest
-import com.tovelop.maphant.dto.ReportComment
 import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -14,6 +12,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/comment")
 class CommentController(@Autowired val commentService: CommentService) {
+
+    data class CommentRequest(
+        val userId: Int,
+        val commentId: Int,
+        val reportId: Int?
+    )
 
     @GetMapping("/list/{boardId}")
     fun findAllComment(@PathVariable boardId: Int): ResponseEntity<Response<List<CommentDTO>>> {
@@ -98,8 +102,11 @@ class CommentController(@Autowired val commentService: CommentService) {
     }
 
     @PostMapping("/report")
-    fun insertCommentReport(@RequestBody reportComment: ReportComment): ResponseEntity<ResponseUnit> {
-        commentService.insertCommentReport(reportComment.userId, reportComment.commentId, reportComment.reportReason)
+    fun insertCommentReport(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
+        if (commentService.findCommentReport(commentRequest.userId, commentRequest.commentId) != null) {
+            return ResponseEntity.badRequest().body(Response.error("이미 신고한 댓글입니다."))
+        }
+        commentService.insertCommentReport(commentRequest.userId, commentRequest.commentId, commentRequest.reportId!!)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 

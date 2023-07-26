@@ -18,6 +18,6 @@ interface CommentMapper {
     fun cntCommentLike(commentId: Int): Int
     fun deleteCommentLike(userId: Int, commentId: Int)
     fun insertCommentReport(userId: Int, commentId: Int, reportId: Int)
-    fun findCommentReport(userId: Int, commentId: Int): List<CommentReportDTO>
+    fun findCommentReport(userId: Int, commentId: Int): List<CommentReportDTO>?
     fun getCommentById(commentId: Int): CommentDTO?
 }
