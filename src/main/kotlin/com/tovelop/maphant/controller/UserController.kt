@@ -144,16 +144,6 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/login")
-    fun login(@RequestBody login: LoginDTO): ResponseEntity<ResponseUnit> {
-        //ID, PW DB 체크
-        if (true /*입력받은 이메일, 비밀번호 DB에 있는 정보와 동일한 지 확인 */) {
-            return ResponseEntity.badRequest().body(Response.error("이메일, 비밀번호를 확인해주세요."))
-        }
-
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-
     //개인정보 수정 페이지 접근 전, 본인 확인 절차: 비밀번호 확인
     @PostMapping("/changeinfo/identification")
     fun identification(@RequestBody identificationDTO: IdentificationDTO): ResponseEntity<ResponseUnit> {
