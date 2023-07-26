@@ -69,8 +69,18 @@
             from (select *
                 from board
                 where category_id = #{categoryId} and type_id = #{boardTypeId}
-                order by #{sortCriterion})
-            limit #{pageSize} offset #{startRow})
+                order by #{findBoardDTO.sortCriterion}) as board
+            limit #{findBoardDTO.pageSize} offset #{startRow}) as
             boards join user on boards.user_id = user.id
+    </select>
+    <select id="isInCategory" resultType="String">
+        select category
+        from board
+        where category = #{category}
+    </select>
+    <select id="isInBoardtype" resultType="String">
+        select name
+        from board_type
+        where name = #{boardType}
     </select>
 </mapper>
