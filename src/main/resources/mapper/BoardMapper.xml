@@ -61,7 +61,7 @@
     <select id="findBoardByKeyword" resultType="BoardDTO">
         select *
         from board
-        where title like CONCAT('%',#{keyword},'%') or body like CONCAT('%',#{keyword},'%')
+        where lower(title) like lower(CONCAT('%',#{keyword},'%')) or lower(body) like lower(CONCAT('%',#{keyword},'%'))
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
         select pageBoards.board_id, pageBoards.title, pageBoards.created_at, pageBoards.modified_at, pageBoards.nickname, pageBoards.comment_cnt, pageBoards.like_cnt, pageBoards.is_anonymous, pageBoards.is_hide, board_like.user_id
