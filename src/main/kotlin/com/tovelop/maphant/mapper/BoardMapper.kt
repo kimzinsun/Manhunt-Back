@@ -24,4 +24,5 @@ interface BoardMapper {
     fun findBoardByKeyword(keyword: String): List<BoardDTO>
     fun isInCategory(category: String): Int?
     fun isInBoardtype(boardType: String): String?
+    fun findBoardLike(boardId: Int, userId: Int): BoardLikeDTO
 }

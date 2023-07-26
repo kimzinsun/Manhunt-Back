@@ -83,4 +83,9 @@
         from board_type
         where name = #{boardType}
     </select>
+    <select id="findBoardLike" resultType="BoardLikeDTO">
+        select *
+        from board_like
+        where board_id = #{boardId} and user_id = #{userId}
+    </select>
 </mapper>

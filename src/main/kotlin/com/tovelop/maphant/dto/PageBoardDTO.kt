@@ -3,7 +3,7 @@ package com.tovelop.maphant.dto
 import java.time.LocalDateTime
 
 data class PageBoardDTO(
-    val boardId : String,
+    val boardId : Int,
     val title: String,
     val createdAt: LocalDateTime,
     val modifiedAt : LocalDateTime?,
@@ -11,5 +11,6 @@ data class PageBoardDTO(
     val commentCnt: Int,
     val likeCnt: Int,
     val isAnonymous: Int,
-    val isHide: Int
+    val isHide: Int,
+    var isLike: Boolean?
 )

@@ -1,9 +1,6 @@
 package com.tovelop.maphant.service
 
-import com.tovelop.maphant.dto.BoardDTO
-import com.tovelop.maphant.dto.FindBoardDTO
-import com.tovelop.maphant.dto.PageBoardDTO
-import com.tovelop.maphant.dto.UpdateBoardDTO
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -18,18 +15,22 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return boardMapper.getCategoryIdByCategoryName(categoryName)
     }
 
-    fun findBoardList(findBoardDTO: FindBoardDTO): List<PageBoardDTO> {
+    fun findBoardList(findBoardDTO: FindBoardDTO, userId: Int): List<PageBoardDTO> {
         val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
         val categoryId = boardMapper.getCategoryIdByCategoryName(findBoardDTO.category)
         val boardTypeId = boardMapper.getBoardTypeIdByBoardTypeName(findBoardDTO.boardType)
-        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId, boardTypeId);
+        val pageBoardDTOList = boardMapper.findBoardList(findBoardDTO, startRow, categoryId, boardTypeId);
+        return pageBoardDTOList.map {
+            it.isLike = findBoardLike(it.boardId, userId)
+            it
+        }
     }
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
     }
 
-    fun findBoard(boardId: Int): BoardDTO? {
-        return boardMapper.findBoard(boardId)
+    fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
+        return boardMapper.findBoard(boardId)?.toExtBoardDTO(findBoardLike(boardId, userId))
     }
 
     fun updateBoard(updateBoardDTO: UpdateBoardDTO) {
@@ -70,6 +71,11 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
     fun isInBoardtype(boardType: String): Boolean {
         return boardMapper.isInBoardtype(boardType) != null
+    }
+
+    fun findBoardLike(boardId: Int, userId: Int): Boolean{
+        val boardLikeDTO = boardMapper.findBoardLike(boardId, userId)
+        return boardLikeDTO!=null
     }
 }
 
