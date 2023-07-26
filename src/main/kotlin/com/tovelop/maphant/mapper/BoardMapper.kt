@@ -3,6 +3,7 @@ package com.tovelop.maphant.mapper
 import com.tovelop.maphant.dto.*
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Mapper
 @Repository
@@ -16,9 +17,11 @@ interface BoardMapper {
     fun deleteBoard(boardId: Int): Unit
     fun getIsHideByBoardId(boardId: Int): Int?
     fun getUserIdByBoardId(boardId: Int): Int?
-    fun isModified(boardId: Int): BoardTimeDTO
+    fun isModified(boardId: Int): LocalDateTime
     fun insertBoardLike(boardId: Int, userId: Int)
     fun deleteBoardLike(boardId: Int, userId: Int)
     fun insertBoardReport(boardId: Int, userId: Int, reportId: Int)
     fun findBoardByKeyword(keyword: String): List<BoardDTO>
+    fun isInCategory(category: String): Int?
+    fun isInBoardtype(boardType: String): String?
 }

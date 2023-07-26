@@ -49,8 +49,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return boardMapper.getUserIdByBoardId(boardId)
     }
     fun isModified(boardId: Int): Boolean {
-        val boardTimeDTO = boardMapper.isModified(boardId)
-        return boardTimeDTO.createAt == boardTimeDTO.modifiedAt
+        val isModified = boardMapper.isModified(boardId)
+        return isModified!=null
     }
     fun insertBoardLike(boardId: Int, userId: Int) {
         boardMapper.insertBoardLike(boardId, userId)
@@ -63,6 +63,13 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
     fun findBoardByKeyword(keyword: String): List<BoardDTO> {
         return boardMapper.findBoardByKeyword(keyword)
+    }
+    fun isInCategory(category: String): Boolean {
+
+        return boardMapper.isInCategory(category) != null
+    }
+    fun isInBoardtype(boardType: String): Boolean {
+        return boardMapper.isInBoardtype(boardType) != null
     }
 }
 

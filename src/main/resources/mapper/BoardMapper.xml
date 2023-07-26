@@ -15,7 +15,7 @@
     </select>
     <insert id="insertBoard">
         INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete, is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
-        VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), NOW(), #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
+        VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), null, #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
     </insert>
     <select id="findBoard" resultType="BoardDTO">
         select *
@@ -42,8 +42,8 @@
         from board
         where id = #{boardId}
     </select>
-    <select id="isModified" resultType="BoardTimeDTO">
-        select created_at, modified_at
+    <select id="isModified" resultType="java.time.LocalDateTime">
+        select modified_at
         from board
         where id = #{boardId}
     </select>
@@ -64,13 +64,23 @@
         where title like '%'+#{keyword}+'%' or body like '%'+#{keyword}+'%'
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
-        select title, created_at, user.nickname, comment_cnt, like_cnt
+        select boards.id, title, boards.created_at, modified_at, user.nickname, comment_cnt, like_cnt, is_hide, is_anonymous
         from (select *
             from (select *
                 from board
                 where category_id = #{categoryId} and type_id = #{boardTypeId}
-                order by #{sortCriterion})
-            limit #{pageSize} offset #{startRow})
+                order by #{findBoardDTO.sortCriterion}) as board
+            limit #{findBoardDTO.pageSize} offset #{startRow}) as
             boards join user on boards.user_id = user.id
+    </select>
+    <select id="isInCategory" resultType="Int">
+        select id
+        from category
+        where name = #{category}
+    </select>
+    <select id="isInBoardtype" resultType="String">
+        select name
+        from board_type
+        where name = #{boardType}
     </select>
 </mapper>
