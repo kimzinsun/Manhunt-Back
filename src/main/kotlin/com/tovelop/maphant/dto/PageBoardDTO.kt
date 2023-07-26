@@ -9,5 +9,7 @@ data class PageBoardDTO(
     val modifiedAt : LocalDateTime?,
     val userNickname: String,
     val commentCnt: Int,
-    val likeCnt: Int
+    val likeCnt: Int,
+    val isAnonymous: Int,
+    val isHide: Int
 )
