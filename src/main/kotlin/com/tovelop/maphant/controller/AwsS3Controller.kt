@@ -7,18 +7,20 @@ import com.tovelop.maphant.service.AwsS3Service
 import com.tovelop.maphant.service.UploadLogService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MaxUploadSizeExceededException
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
+@RequestMapping("/image")
 class AwsS3Controller(
     private val awsS3Service: AwsS3Service,
     private val uploadLogService: UploadLogService
 ) {
 
-    @PostMapping("/upload")
+    @PostMapping
     fun uploadFile(@RequestParam files: List<MultipartFile>): List<UploadLogDTO> {
 
         if (files.size > 5) {
