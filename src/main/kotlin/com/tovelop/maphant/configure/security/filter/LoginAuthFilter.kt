@@ -14,7 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
 
 class LoginAuthFilter(authenticationManager: AuthenticationManager?)
-    :AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/login", "POST"), authenticationManager) {
+    :AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POST"), authenticationManager) {
 
     private val objectMapper = ObjectMapper()
 

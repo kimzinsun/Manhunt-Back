@@ -21,18 +21,15 @@ class TokenAuthProvider(
         val token = authentication as TokenAuthToken
 
         if(token.isExpired()) {
-//            throw SecurityException("Token expired")
             throw BadCredentialsException("Token expired")
         }
 
         val principal = token.principal
         val credentials = token.credentials
 
-//        val userToken = redis.get(principal) ?: throw SecurityException("No user")
-        val userToken = redis.get(principal) ?: throw BadCredentialsException("No user")
+        val userToken = redis.get("LOGIN_AUTH|${principal}") ?: throw BadCredentialsException("No user")
 
         if(credentials.third != token.createToken(credentials.second, userToken.substringBefore('|'))) {
-//            throw SecurityException("Invalid token")
             throw BadCredentialsException("Invalid token")
         }
 
