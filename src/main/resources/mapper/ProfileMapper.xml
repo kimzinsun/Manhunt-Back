@@ -30,7 +30,7 @@
             INNER JOIN board_type ON board.id = board_type.id
         WHERE user_id = #{userId}
     </select>
-    
+
     <update id="updateProfileImage">
         UPDATE profile
         SET profile_img = #{imageUrl}
@@ -43,18 +43,19 @@
     </insert>
 
     <select id="findAllBoardByIdWithPaging" resultType="BoardDTO">
-        SELECT categoryId,
-               userId,
-               postId,
-               type,
+        SELECT category_id as categoryId,
+               user_id as userId,
+               board.id as postId,
+               board_type.name as type,
                title,
                body,
                state,
-               isAnonnymous,
-               creatAt,
-               modifiedAt
+               is_anonymous as isAnonymous,
+               created_at as createAt,
+               modified_at as modifiedAt
         FROM board
-        WHERE userId = #{user_id}
+                 INNER JOIN board_type ON board.id = board_type.id
+        WHERE user_id = #{userId}
         ORDER BY created_at
         LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
@@ -62,7 +63,7 @@
     <select id="getBoardCount">
         SELECT COUNT(*)
         FROM board
-        WHERE userId = #{user_id}
+        WHERE user_id = #{userId}
     </select>
 
 </mapper>

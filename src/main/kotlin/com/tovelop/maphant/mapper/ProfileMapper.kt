@@ -25,7 +25,7 @@ interface ProfileMapper {
     //회원의 모든 작성글 목록 불러오기(board로 옮겨야함)
     fun findAllBoardsById(userId:Int): List<BoardDTO>
 
-    fun findAllBoardByIdWithPaging(userId: Int, pagingDto: PagingDto): List<BoardDTO>
+    fun findAllBoardByIdWithPaging(userId: Int, params: PagingDto): List<BoardDTO>
 
     //회원의 모든 작성 댓글 목록 불러오기(comment로 옮겨야함)
     fun findAllCommentsById(userId: Int)
