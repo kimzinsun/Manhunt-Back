@@ -61,9 +61,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun findBoardByKeyword(keyword: String): List<BoardDTO> {
         return boardMapper.findBoardByKeyword(keyword)
     }
-    fun isInCategory(category: String): Boolean {
-
-        return boardMapper.isInCategory(category) != null
+    fun isInCategory(categoryId: Int): Boolean {
+        return boardMapper.isInCategory(categoryId) != null
     }
     fun isInBoardtype(boardType: String): Boolean {
         return boardMapper.isInBoardtype(boardType) != null

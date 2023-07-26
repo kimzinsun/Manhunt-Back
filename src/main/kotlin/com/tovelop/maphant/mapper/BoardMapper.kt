@@ -22,7 +22,7 @@ interface BoardMapper {
     fun deleteBoardLike(boardId: Int, userId: Int)
     fun insertBoardReport(boardId: Int, userId: Int, reportId: Int)
     fun findBoardByKeyword(keyword: String): List<BoardDTO>
-    fun isInCategory(category: String): Int?
+    fun isInCategory(categoryId: Int): String?
     fun isInBoardtype(boardType: String): String?
     fun findBoardLike(boardId: Int, userId: Int): BoardLikeDTO //수정 필요
 }
