@@ -19,21 +19,14 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
         val categoryId = boardMapper.getCategoryIdByCategoryName(findBoardDTO.category)
         val boardTypeId = boardMapper.getBoardTypeIdByBoardTypeName(findBoardDTO.boardType)
-        val pageBoardDTOList = boardMapper.findBoardList(findBoardDTO, startRow, categoryId, boardTypeId);
-
-        val boardIdList = pageBoardDTOList.map { it.boardId }
-        val isLikeList = findBoardLike(boardIdList, List(boardIdList.size) { userId })
-        for (i in pageBoardDTOList.indices){
-            pageBoardDTOList[i].isLike = isLikeList[i]
-        }
-        return pageBoardDTOList
+        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId, boardTypeId);
     }
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
     }
 
     fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
-        return boardMapper.findBoard(boardId)?.toExtBoardDTO(findBoardLike(listOf(boardId), listOf(userId))[0])
+        return boardMapper.findBoard(boardId)?.toExtBoardDTO(findBoardLike(boardId, userId))
     }
 
     fun updateBoard(updateBoardDTO: UpdateBoardDTO) {
@@ -76,9 +69,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return boardMapper.isInBoardtype(boardType) != null
     }
 
-    fun findBoardLike(boardIdList: List<Int>, userIdList: List<Int>): BooleanArray{
-        val boardLikeDTO = boardMapper.findBoardLike(boardIdList, userIdList)
-        return boardLikeDTO.map { it!=null }.toBooleanArray()
+    fun findBoardLike(boardId: Int, userId: Int): Boolean{
+        val boardLikeDTO = boardMapper.findBoardLike(boardId, userId)
+        return boardLikeDTO!=null
     }
 }
 

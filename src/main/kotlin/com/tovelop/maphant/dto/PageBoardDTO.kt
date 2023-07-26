@@ -12,5 +12,5 @@ data class PageBoardDTO(
     val likeCnt: Int,
     val isAnonymous: Int,
     val isHide: Int,
-    var isLike: Boolean?
+    var isLike: Int?
 )
