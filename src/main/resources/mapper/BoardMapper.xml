@@ -69,7 +69,7 @@
             from (select board.id as board_id, board.title, board.created_at, board.modified_at, board.user_id, board.comment_cnt, board.like_cnt, board.is_hide, board.is_anonymous
                 from (select *
                     from board
-                    where category_id = #{categoryId} and type_id = #{boardTypeId}
+                    where category_id = #{categoryId} and type_id = #{boardTypeId} and state = 0
                     order by #{findBoardDTO.sortCriterion}) as board
                 limit #{findBoardDTO.pageSize} offset #{startRow}) as
                 boards join user on boards.user_id = user.id) as
