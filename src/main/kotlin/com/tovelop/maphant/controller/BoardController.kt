@@ -152,22 +152,12 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun searchBoard(@RequestParam content:String): Any {
         val searchBoard = boardService.findBoardByKeyword(content)
         // 검색어가 포함된 게시글 읽어오기
-        print("content: $content")
-        print("searchBoard: $searchBoard")
         if(searchBoard.isEmpty()){
             return ResponseEntity.badRequest().body(Response.error<Unit>("검색 결과가 없습니다."))
         }
         // return: json
         return ResponseEntity.ok(Response.success(searchBoard))
     }
-    @GetMapping("/my")
-    fun readMyBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
-        // 내가 쓴 게시글 읽어오기
-
-        // return: json
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-
     @PostMapping("/report")
     fun reportBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
         // 신고하기
