@@ -74,7 +74,7 @@
             boards join user on boards.user_id = user.id
     </select>
     <select id="isInCategory" resultType="Int">
-        select category_id
+        select id
         from category
         where name = #{category}
     </select>
