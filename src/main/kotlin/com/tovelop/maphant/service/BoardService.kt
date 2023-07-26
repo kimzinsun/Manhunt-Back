@@ -15,9 +15,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return boardMapper.getCategoryIdByCategoryName(categoryName)
     }
 
-    fun findBoardList(findBoardDTO: FindBoardDTO, userId: Int): List<PageBoardDTO> {
+    fun findBoardList(findBoardDTO: FindBoardDTO, userId: Int, categoryId: Int): List<PageBoardDTO> {
         val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
-        val categoryId = boardMapper.getCategoryIdByCategoryName(findBoardDTO.category)
         val boardTypeId = boardMapper.getBoardTypeIdByBoardTypeName(findBoardDTO.boardType)
         return boardMapper.findBoardList(findBoardDTO, startRow, categoryId, boardTypeId);
     }
