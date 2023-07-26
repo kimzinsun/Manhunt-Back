@@ -75,10 +75,10 @@
                 boards join user on boards.user_id = user.id) as
             pageBoards left outer join board_like on pageBoards.board_id = board_like.board_id and pageBoards.user_id = board_like.user_id
     </select>
-    <select id="isInCategory" resultType="Int">
-        select id
+    <select id="isInCategory" resultType="String">
+        select name
         from category
-        where name = #{category}
+        where id = #{categoryId}
     </select>
     <select id="isInBoardtype" resultType="String">
         select name
