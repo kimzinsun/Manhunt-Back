@@ -45,4 +45,12 @@
             from comment_report
         )
     </update>
+    <update id="setUserSanction">
+        update user
+        set state = 2
+        where id = (
+            select user_id
+            from user_report
+        )
+    </update>
 </mapper>

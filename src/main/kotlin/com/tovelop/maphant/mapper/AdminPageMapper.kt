@@ -9,4 +9,5 @@ interface AdminPageMapper {
     fun setBoardReport(boardId: Int)
     fun findCommentReport()
     fun setCommentReport(commentId: Int)
+    fun setUserSanction(userId: Int)
 }

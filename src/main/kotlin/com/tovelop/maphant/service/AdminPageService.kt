@@ -29,5 +29,7 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper) {
     fun setCommentReport(commentId: Int) {
         adminPageMapper.setBoardReport(commentId)
     }
-
+    fun setUserSanction(userId: Int) { //sanction = 제재
+        adminPageMapper.setUserSanction(userId)
+    }
 }
