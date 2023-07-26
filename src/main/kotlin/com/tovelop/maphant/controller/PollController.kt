@@ -16,6 +16,7 @@ class PollController(val pollService: PollService) {
     @ResponseBody
     fun getPoll(@PathVariable("board_id") boardId: Int) =
         mutableMapOf("poll_id" to pollService.getPollIdByBoardId(boardId))
+
     @PostMapping("/") // 투표 생성
     fun createPoll(@RequestBody poll: PollDTO): ResponseEntity<Any> {
         pollService.createPoll(poll)
@@ -35,5 +36,18 @@ class PollController(val pollService: PollService) {
         }
 
         return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
+
+    @GetMapping("/my-poll/{poll_id}")
+    @ResponseBody
+    fun pollInfo(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
+        val optionList = pollService.getPoll(pollId)
+
+        if (optionList.isFailure) {
+            return ResponseEntity.badRequest().body(
+                Response.error<Any>("Parse Error")
+            )
+        }
+        return ResponseEntity.ok().body(Response.success(optionList.getOrNull()))
     }
 }

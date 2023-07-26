@@ -25,4 +25,6 @@ interface PollMapper {
 
     fun getPollIdByBoardId(boardId: Int): Int
 
+    fun selectPollInfoById(pollId: Int): List<Map<String, Int>>
+
 }
