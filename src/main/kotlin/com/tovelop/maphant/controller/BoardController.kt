@@ -165,4 +165,11 @@ class BoardController(@Autowired val boardService: BoardService) {
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
+    @PostMapping("/complete")
+    fun completeBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
+        // 채택하기
+        // boardService.completePost(post.postId)
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
 }
