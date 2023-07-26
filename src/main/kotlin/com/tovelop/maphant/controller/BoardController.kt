@@ -39,7 +39,8 @@ class BoardController(@Autowired val boardService: BoardService) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 카테고리나 게시판 유형입니다."))
         }
-        val boardList = boardService.findBoardList(findBoardDTO, auth.getUserData().categoryId,auth.getUserData().id)
+        val boardList = boardService.findBoardList(findBoardDTO,auth.getUserData().id,auth.getUserData().categoryId)
+        print(auth.getUserData().categoryId)
         return if (boardList.isEmpty()) {
             ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         } else {
