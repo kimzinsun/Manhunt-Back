@@ -20,9 +20,6 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun readBoardList(
         @RequestBody findBoardDTO: FindBoardDTO
     ): ResponseEntity<Any> {
-//        if(boardType !in boardService.boardTypeList){
-//            return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 게시판 유형입니다."))
-//        }
         val auth = SecurityContextHolder.getContext().authentication
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
@@ -38,11 +35,11 @@ class BoardController(@Autowired val boardService: BoardService) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
         }
-        if (!boardService.isInCategory(findBoardDTO.category) || !boardService.isInBoardtype(findBoardDTO.boardType)) {
+        if (!boardService.isInCategory(auth.getUserData().categoryId) || !boardService.isInBoardtype(findBoardDTO.boardType)) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 카테고리나 게시판 유형입니다."))
         }
-        val boardList = boardService.findBoardList(findBoardDTO, auth.getUserData().id)
+        val boardList = boardService.findBoardList(findBoardDTO, auth.getUserData().categoryId,auth.getUserData().id)
         return if (boardList.isEmpty()) {
             ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         } else {
@@ -158,17 +155,10 @@ class BoardController(@Autowired val boardService: BoardService) {
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-
-    @GetMapping("/category")
-    fun readCategory(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
-        // 장르별 게시글 읽어오기
-        // return: json
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-
     @GetMapping("/my")
     fun readMyBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
         // 내가 쓴 게시글 읽어오기
+
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
