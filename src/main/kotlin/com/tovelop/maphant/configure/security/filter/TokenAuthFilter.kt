@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class TokenAuthFilter(authenticationManager: AuthenticationManager?)
     : AbstractAuthenticationProcessingFilter("/**", authenticationManager) {
@@ -36,17 +38,18 @@ class TokenAuthFilter(authenticationManager: AuthenticationManager?)
         // pubKey
         val headerAuth = request?.getHeader("x-auth") ?: throw BadCredentialsException("No auth header")
 
-        // time stamp
+        // epoch time stamp
         val headerTS = request.getHeader("x-timestamp") ?: throw BadCredentialsException("No timestamp header")
 
         // privKey * timestamp
         val headerSign = request.getHeader("x-sign") ?: throw BadCredentialsException("No sign header")
 
-
-//        val epoch = System.currentTimeMillis() / 1000
-//        if(epoch - headerTS > 60) {
-//            throw SecurityException("Timestamp expired")
-//        }
+        if(headerAuth != "maphant@pubKey") {
+            val epoch = System.currentTimeMillis() / 1000
+            if(epoch - headerTS.toInt() > 60) {
+                throw BadCredentialsException("Timestamp expired")
+            }
+        }
 
         val authReq = TokenAuthToken(headerAuth, headerTS.toInt(), headerSign)
 
