@@ -42,7 +42,7 @@
         from board
         where id = #{boardId}
     </select>
-    <select id="isModified" resultType="LocalDateTime">
+    <select id="isModified" resultType="java.time.LocalDateTime">
         select modified_at
         from board
         where id = #{boardId}
