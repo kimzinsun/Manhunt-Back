@@ -1,6 +1,7 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.BoardDTO
+import com.tovelop.maphant.dto.BoardResDto
 import com.tovelop.maphant.dto.ProfileImageDto
 import com.tovelop.maphant.dto.UploadLogDTO
 import com.tovelop.maphant.mapper.ProfileMapper
@@ -27,7 +28,7 @@ class ProfileService (
     }
 
     //유저가 작성한 글 목록 불러오기
-    fun getBoardsList(userId: Int, params: PagingDto):PagingResponse<BoardDTO>{
+    fun getBoardsList(userId: Int, params: PagingDto):PagingResponse<BoardResDto>{
         //getBoardCount xml 구현
         val count = profileMapper.getBoardCount(userId);
 

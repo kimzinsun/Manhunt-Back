@@ -7,6 +7,7 @@ import com.tovelop.maphant.dto.RoomListResultDto
 import com.tovelop.maphant.service.DmService
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.SuccessResponse
+import jakarta.validation.Valid
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
@@ -25,7 +26,7 @@ class RoomController(private val dmService: DmService) {
 
     @GetMapping("/{roomId}")
     fun getDmList(
-        @ModelAttribute params: PagingDto,
+        @ModelAttribute @Valid params: PagingDto,
         @PathVariable("roomId") roomId: Int
     ): SuccessResponse<PagingResponse<ResultDmDto>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken

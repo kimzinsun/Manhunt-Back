@@ -15,20 +15,26 @@
             ON profile.user_id = user.id
         WHERE user.id = #{user_id}
     </select>
-    <select id="findAllPostsById" resultType="BoardDto">
-        SELECT category_id as categoryId,
-               user_id as userId,
-               board.id as postId,
+    <select id="findAllPostsById" resultType="BoardResDto">
+        SELECT
+               board.id as id,
+               category_id,
+               user_id,
                board_type.name as type,
                title,
                body,
-               state,
-               is_anonymous as isAnonymous,
-               created_at as createAt,
-               modified_at as modifiedAt
+               is_hide,
+               is_complete,
+               is_anonymous,
+               created_at,
+               modified_at,
+               comment_cnt,
+               like_cnt,
+               report_cnt,
+               images_url
         FROM board
             INNER JOIN board_type ON board.id = board_type.id
-        WHERE user_id = #{userId}
+        WHERE user_id = #{userId} AND board.state = 0
     </select>
 
     <update id="updateProfileImage">
@@ -42,17 +48,23 @@
         VALUES (#{userId}, #{imageUrl})
     </insert>
 
-    <select id="findAllBoardByIdWithPaging" resultType="BoardDTO">
-        SELECT category_id as categoryId,
-               user_id as userId,
-               board.id as postId,
-               board_type.name as type,
-               title,
-               body,
-               state,
-               is_anonymous as isAnonymous,
-               created_at as createAt,
-               modified_at as modifiedAt
+    <select id="findAllBoardByIdWithPaging" resultType="BoardResDto">
+        SELECT
+            board.id as id,
+            category_id,
+            user_id,
+            board_type.name as type,
+            title,
+            body,
+            is_hide,
+            is_complete,
+            is_anonymous,
+            created_at,
+            modified_at,
+            comment_cnt,
+            like_cnt,
+            report_cnt,
+            images_url
         FROM board
                  INNER JOIN board_type ON board.id = board_type.id
         WHERE user_id = #{userId}

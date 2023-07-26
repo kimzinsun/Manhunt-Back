@@ -1,9 +1,6 @@
 package com.tovelop.maphant.mapper
 
-import com.tovelop.maphant.dto.BoardDTO
-import com.tovelop.maphant.dto.ProfileDto
-import com.tovelop.maphant.dto.ProfileImageDto
-import com.tovelop.maphant.dto.UploadLogDTO
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.response.SuccessResponse
 import org.apache.ibatis.annotations.Mapper
@@ -25,7 +22,7 @@ interface ProfileMapper {
     //회원의 모든 작성글 목록 불러오기(board로 옮겨야함)
     fun findAllBoardsById(userId:Int): List<BoardDTO>
 
-    fun findAllBoardByIdWithPaging(userId: Int, params: PagingDto): List<BoardDTO>
+    fun findAllBoardByIdWithPaging(userId: Int, params: PagingDto): List<BoardResDto>
 
     //회원의 모든 작성 댓글 목록 불러오기(comment로 옮겨야함)
     fun findAllCommentsById(userId: Int)
