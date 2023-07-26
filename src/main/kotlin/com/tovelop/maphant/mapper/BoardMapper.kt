@@ -22,6 +22,6 @@ interface BoardMapper {
     fun deleteBoardLike(boardId: Int, userId: Int)
     fun insertBoardReport(boardId: Int, userId: Int, reportId: Int)
     fun findBoardByKeyword(keyword: String): List<BoardDTO>
-    fun isInCategory(category: String): Boolean
-    fun isInBoardtype(boardType: String): Boolean
+    fun isInCategory(category: String): Int
+    fun isInBoardtype(boardType: String): String
 }
