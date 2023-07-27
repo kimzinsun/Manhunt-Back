@@ -21,11 +21,11 @@ data class SignupDTO(
             name = name,
             phNum = null,
             sno = sno,
-            createdAt = LocalDate.now(),
+//            createdAt = LocalDate.now(),
             role = "user",
             state = 0,
-            agreedAt = LocalDate.now(),
-            lastmodifiedAt = LocalDate.now(),
+//            agreedAt = LocalDate.now(),
+//            lastmodifiedAt = LocalDate.now(),
             univId = univId
         )
     }

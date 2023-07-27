@@ -1,6 +1,7 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.PasswordEncoderBcrypt
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
@@ -10,16 +11,24 @@ import com.tovelop.maphant.utils.ValidationHelper
 import com.tovelop.maphant.utils.isSuccess
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
 class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid) {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
+
+    @GetMapping("")
+    fun getUser(): ResponseEntity<Response<UserDataDTO>> {
+        val auth = SecurityContextHolder.getContext().authentication
+        if(auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
+            return ResponseEntity.ok(Response.success(auth.getUserData()))
+        }
+
+        return ResponseEntity.unprocessableEntity().body(Response.error("Invalid credentials"))
+    }
 
     //이메일 검증 api
     @PostMapping("/validation/email")
@@ -115,6 +124,11 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return nicknameValidation
         }
 
+        val passwordValidation = validationPassword(ValidationSignupDTO(password = signupDTO.password))
+        if (!passwordValidation.isSuccess()){
+            return ResponseEntity.badRequest().body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+        }
+
         val passwordChkValidation = validationPasswordCheck(
             ValidationSignupDTO(
                 password = signupDTO.password, passwordCheck = signupDTO.passwordCheck
@@ -136,16 +150,6 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         sendGrid.sendSignUp(signupDTO.email)
         userService.signUp(signupDTO.toUserDTO(univId, passwordEncoder))
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-
-    @PostMapping("/login")
-    fun login(@RequestBody login: LoginDTO): ResponseEntity<ResponseUnit> {
-        //ID, PW DB 체크
-        if (true /*입력받은 이메일, 비밀번호 DB에 있는 정보와 동일한 지 확인 */) {
-            return ResponseEntity.badRequest().body(Response.error("이메일, 비밀번호를 확인해주세요."))
-        }
-
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
