@@ -24,7 +24,7 @@ class LoginAuthFilter(authenticationManager: AuthenticationManager?)
             run {
                 val authResult = authentication as LoginAuthToken
                 val output = mutableMapOf<String, Any>(
-                    "status" to true,
+                    "success" to true,
                     "pubKey" to authResult.principal,
                     "privKey" to authResult.credentials,
                 )
@@ -36,7 +36,7 @@ class LoginAuthFilter(authenticationManager: AuthenticationManager?)
         this.setAuthenticationFailureHandler { request, response, exception ->
             run {
                 val output = mutableMapOf<String, Any>(
-                    "status" to false,
+                    "success" to false,
                     "message" to (exception.message ?: "unexpected error")
                 )
 

@@ -1,6 +1,7 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.PasswordEncoderBcrypt
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
@@ -10,16 +11,24 @@ import com.tovelop.maphant.utils.ValidationHelper
 import com.tovelop.maphant.utils.isSuccess
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
 class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid) {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
+
+    @GetMapping("/")
+    fun getUser(): ResponseEntity<Response<UserDataDTO>> {
+        val auth = SecurityContextHolder.getContext().authentication
+        if(auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
+            return ResponseEntity.ok(Response.success(auth.getUserData()))
+        }
+
+        return ResponseEntity.unprocessableEntity().body(Response.error("Invalid credentials"))
+    }
 
     //이메일 검증 api
     @PostMapping("/validation/email")
