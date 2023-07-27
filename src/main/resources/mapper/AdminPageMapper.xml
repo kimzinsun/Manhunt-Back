@@ -6,7 +6,7 @@
     <select id="isAdmin" resultType="Int">
         select role
         from user
-        where role = "admin"
+        where role = 'admin'
     </select>
     <update id="setUserRole">
         update user
