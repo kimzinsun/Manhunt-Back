@@ -16,29 +16,26 @@
     <select id="findBoardReport" resultType="BoardDTO">
         select *
         from board
-        where id in (
-            select board_id
-            from board_report
-        )
+        where id in (select board_id
+                     from board_report)
     </select>
     <update id="setBoardReport">
         update board
         set state = 2
-        where id in (
-            select board_id
-            from board_report
-            where board_id in #{boardId}
-        )
+        where id in (select board_id
+                     from board_report
+                     where board_id in #{boardId})
     </update>
     <update id="setUserSanction">
-        insert into user_report(user_id, deadline_at, sanction_reason) values (#{userId}, #{deadlineAt}, #{sanctionReason});
+        insert into user_report(user_id, deadline_at, sanction_reason)
+        values (#{userId}, #{deadlineAt}, #{sanctionReason});
         update user
         set state = 2
         where id in
     </update>
-    <select id="findUserSanction" resultType="">
-        select
-        from user, user_report
-
+    <select id="findUserSanction">
+        select *
+        from user,
+             user_report
     </select>
 </mapper>
