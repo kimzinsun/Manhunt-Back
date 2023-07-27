@@ -41,7 +41,7 @@ class Security {
             it.disable()
         }
         http.authorizeHttpRequests { authorize -> authorize
-            .requestMatchers("/admin/**").hasRole("ADMIN")
+            .requestMatchers("/admin/**").hasRole("admin")
             .anyRequest().permitAll()
         }
 
