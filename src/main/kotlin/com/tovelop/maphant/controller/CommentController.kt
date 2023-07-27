@@ -1,11 +1,15 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.CommentDTO
+import com.tovelop.maphant.dto.CommentExtDTO
+import com.tovelop.maphant.dto.CommentLikeDTO
+import com.tovelop.maphant.dto.CommentReportDTO
 import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -19,8 +23,8 @@ class CommentController(@Autowired val commentService: CommentService) {
     )
 
     @GetMapping("/list/{boardId}")
-    fun findAllComment(@PathVariable boardId: Int): ResponseEntity<Response<List<CommentDTO>>> {
-        val comment = commentService.findAllComment(boardId)
+    fun findAllComment(@PathVariable boardId: Int): ResponseEntity<Response<List<CommentExtDTO>>> {
+        val comment = commentService.findAllComment(boardId, 1)
         return ResponseEntity.ok().body(Response.success(comment))
     }
 
@@ -50,10 +54,12 @@ class CommentController(@Autowired val commentService: CommentService) {
 
     @PostMapping("/update")
     fun updateComment(@RequestBody commentDTO: CommentDTO): ResponseEntity<ResponseUnit> {
-        if (commentService.getCommentById(commentDTO.id) == null) {
+        val original = commentService.getCommentById(commentDTO.id);
+
+        if (original == null) {
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
         }
-        if (commentService.getCommentById(commentDTO.id)!!.user_id != commentDTO.user_id) {
+        if (original.user_id != commentDTO.user_id) {
             return ResponseEntity.badRequest().body(Response.error("댓글 작성자만 수정할 수 있습니다."))
         }
         if (commentDTO.body.isBlank()) {
@@ -69,55 +75,66 @@ class CommentController(@Autowired val commentService: CommentService) {
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-    @PostMapping("/insert-like")
-    fun insertCommentLike(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
-        if (commentService.findCommentLike(commentRequest.userId, commentRequest.commentId) != null) {
-            return ResponseEntity.badRequest().body(Response.error("이미 좋아요를 누른 댓글입니다."))
+    @PostMapping("/like")
+    fun changeCommentLike(@RequestBody commentRequest: CommentRequest): ResponseEntity<Response<String>> {
+        if (commentService.getCommentById(commentRequest.commentId) == null) {
+            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
         }
-        commentService.insertCommentLike(commentRequest.userId, commentRequest.commentId)
-        return ResponseEntity.ok().body(Response.stateOnly(true))
+        return if (commentService.findCommentLike(
+                commentRequest.userId,
+                commentRequest.commentId
+            ) != emptyList<CommentLikeDTO>()
+        ) {
+            commentService.deleteCommentLike(commentRequest.userId, commentRequest.commentId)
+            ResponseEntity.ok().body(Response.success("좋아요를 취소했습니다."))
+        } else {
+            commentService.insertCommentLike(commentRequest.userId, commentRequest.commentId)
+            ResponseEntity.ok().body(Response.success("좋아요를 눌렀습니다."))
+        }
     }
 
-    @PostMapping("/find-like")
-    fun findCommentLike(@RequestBody commentRequest: CommentRequest): ResponseEntity<Response<Int>> {
-        commentService.findCommentLike(commentRequest.userId, commentRequest.commentId)
-        return ResponseEntity.ok().body(Response.success(commentRequest.commentId))
+    @GetMapping("/like")
+    fun findCommentLike(@RequestBody commentRequest: CommentRequest): ResponseEntity<Response<List<CommentLikeDTO>?>> {
+        val comment = commentService.findCommentLike(commentRequest.userId, commentRequest.commentId)
+        return ResponseEntity.ok().body(Response.success(comment))
     }
 
     @GetMapping("/cnt-like/{commentId}")
-    fun cntCommentLike(@PathVariable commentId: Int): ResponseEntity<ResponseUnit> {
+    fun cntCommentLike(@PathVariable commentId: Int): ResponseEntity<Response<Int>> {
         if (commentService.getCommentById(commentId) == null) {
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
         }
         commentService.cntCommentLike(commentId)
-        return ResponseEntity.ok().body(Response.stateOnly(true))
-    }
-
-    @PostMapping("/delete-like")
-    fun deleteCommentLike(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
-        if (commentService.findCommentLike(commentRequest.userId, commentRequest.commentId) == null) {
-            return ResponseEntity.badRequest().body(Response.error("좋아요를 누르지 않은 댓글입니다."))
-        }
-        commentService.deleteCommentLike(commentRequest.userId, commentRequest.commentId)
-        return ResponseEntity.ok().body(Response.stateOnly(true))
+        return ResponseEntity.ok().body(Response.success(commentService.cntCommentLike(commentId)))
     }
 
     @PostMapping("/report")
     fun insertCommentReport(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
-        if (commentService.findCommentReport(commentRequest.userId, commentRequest.commentId) != null) {
+        if (commentService.getCommentById(commentRequest.commentId) == null) {
+            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
+        }
+        if (commentService.findCommentReport(
+                commentRequest.userId,
+                commentRequest.commentId,
+                commentRequest.reportId!!
+            ) != emptyList<CommentReportDTO>()
+        ) {
             return ResponseEntity.badRequest().body(Response.error("이미 신고한 댓글입니다."))
         }
         if (commentRequest.reportId == null) {
             return ResponseEntity.badRequest().body(Response.error("신고 사유를 선택해주세요."))
         }
-        commentService.insertCommentReport(commentRequest.userId, commentRequest.commentId, commentRequest.reportId!!)
+        commentService.insertCommentReport(commentRequest.userId, commentRequest.commentId, commentRequest.reportId)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-    @PostMapping("/find-report")
-    fun findCommentReport(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
-        commentService.findCommentReport(commentRequest.userId, commentRequest.commentId)
-        return ResponseEntity.ok().body(Response.stateOnly(true))
+    @GetMapping("/report") // TODO : 출력 시 commentId 지울 수 있으면 지우기
+    fun findCommentReport(@RequestBody commentRequest: CommentRequest): ResponseEntity<Response<List<CommentReportDTO>?>> {
+        if (commentService.getCommentById(commentRequest.commentId) == null) {
+            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
+        }
+        val comment =
+            commentService.findCommentReport(commentRequest.userId, commentRequest.commentId, commentRequest.reportId!!)
+        return ResponseEntity.ok().body(Response.success(comment))
     }
-
 }
