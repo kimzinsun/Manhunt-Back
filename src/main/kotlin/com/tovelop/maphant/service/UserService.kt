@@ -15,7 +15,6 @@ class UserService(val mapper: UserMapper) {
             mapper.findMajorIdByMajorName(major)
         )
     }
-
     fun getAllCategories() = mapper.getAllCategories()
     fun getAllMajors() = mapper.getAllMajors()
     fun getAllUnivNames() = mapper.getAllUnivNames()
