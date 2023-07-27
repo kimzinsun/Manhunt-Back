@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper) {
-    fun isAdmin(userDTO: UserDTO): Boolean {
-        if(userDTO.role == "admin") return true
-        else return false
+class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService) {
 
+    
+    //추후 수정
+    fun updateUserState(email: String, state: Int){
+        userService.updateUserState(email, state)
     }
     fun setUserRole(role: String, id: Int) {
         adminPageMapper.setUserRole(role, id)
