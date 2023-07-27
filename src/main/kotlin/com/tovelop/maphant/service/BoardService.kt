@@ -82,6 +82,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         val isInboardId = boardMapper.isInBoardByBoardId(boardId)
         return isInboardId!=null
     }
+    fun updateBoardComplete(boardId: Int, userId: Int) {
+        boardMapper.updateBoardComplete(boardId, userId)
+    }
 }
 
 
