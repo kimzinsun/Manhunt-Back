@@ -6,8 +6,9 @@ interface AdminPageMapper {
     fun isAdmin(userDTO: UserDTO): Boolean
     fun setUserRole(role: String, id: Int)
     fun findBoardReport()
-    fun setBoardReport(boardId: Int)
+    fun setBoardSanction(boardId: Int)
     fun findCommentReport()
-    fun setCommentReport(commentId: Int)
+    fun setCommentSanction(commentId: Int)
+    fun findUserSanction()
     fun setUserSanction(userId: Int)
 }

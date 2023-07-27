@@ -2,9 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.AdminPageMapper
-import com.tovelop.maphant.type.response.Response
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
 
 class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper) {
     fun isAdmin(userDTO: UserDTO): Boolean {
@@ -20,14 +18,14 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper) {
     fun findBoardReport() {
         adminPageMapper.findBoardReport()
     }
-    fun setBoardReport(boardId: Int) {
-        adminPageMapper.setBoardReport(boardId)
+    fun insertBoardSanction(boardId: Int) {
+        adminPageMapper.setBoardSanction(boardId)
     }
     fun findCommentReport() {
         adminPageMapper.findBoardReport()
     }
-    fun setCommentReport(commentId: Int) {
-        adminPageMapper.setBoardReport(commentId)
+    fun insertCommentSanction(commentId: Int) {
+        adminPageMapper.setBoardSanction(commentId)
     }
     fun setUserSanction(userId: Int) { //sanction = 제재
         adminPageMapper.setUserSanction(userId)
