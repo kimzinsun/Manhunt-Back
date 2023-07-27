@@ -1,5 +1,6 @@
 package com.tovelop.maphant.controller
 
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.response.Response
@@ -11,12 +12,12 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/comment")
-class CommentController(@Autowired val commentService: CommentService) { // TODO : SecurityContextHolder.getContext().authentication
+class CommentController(@Autowired val commentService: CommentService) {
 
     data class CommentRequest(
         val userId: Int,
         val commentId: Int,
-        val reportId: Int?,
+        val reportId: Int?
     )
 
     @GetMapping("/list/{boardId}")
@@ -51,10 +52,12 @@ class CommentController(@Autowired val commentService: CommentService) { // TODO
 
     @PostMapping("/delete")
     fun deleteComment(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
-        if (commentService.getCommentById(commentRequest.commentId)?.state == 1) {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val current = commentService.getCommentById(commentRequest.commentId)!!
+        if (current.state == 1) {
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
         }
-        if (commentService.getCommentById(commentRequest.commentId)!!.user_id != commentRequest.userId) {
+        if ((current.user_id != auth.getUserData().id)) {
             return ResponseEntity.badRequest().body(Response.error("댓글 작성자만 삭제할 수 있습니다."))
         }
         commentService.deleteComment(commentRequest.userId, commentRequest.commentId)
@@ -63,12 +66,13 @@ class CommentController(@Autowired val commentService: CommentService) { // TODO
 
     @PostMapping("/update")
     fun updateComment(@RequestBody commentDTO: CommentDTO): ResponseEntity<ResponseUnit> {
-        val original = commentService.getCommentById(commentDTO.id);
+        val current = commentService.getCommentById(commentDTO.id)!!
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
 
-        if (original == null) {
+        if (current.state == 1) {
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
         }
-        if (original.user_id != commentDTO.user_id) {
+        if (current.user_id != commentDTO.user_id) {
             return ResponseEntity.badRequest().body(Response.error("댓글 작성자만 수정할 수 있습니다."))
         }
         if (commentDTO.body.isBlank()) {
