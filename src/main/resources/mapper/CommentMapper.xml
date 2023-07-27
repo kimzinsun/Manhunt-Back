@@ -3,17 +3,22 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.CommentMapper">
-    <select id="findAllComment" resultType="commentDTO">
+    <select id="findAllComment" resultType="CommentExtDTO">
         SELECT comment.id,
                comment.user_id,
+               user.nickname,
                board.id,
                comment.body,
                comment.is_anonymous,
                comment.created_at,
-               comment.like_cnt
+               comment.like_cnt,
+               IFNULL(comment_like.comment_id, 0)
         FROM comment
                  JOIN board ON board.id = comment.board_id
-        WHERE board_id = #{board_id}
+                 JOIN user ON comment.user_id = user.id
+                 LEFT OUTER JOIN comment_like
+                                 ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
+        WHERE board_id = #{boardId}
     </select>
     <insert id="insertComment">
         INSERT INTO comment(board_id, user_id, body, created_at, is_anonymous)
@@ -30,7 +35,13 @@
         WHERE id = #{id}
     </update>
     <select id="getCommentById">
-        SELECT *
+        SELECT id,
+               user_id,
+               board_id,
+               body,
+               is_anonymous,
+               created_at,
+               like_cnt
         FROM comment
         WHERE id = #{id}
     </select>
@@ -42,7 +53,6 @@
         SELECT *
         FROM comment_like
         WHERE comment_like.comment_id = #{commentId}
-          AND comment_like.user_id = #{userId}
     </select>
     <select id="cntCommentLike">
         SELECT COUNT(*)
@@ -57,13 +67,12 @@
     </delete>
     <insert id="insertCommentReport">
         INSERT INTO comment_report(comment_id, user_id, report_id)
-        VALUES (#{commentId}, #{userId}, #{reportReason})
+        VALUES (#{commentId}, #{userId}, #{reportId})
     </insert>
     <select id="findCommentReport">
         SELECT *
         FROM comment_report
         WHERE comment_report.comment_id = #{commentId}
-          AND comment_report.user_id = #{userId}
     </select>
 
 </mapper>
