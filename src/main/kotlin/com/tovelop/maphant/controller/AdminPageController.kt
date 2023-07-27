@@ -17,20 +17,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/admin")
 class AdminPageController(@Autowired val adminPageService: AdminPageService) {
-    @PostMapping("/")
-    fun isAdmin(): ResponseEntity<Any> {
-        val auth = SecurityContextHolder.getContext().authentication
-        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
-        }
-        val role = auth.getUserData().role
-        if (role != "admin") {
-            return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
-        }
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
     @GetMapping("/reportlist/board")
-    fun listBoardReport(): ResponseEntity<Response<List<String>>> {
+    fun listBoardReport(): ResponseEntity<Response<List<>>> {
 
     }
 }
