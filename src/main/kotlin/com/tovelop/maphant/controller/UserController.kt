@@ -20,7 +20,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
 
-    @GetMapping("")
+    @GetMapping("/")
     fun getUser(): ResponseEntity<Response<UserDataDTO>> {
         val auth = SecurityContextHolder.getContext().authentication
         if(auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
