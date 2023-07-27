@@ -76,5 +76,9 @@
         FROM comment_report
         WHERE comment_report.comment_id = #{commentId}
     </select>
+    <insert id="insertReply">
+        INSERT INTO comment(user_id, board_id, parent_id, body, created_at, is_anonymous)
+        values (#{user_id}, #{board_id}, #{parent_id}, #{body}, NOW(), #{is_anonymous})
+    </insert>
 
 </mapper>
