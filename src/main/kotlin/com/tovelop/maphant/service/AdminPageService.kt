@@ -1,9 +1,12 @@
 package com.tovelop.maphant.service
 
+import com.tovelop.maphant.dto.BoardDTO
+import com.tovelop.maphant.dto.CommentDTO
 import com.tovelop.maphant.dto.UserDTO
 import com.tovelop.maphant.mapper.AdminPageMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService) {
@@ -16,19 +19,22 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
     fun setUserRole(role: String, id: Int) {
         adminPageMapper.setUserRole(role, id)
     }
-    fun findBoardReport() {
-        adminPageMapper.findBoardReport()
+    fun findBoardReport(): List<BoardDTO> {
+        return adminPageMapper.findBoardReport()
     }
     fun insertBoardSanction(boardId: Int) {
         adminPageMapper.setBoardSanction(boardId)
     }
-    fun findCommentReport() {
-        adminPageMapper.findBoardReport()
+    fun findCommentReport(): List<CommentDTO> {
+        return adminPageMapper.findCommentReport()
     }
     fun insertCommentSanction(commentId: Int) {
-        adminPageMapper.setBoardSanction(commentId)
+        adminPageMapper.setCommentSanction(commentId)
     }
-    fun setUserSanction(userId: Int) { //sanction = 제재
-        adminPageMapper.setUserSanction(userId)
+    fun findUserReportByUserid(userId: Int): UserDTO { //sanction = 제재
+        return adminPageMapper.findUserReportByUserid(userId)
+    }
+    fun setUserSanction(userId: Int, deadlineAt: LocalDateTime, sanctionReason: String) {
+        adminPageMapper.setUserSanction(userId, deadlineAt, sanctionReason)
     }
 }

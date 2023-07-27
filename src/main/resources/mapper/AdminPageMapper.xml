@@ -26,16 +26,47 @@
                      from board_report
                      where board_id in #{boardId})
     </update>
-    <update id="setUserSanction">
+    <select id="findCommentReport" resultType="CommentDTO">
+    select *
+    from comment
+    where id in (select comment_id
+                 from comment_report)
+</select>
+    <update id="setCommentSanction">
+        update comment
+        set state = 2
+        where id in (select comment_id
+                     from comment_report
+                     where comment_id in #{commentId})
+    </update>
+    <select id="findUserReportByUserid" resultType="UserDTO">
+--         SELECT user.id, user.nickname, user.name, user.email,
+--                COUNT(DISTINCT CASE WHEN board.state = 2 THEN board.id END) +
+--                COUNT(DISTINCT CASE WHEN comment.state = 2 THEN comment.id END) AS total_count
+--         FROM user
+--                  LEFT JOIN
+--              board ON user.id = board.user_id
+--                  LEFT JOIN
+--              comment ON user.id = comment.user_id
+--         where user.id = #{id}
+--         GROUP BY user.id,
+--                  user.nickname,
+--                  user.name,
+--                  user.email;
+        SELECT user.id, user.nickname, user.name, user.email,
+            COUNT(DISTINCT board.state) + COUNT(DISTINCT comment.state) AS total_count
+        FROM user
+        LEFT JOIN board ON user.id = board.user_id AND board.state = 2
+        LEFT JOIN comment ON user.id = comment.user_id AND comment.state = 2
+        WHERE user.id = #{userId}
+        GROUP BY user.id, user.nickname, user.name, user.email;
+
+    </select>
+    <insert id="setUserSanction">
         insert into user_report(user_id, deadline_at, sanction_reason)
-        values (#{userId}, #{deadlineAt}, #{sanctionReason});
+            values (#{userId}, #{deadlineAt}, #{sanctionReason});
         update user
         set state = 2
-        where id in
-    </update>
-    <select id="findUserSanction">
-        select *
-        from user,
-             user_report
-    </select>
+        where id in #{userId}
+    </insert>
 </mapper>
