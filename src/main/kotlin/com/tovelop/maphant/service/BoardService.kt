@@ -66,10 +66,21 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun isInBoardtype(boardType: String): Boolean {
         return boardMapper.isInBoardtype(boardType) != null
     }
-
     fun findBoardLike(boardId: Int, userId: Int): Boolean{
         val boardLikeDTO = boardMapper.findBoardLike(boardId, userId)
         return boardLikeDTO!=null
+    }
+    fun isInReportByBoardId(boardId: Int, userId: Int): Boolean{
+        val boardReportDTO = boardMapper.isInReportByBoardId(boardId, userId)
+        return boardReportDTO!=null
+    }
+    fun isInReportId(reportId: Int): Boolean{
+        val reportName = boardMapper.isInReportId(reportId)
+        return !reportName.isNullOrBlank()
+    }
+    fun isInBoardByBoardId(boardId: Int): Boolean{
+        val isInboardId = boardMapper.isInBoardByBoardId(boardId)
+        return isInboardId!=null
     }
 }
 

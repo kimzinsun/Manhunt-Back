@@ -90,4 +90,19 @@
         from board_like
         where board_id = #{boardId} and user_id = #{userId}
     </select>
+    <select id="isInReportByBoardId" resultType="BoardReportDTO">
+        select *
+        from board_report
+        where board_id = #{boardId} and user_id = #{userId}
+    </select>
+    <select id="isInReportId" resultType="String">
+        select name
+        from report
+        where id = #{reportId}
+    </select>
+    <select id="isInBoardByBoardId" resultType="Int">
+        select id
+        from board
+        where id = #{boardId}
+    </select>
 </mapper>
