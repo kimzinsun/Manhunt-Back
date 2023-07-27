@@ -20,8 +20,8 @@
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
         WHERE board_id = #{boardId}
           AND comment.state = 0
-        WHERE board_id = #{boardId} LIMIT #{params.recordSize}
-        OFFSET #{params.offset}
+            LIMIT #{pagingDto.recordSize}
+        OFFSET #{pagingDto.offset}
     </select>
     <insert id="insertComment">
         INSERT INTO comment(board_id, user_id, body, created_at, is_anonymous)

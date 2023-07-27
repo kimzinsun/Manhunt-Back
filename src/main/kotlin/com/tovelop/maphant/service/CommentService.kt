@@ -28,12 +28,8 @@ class CommentService(val commentMapper: CommentMapper) {
     }
 
     fun insertComment(commentDTO: CommentDTO) = commentMapper.insertComment(commentDTO)
-
-
     fun deleteComment(userId: Int, commentId: Int) = commentMapper.deleteComment(userId, commentId)
-
     fun updateComment(updateCommentDTO: UpdateCommentDTO) = commentMapper.updateComment(updateCommentDTO)
-
     fun insertCommentLike(userId: Int, commentId: Int) = commentMapper.insertCommentLike(userId, commentId)
 
     fun findCommentLike(userId: Int, commentId: Int) = commentMapper.findCommentLike(userId, commentId)

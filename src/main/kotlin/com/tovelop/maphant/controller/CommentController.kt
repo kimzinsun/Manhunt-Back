@@ -1,9 +1,7 @@
 package com.tovelop.maphant.controller
 
-import com.tovelop.maphant.dto.CommentDTO
-import com.tovelop.maphant.dto.CommentExtDTO
-import com.tovelop.maphant.dto.CommentLikeDTO
-import com.tovelop.maphant.dto.CommentReportDTO
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
@@ -31,20 +29,15 @@ class CommentController(@Autowired val commentService: CommentService) {
     )
 
     @GetMapping("/list/{boardId}")
-    fun findAllComment(@PathVariable boardId: Int): ResponseEntity<Response<List<CommentExtDTO>>> {
-        val auth = SecurityContextHolder.getContext().authentication;
-        if (auth is AnonymousAuthenticationToken) {
-            return ResponseEntity.badRequest().body(Response.error("로그인 후 이용해주세요."))
-        }
-        val comment = commentService.findAllComment(boardId, (auth as TokenAuthToken).getUserData().id)
-    fun getCommentList(
+    fun findAllComment(
         @ModelAttribute pagingDto: PagingDto,
         @PathVariable boardId: Int
     ): ResponseEntity<Response<PagingResponse<CommentExtDTO>>> {
         val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth!!.principal.toString().toInt()
-//        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-//        val userId: Int = auth.getUserData().id!!
+        if (auth is AnonymousAuthenticationToken) {
+            return ResponseEntity.badRequest().body(Response.error("로그인 후 이용해주세요."))
+        }
+        val userId = (auth as TokenAuthToken).getUserData().id
         val comment = commentService.getCommentList(boardId, userId, pagingDto)
         return ResponseEntity.ok().body(Response.success(comment))
     }

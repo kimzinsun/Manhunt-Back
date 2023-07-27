@@ -23,6 +23,5 @@ interface CommentMapper {
     fun findCommentReport(commentId: Int): List<CommentReportDTO>?
     fun getCommentById(commentId: Int): CommentDTO?
     fun getCommentCount(boardId: Int): Int
-
     fun insertReply(replyDTO: ReplyDTO)
 }
