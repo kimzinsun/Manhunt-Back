@@ -28,4 +28,5 @@ interface BoardMapper {
     fun isInReportByBoardId(boardId: Int, userId: Int): BoardReportDTO?
     fun isInReportId(reportId: Int): String?
     fun isInBoardByBoardId(boardId: Int): Int?
+    fun updateBoardComplete(boardId: Int, userId: Int)
 }

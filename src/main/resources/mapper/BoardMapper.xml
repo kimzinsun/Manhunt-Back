@@ -105,4 +105,9 @@
         from board
         where id = #{boardId}
     </select>
+    <update id="updateBoardComplete">
+        update board
+        set is_complete = 1
+        where id = #{boardId}
+    </update>
 </mapper>
