@@ -10,6 +10,7 @@ data class CommentDTO(
     val is_anonymous: Boolean,
     val created_at: LocalDateTime,
     val like_cnt: Int,
+    val state: Int
 )
 
 data class CommentExtDTO(

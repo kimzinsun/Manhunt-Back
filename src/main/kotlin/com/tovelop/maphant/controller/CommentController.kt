@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/comment")
-class CommentController(@Autowired val commentService: CommentService) {
+class CommentController(@Autowired val commentService: CommentService) { // TODO : SecurityContextHolder.getContext().authentication
 
     data class CommentRequest(
         val userId: Int,
@@ -40,9 +40,9 @@ class CommentController(@Autowired val commentService: CommentService) {
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     fun deleteComment(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
-        if (commentService.getCommentById(commentRequest.commentId) == null) {
+        if (commentService.getCommentById(commentRequest.commentId)?.state == 1) {
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
         }
         if (commentService.getCommentById(commentRequest.commentId)!!.user_id != commentRequest.userId) {
