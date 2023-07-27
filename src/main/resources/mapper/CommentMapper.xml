@@ -72,7 +72,7 @@
         VALUES (#{commentId}, #{userId}, #{reportId})
     </insert>
     <select id="findCommentReport">
-        SELECT *
+        SELECT user_id, report_id
         FROM comment_report
         WHERE comment_report.comment_id = #{commentId}
     </select>

@@ -8,7 +8,7 @@ data class CommentDTO(
     val board_id: Int,
     val body: String,
     val is_anonymous: Boolean,
-    val created_at: LocalDateTime,
+    val created_at: LocalDateTime?,
     val like_cnt: Int,
     val state: Int,
 )
@@ -44,5 +44,10 @@ data class CommentLikeDTO(
 
 data class CommentReportDTO(
     val user_id: Int,
-    val comment_id: Int,
+    val report_id: Int,
+)
+
+data class UpdateCommentDTO(
+    val id: Int,
+    val body: String,
 )

@@ -9,13 +9,13 @@ interface CommentMapper {
     fun findAllComment(boardId: Int, userId: Int): List<CommentExtDTO>
     fun insertComment(commentDTO: CommentDTO)
     fun deleteComment(userId: Int, commentId: Int)
-    fun updateComment(commentDTO: CommentDTO)
+    fun updateComment(updateCommentDTO: UpdateCommentDTO)
     fun insertCommentLike(userId: Int, commentId: Int)
     fun findCommentLike(userId: Int, commentId: Int): List<CommentLikeDTO>?
     fun cntCommentLike(commentId: Int): Int
     fun deleteCommentLike(userId: Int, commentId: Int)
     fun insertCommentReport(userId: Int, commentId: Int, reportId: Int)
-    fun findCommentReport(userId: Int, commentId: Int, reportId: Int): List<CommentReportDTO>?
+    fun findCommentReport(commentId: Int): List<CommentReportDTO>?
     fun getCommentById(commentId: Int): CommentDTO?
 
     fun insertReply(replyDTO: ReplyDTO)
