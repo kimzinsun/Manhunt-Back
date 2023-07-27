@@ -18,7 +18,8 @@
                  JOIN user ON comment.user_id = user.id
                  LEFT OUTER JOIN comment_like
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
-        WHERE board_id = #{boardId}
+        WHERE board_id = #{boardId} LIMIT #{params.recordSize}
+        OFFSET #{params.offset}
     </select>
     <insert id="insertComment">
         INSERT INTO comment(board_id, user_id, body, created_at, is_anonymous)
@@ -73,6 +74,11 @@
         SELECT *
         FROM comment_report
         WHERE comment_report.comment_id = #{commentId}
+    </select>
+    <select id="getCommentCount">
+        SELECT COUNT(*)
+        FROM comment
+        WHERE board_id = #{boardId}
     </select>
 
 </mapper>

@@ -1,10 +1,13 @@
 package com.tovelop.maphant.controller
 
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.CommentDTO
 import com.tovelop.maphant.dto.CommentExtDTO
 import com.tovelop.maphant.dto.CommentLikeDTO
 import com.tovelop.maphant.dto.CommentReportDTO
 import com.tovelop.maphant.service.CommentService
+import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,11 +25,25 @@ class CommentController(@Autowired val commentService: CommentService) {
         val reportId: Int?
     )
 
+//    @GetMapping("/list/{boardId}")
+//    fun findAllComment(@PathVariable boardId: Int): ResponseEntity<Response<List<CommentExtDTO>>> {
+//        val comment = commentService.findAllComment(boardId, 1)
+//        return ResponseEntity.ok().body(Response.success(comment))
+//    }
+
     @GetMapping("/list/{boardId}")
-    fun findAllComment(@PathVariable boardId: Int): ResponseEntity<Response<List<CommentExtDTO>>> {
-        val comment = commentService.findAllComment(boardId, 1)
+    fun getCommentList(
+        @ModelAttribute pagingDto: PagingDto,
+        @PathVariable boardId: Int
+    ): ResponseEntity<Response<PagingResponse<CommentExtDTO>>> {
+        val auth = SecurityContextHolder.getContext().authentication
+        val userId = auth!!.principal.toString().toInt()
+//        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
+//        val userId: Int = auth.getUserData().id!!
+        val comment = commentService.getCommentList(boardId, userId, pagingDto)
         return ResponseEntity.ok().body(Response.success(comment))
     }
+
 
     @PostMapping("/insert")
     fun insertComment(@RequestBody commentDTO: CommentDTO): ResponseEntity<ResponseUnit> {

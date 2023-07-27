@@ -1,13 +1,29 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.CommentDTO
+import com.tovelop.maphant.dto.CommentExtDTO
 import com.tovelop.maphant.mapper.CommentMapper
+import com.tovelop.maphant.type.paging.Pagination
+import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.xml.stream.events.Comment
 
 @Service
 class CommentService(val commentMapper: CommentMapper) {
-    fun findAllComment(boardId: Int, userId: Int) = commentMapper.findAllComment(boardId, userId)
+    fun findAllComment(boardId: Int, userId: Int, params: PagingDto) =
+        commentMapper.findAllComment(boardId, userId, params)
+
+    fun getCommentList(boardId: Int, userId: Int, params: PagingDto): PagingResponse<CommentExtDTO> {
+        val count = commentMapper.getCommentCount(boardId)
+        if (count < 1) {
+            return PagingResponse(Collections.emptyList(), null)
+        }
+        val pagination = Pagination(count, params)
+        val comments = commentMapper.findAllComment(boardId, userId, params)
+        return PagingResponse(comments, pagination)
+    }
 
     fun insertComment(commentDTO: CommentDTO) = commentMapper.insertComment(commentDTO)
 
@@ -31,4 +47,5 @@ class CommentService(val commentMapper: CommentMapper) {
         commentMapper.findCommentReport(userId, commentId, reportId)
 
     fun getCommentById(commentId: Int) = commentMapper.getCommentById(commentId)
+
 }
