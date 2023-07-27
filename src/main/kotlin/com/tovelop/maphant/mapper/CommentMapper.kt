@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 
 @Mapper
 interface CommentMapper {
-    fun findAllComment(boardId: Int, userId: Int, pagingDto: PagingDto): List<CommentExtDTO>
+    fun findAllComment(boardId: Int, userId: Int, params: PagingDto): List<CommentExtDTO>
     fun insertComment(commentDTO: CommentDTO)
     fun deleteComment(userId: Int, commentId: Int)
     fun updateComment(updateCommentDTO: UpdateCommentDTO)
