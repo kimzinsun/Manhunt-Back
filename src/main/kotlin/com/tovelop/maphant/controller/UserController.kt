@@ -10,6 +10,7 @@ import com.tovelop.maphant.utils.ValidationHelper
 import com.tovelop.maphant.utils.isSuccess
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -79,17 +80,17 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/universitylist")
+    @GetMapping("/universitylist")
     fun listUniversity(): ResponseEntity<Response<List<String>>> {
         return ResponseEntity.ok().body(Response.success(userService.getAllUnivNames()))
     }
 
-    @PostMapping("/categorylist")
+    @GetMapping("/categorylist")
     fun listCategory(): ResponseEntity<Response<List<String>>> {
         return ResponseEntity.ok().body(Response.success(userService.getAllCategories()))
     }
 
-    @PostMapping("/majorlist")
+    @GetMapping("/majorlist")
     fun listMajor(): ResponseEntity<Response<List<String>>> {
         return ResponseEntity.ok().body(Response.success(userService.getAllMajors()))
     }
@@ -164,7 +165,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/changeinfo/olddata")
+    @GetMapping("/changeinfo/olddata")
     fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<Response<UserDTO>> {
         val userData = userService.getUser(listOf(changeInfoDTO.email))!!
 
