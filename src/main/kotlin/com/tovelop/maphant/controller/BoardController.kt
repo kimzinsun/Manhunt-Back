@@ -20,6 +20,10 @@ class BoardController(@Autowired val boardService: BoardService) {
     fun readBoardList(
         @RequestBody findBoardDTO: FindBoardDTO
     ): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication
+        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
+        }
         //pageNum과 pageSize는 양의 정수
         if (findBoardDTO.page <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageNum가 일치하지 않습니다."))
@@ -31,11 +35,11 @@ class BoardController(@Autowired val boardService: BoardService) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
         }
-        if (!boardService.isInCategory(findBoardDTO.category) || !boardService.isInBoardtype(findBoardDTO.boardType)) {
+        if (!boardService.isInCategory(auth.getUserData().categoryId) || !boardService.isInBoardtype(findBoardDTO.boardType)) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 카테고리나 게시판 유형입니다."))
         }
-        val boardList = boardService.findBoardList(findBoardDTO)
+        val boardList = boardService.findBoardList(findBoardDTO,auth.getUserData().id,auth.getUserData().categoryId)
         return if (boardList.isEmpty()) {
             ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         } else {
@@ -46,10 +50,10 @@ class BoardController(@Autowired val boardService: BoardService) {
     @PostMapping("/like/{boardId}")
     fun insertLikePost(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
-        val board = boardService.findBoard(boardId)
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
+        val board = boardService.findBoard(boardId,auth.getUserData().id)
         if (board == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
@@ -60,10 +64,10 @@ class BoardController(@Autowired val boardService: BoardService) {
     @DeleteMapping("/like/{boardId}")
     fun deleteLikeBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
-        val board = boardService.findBoard(boardId)
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
+        val board = boardService.findBoard(boardId,auth.getUserData().id)
         if (board == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
@@ -74,10 +78,10 @@ class BoardController(@Autowired val boardService: BoardService) {
     @PostMapping("/{boardId}")
     fun readBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
-        val board = boardService.findBoard(boardId)
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
+        val board = boardService.findBoard(boardId,auth.getUserData().id)
         if (board == null || boardService.getIsHideByBoardId(boardId) == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
@@ -120,9 +124,12 @@ class BoardController(@Autowired val boardService: BoardService) {
     @PutMapping("/update")
     fun updateBoard(@RequestBody board: UpdateBoardDTO): ResponseEntity<ResponseUnit> {
         // 현재 로그인한 사용자 정보 가져오기
-        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val auth = SecurityContextHolder.getContext().authentication
+        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
+            return ResponseEntity.badRequest().body(Response.error<Unit>("로그인 안됨"))
+        }
         // 게시글 읽어오기
-        val reBoard = boardService.findBoard(board.id)
+        val reBoard = boardService.findBoard(board.id,auth.getUserData().id)
             ?: return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
         // 게시글이 존재하지 않는 경우
         // 제목 및 내용 빈칸 확인
@@ -142,23 +149,21 @@ class BoardController(@Autowired val boardService: BoardService) {
     }
 
     @GetMapping("/search")
-    fun searchBoard(@RequestParam content:String): ResponseEntity<ResponseUnit> {
-        boardService.findBoardByKeyword(content)
+    fun searchBoard(@RequestParam content:String): Any {
+        val searchBoard = boardService.findBoardByKeyword(content)
         // 검색어가 포함된 게시글 읽어오기
+        print("content: $content")
+        print("searchBoard: $searchBoard")
+        if(searchBoard.isEmpty()){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("검색 결과가 없습니다."))
+        }
         // return: json
-        return ResponseEntity.ok(Response.stateOnly(true))
+        return ResponseEntity.ok(Response.success(searchBoard))
     }
-
-    @GetMapping("/category")
-    fun readCategory(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
-        // 장르별 게시글 읽어오기
-        // return: json
-        return ResponseEntity.ok(Response.stateOnly(true))
-    }
-
     @GetMapping("/my")
     fun readMyBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
         // 내가 쓴 게시글 읽어오기
+
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
