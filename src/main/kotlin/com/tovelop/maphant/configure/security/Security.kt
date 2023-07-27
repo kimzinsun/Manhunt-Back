@@ -29,9 +29,8 @@ class Security {
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
-        http.csrf { it.disable() }.authorizeHttpRequests { authorize ->
-            authorize.anyRequest().permitAll()
-        }.addFilterBefore(
+        http.csrf { it.disable() }
+        http.addFilterBefore(
             LoginAuthFilter(authenticationManager(http)),
             UsernamePasswordAuthenticationFilter::class.java
         ).addFilterAfter(
@@ -40,6 +39,10 @@ class Security {
         ).sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             it.disable()
+        }
+        http.authorizeHttpRequests { authorize -> authorize
+            .requestMatchers("/admin/**").hasRole("ADMIN")
+            .anyRequest().permitAll()
         }
 
         http.authenticationManager(authenticationManager(http))

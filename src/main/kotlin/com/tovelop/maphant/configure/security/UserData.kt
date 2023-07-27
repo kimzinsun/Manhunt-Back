@@ -2,6 +2,7 @@ package com.tovelop.maphant.configure.security
 
 import com.tovelop.maphant.dto.UserDataDTO
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserData(
@@ -10,7 +11,10 @@ class UserData(
     private val userData: UserDataDTO,
 ): UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return mutableListOf()
+        val authorities = mutableListOf<GrantedAuthority>()
+        val roleWithPrefix = "ROLE_${userData.role}"
+        authorities.add(SimpleGrantedAuthority(roleWithPrefix))
+        return authorities
     }
 
     override fun getPassword() = password

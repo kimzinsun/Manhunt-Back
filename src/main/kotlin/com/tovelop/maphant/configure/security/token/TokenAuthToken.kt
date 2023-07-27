@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class TokenAuthToken(
@@ -14,8 +15,12 @@ class TokenAuthToken(
     private val headerTS: Int,
     private val headerSign: String,
     private val userData: UserData? = null,
-    authorities: MutableCollection<out GrantedAuthority>? = null,
+    authorities: MutableCollection<out GrantedAuthority>? = null
 ): AbstractAuthenticationToken(authorities) {
+
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        return userData!!.authorities
+    }
 
     override fun getCredentials(): Triple<String, Int, String> = Triple(headerAuth, headerTS, headerSign)
     override fun getPrincipal() = headerAuth
