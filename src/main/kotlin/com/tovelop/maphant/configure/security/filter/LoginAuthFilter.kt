@@ -1,6 +1,8 @@
 package com.tovelop.maphant.configure.security.filter
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.tovelop.maphant.configure.security.token.LoginAuthToken
+import com.tovelop.maphant.dto.LoginDTO
 import com.tovelop.maphant.utils.ResponseJsonWriter.Companion.writeJSON
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -12,7 +14,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
 
 class LoginAuthFilter(authenticationManager: AuthenticationManager?)
-    :AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/login", "POST"), authenticationManager) {
+    :AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POST"), authenticationManager) {
+
+    private val objectMapper = ObjectMapper()
 
     init {
         this.authenticationManager = authenticationManager
@@ -43,8 +47,11 @@ class LoginAuthFilter(authenticationManager: AuthenticationManager?)
     }
 
     override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication? {
-        val email = request?.getParameter("email") ?: throw BadCredentialsException("no email field")
-        val password = request.getParameter("password") ?: throw BadCredentialsException("no password field")
+        val body = request?.reader?.readText()
+        val loginReq = objectMapper.readValue(body, LoginDTO::class.java)
+
+        val email = loginReq.email ?: throw BadCredentialsException("no email field")
+        val password = loginReq.password ?: throw BadCredentialsException("no password field")
 
         val authReq = LoginAuthToken(email, password)
 
