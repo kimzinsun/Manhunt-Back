@@ -10,7 +10,7 @@ data class CommentDTO(
     val is_anonymous: Boolean,
     val created_at: LocalDateTime,
     val like_cnt: Int,
-    val state: Int
+    val state: Int,
 )
 
 data class CommentExtDTO(
@@ -25,6 +25,18 @@ data class CommentExtDTO(
     val comment_id: Int?,
 )
 
+data class ReplyDTO(
+    val id: Int,
+    val user_id: Int,
+    val parent_id: Int,
+    val board_id: Int,
+    val body: String,
+    val is_anonymous: Boolean,
+    val created_at: LocalDateTime,
+    val like_cnt: Int,
+    val state: Int,
+)
+
 data class CommentLikeDTO(
     val user_id: Int,
     val comment_id: Int,
@@ -33,5 +45,4 @@ data class CommentLikeDTO(
 data class CommentReportDTO(
     val user_id: Int,
     val comment_id: Int,
-    val report_id: Int?,
 )

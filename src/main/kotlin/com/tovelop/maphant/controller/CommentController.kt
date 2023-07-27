@@ -1,9 +1,6 @@
 package com.tovelop.maphant.controller
 
-import com.tovelop.maphant.dto.CommentDTO
-import com.tovelop.maphant.dto.CommentExtDTO
-import com.tovelop.maphant.dto.CommentLikeDTO
-import com.tovelop.maphant.dto.CommentReportDTO
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -19,7 +16,7 @@ class CommentController(@Autowired val commentService: CommentService) { // TODO
     data class CommentRequest(
         val userId: Int,
         val commentId: Int,
-        val reportId: Int?
+        val reportId: Int?,
     )
 
     @GetMapping("/list/{boardId}")
@@ -37,6 +34,18 @@ class CommentController(@Autowired val commentService: CommentService) { // TODO
             return ResponseEntity.badRequest().body(Response.error("댓글은 255자 이내로 작성해주세요."))
         }
         commentService.insertComment(commentDTO)
+        return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
+
+    @PostMapping("/reply/{parentId}")
+    fun replyComment(@RequestBody replyDTO: ReplyDTO, @PathVariable parentId: Int): ResponseEntity<ResponseUnit> {
+        if (replyDTO.body.isBlank()) {
+            return ResponseEntity.badRequest().body(Response.error("댓글 내용을 입력해주세요."))
+        }
+        if (replyDTO.body.length > 255) {
+            return ResponseEntity.badRequest().body(Response.error("댓글은 255자 이내로 작성해주세요."))
+        }
+        commentService.insertReply(replyDTO)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 

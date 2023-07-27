@@ -1,9 +1,9 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.CommentDTO
+import com.tovelop.maphant.dto.ReplyDTO
 import com.tovelop.maphant.mapper.CommentMapper
 import org.springframework.stereotype.Service
-import javax.xml.stream.events.Comment
 
 @Service
 class CommentService(val commentMapper: CommentMapper) {
@@ -31,4 +31,6 @@ class CommentService(val commentMapper: CommentMapper) {
         commentMapper.findCommentReport(userId, commentId, reportId)
 
     fun getCommentById(commentId: Int) = commentMapper.getCommentById(commentId)
+
+    fun insertReply(replyDTO: ReplyDTO) = commentMapper.insertReply(replyDTO)
 }
