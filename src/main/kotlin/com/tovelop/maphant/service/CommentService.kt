@@ -7,7 +7,7 @@ import javax.xml.stream.events.Comment
 
 @Service
 class CommentService(val commentMapper: CommentMapper) {
-    fun findAllComment(boardId: Int) = commentMapper.findAllComment(boardId)
+    fun findAllComment(boardId: Int, userId: Int) = commentMapper.findAllComment(boardId, userId)
 
     fun insertComment(commentDTO: CommentDTO) = commentMapper.insertComment(commentDTO)
 
@@ -27,7 +27,8 @@ class CommentService(val commentMapper: CommentMapper) {
     fun insertCommentReport(userId: Int, commentId: Int, reportId: Int) =
         commentMapper.insertCommentReport(userId, commentId, reportId)
 
-    fun findCommentReport(userId: Int, commentId: Int) = commentMapper.findCommentReport(userId, commentId)
+    fun findCommentReport(userId: Int, commentId: Int, reportId: Int) =
+        commentMapper.findCommentReport(userId, commentId, reportId)
 
     fun getCommentById(commentId: Int) = commentMapper.getCommentById(commentId)
 }
