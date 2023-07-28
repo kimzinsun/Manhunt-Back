@@ -20,7 +20,7 @@ class TokenRepository(@Autowired private val redis: RedisService) {
         userData.zeroisePassword()
         val value = objMapper.writeValueAsString(userData.getUserData())
 
-        redis.set(pubKey, "${redis.get(pubKey)}|${value}")
+        redis.set("LOGIN_AUTH|${pubKey}", "${redis.get("LOGIN_AUTH|${pubKey}")}|${value}")
 
         return Pair(pubKey, privKey)
     }
@@ -29,7 +29,7 @@ class TokenRepository(@Autowired private val redis: RedisService) {
         while(true) {
             val key = RandomGenerator.generateRandomString(48)
 
-            if(redis.setnx(key, testAndSet)) {
+            if(redis.setnx("LOGIN_AUTH|${key}", testAndSet)) {
                 return key
             }
         }
