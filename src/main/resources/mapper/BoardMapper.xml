@@ -41,7 +41,7 @@
         where board_id = #{boardId} and user_id = #{userId}
     </delete>
     <insert id="insertBoardReport">
-        insert into board_report(board_id, user_id, report_id) values (#{boardId}, #{userId}, #{reportId})
+        insert into board_report(board_id, user_id, report_id, reported_at) values (#{boardId}, #{userId}, #{reportId}, now())
     </insert>
     <select id="findBoardByKeyword" resultType="BoardDTO">
         select *
