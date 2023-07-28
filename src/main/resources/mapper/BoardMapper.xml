@@ -32,21 +32,6 @@
         set state = 1
         where id = #{boardId}
     </update>
-    <select id="getIsHideByBoardId" resultType="java.lang.Integer">
-        select is_hide
-        from board
-        where id = #{boardId}
-    </select>
-    <select id="getUserIdByBoardId" resultType="java.lang.Integer">
-        select user_id
-        from board
-        where id = #{boardId}
-    </select>
-    <select id="isModified" resultType="java.time.LocalDateTime">
-        select modified_at
-        from board
-        where id = #{boardId}
-    </select>
     <insert id="insertBoardLike">
         insert into board_like(board_id, user_id) values (#{boardId}, #{userId})
     </insert>
@@ -105,9 +90,12 @@
         from board
         where id = #{boardId}
     </select>
-    <update id="updateBoardComplete">
+    <insert id="insertBoardQnaAndUpdateBoard">
+        insert into board_qna(question_id, answer_id, complete_at)
+        values (#{parentBoardId}, #{childBoardId}, now());
+
         update board
         set is_complete = 1
-        where id = #{boardId}
-    </update>
+        where id = #{parentBoardId};
+    </insert>
 </mapper>

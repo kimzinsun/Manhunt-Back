@@ -1,40 +1,40 @@
 package com.tovelop.maphant.service
 
-import com.tovelop.maphant.dto.BoardDTO
-import com.tovelop.maphant.dto.CommentDTO
-import com.tovelop.maphant.dto.UserDTO
+import com.tovelop.maphant.dto.AdminBoardReportDTO
 import com.tovelop.maphant.mapper.AdminPageMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService) {
-
-    
-    //추후 수정
     fun updateUserState(email: String, state: Int){
         userService.updateUserState(email, state)
     }
-    fun setUserRole(role: String, id: Int) {
-        adminPageMapper.setUserRole(role, id)
+    fun updateUserRole(role: String, id: Int) {
+        userService.updateUserRole(role, id)
     }
-    fun findBoardReport(): List<BoardDTO> {
-        return adminPageMapper.findBoardReport()
+
+    /**
+     * sortType: 정렬 기준 (reportedAt: 오래된 신고부터, mostReportedRanking: 신고를 많이 받은 순서로)
+     * reportSize: 불러올 신고의 개수.
+     */
+    fun findBoardReport(sortType: String, reportSize: Int): List<AdminBoardReportDTO> {
+        return when(sortType){
+            "reportedAt" -> adminPageMapper.findBoardReportByReportedAt(reportSize)
+            "mostReportedRanking" -> adminPageMapper.findBoardReportByMostReportedRanking(reportSize)
+            else -> adminPageMapper.findBoardReportByMostReportedRanking(reportSize)
+        }
     }
-    fun insertBoardSanction(boardId: Int) {
-        adminPageMapper.setBoardSanction(boardId)
-    }
-    fun findCommentReport(): List<CommentDTO> {
-        return adminPageMapper.findCommentReport()
-    }
-    fun insertCommentSanction(commentId: Int) {
-        adminPageMapper.setCommentSanction(commentId)
-    }
-    fun findUserReportByUserid(userId: Int): UserDTO { //sanction = 제재
-        return adminPageMapper.findUserReportByUserid(userId)
-    }
-    fun setUserSanction(userId: Int, deadlineAt: LocalDateTime, sanctionReason: String) {
-        adminPageMapper.setUserSanction(userId, deadlineAt, sanctionReason)
-    }
+//    fun insertBoardSanction(boardId: Int) {
+//        adminPageMapper.setBoardSanction(boardId)
+//    }
+//    fun findCommentReport() {
+//        adminPageMapper.findBoardReport()
+//    }
+//    fun insertCommentSanction(commentId: Int) {
+//        adminPageMapper.setBoardSanction(commentId)
+//    }
+//    fun setUserSanction(userId: Int) { //sanction = 제재
+//        adminPageMapper.setUserSanction(userId)
+//    }
 }

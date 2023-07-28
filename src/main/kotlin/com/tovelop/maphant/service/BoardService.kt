@@ -1,8 +1,12 @@
 package com.tovelop.maphant.service
 
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
+import com.tovelop.maphant.type.response.Response
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 
@@ -37,16 +41,17 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
 
     fun getIsHideByBoardId(boardId: Int): Boolean? {
-        val isHide = boardMapper.getIsHideByBoardId(boardId)
-        return isHide==1
+        val board = boardMapper.findBoard(boardId)
+        return board?.isHide==1
     }
 
     fun getUserIdByBoardId(boardId: Int): Int?{
-        return boardMapper.getUserIdByBoardId(boardId)
+        val board = boardMapper.findBoard(boardId)
+        return board?.userId
     }
     fun isModified(boardId: Int): Boolean {
-        val isModified = boardMapper.isModified(boardId)
-        return isModified!=null
+        val board = boardMapper.findBoard(boardId)
+        return board?.modifiedAt != null
     }
     fun insertBoardLike(boardId: Int, userId: Int) {
         boardMapper.insertBoardLike(boardId, userId)
@@ -82,8 +87,16 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         val isInboardId = boardMapper.isInBoardByBoardId(boardId)
         return isInboardId!=null
     }
-    fun updateBoardComplete(boardId: Int, userId: Int) {
-        boardMapper.updateBoardComplete(boardId, userId)
+    fun completeBoard(parentBoardId: Int, childBoardId: Int, userId: Int){
+        boardMapper.insertBoardQnaAndUpdateBoard(parentBoardId, childBoardId)
+    }
+    fun isinCompleteByBoardId(boardId: Int): Boolean {
+        val board = boardMapper.findBoard(boardId)
+        return board?.isComplete==1
+    }
+    fun isParent(parentBoardId: Int, childBoardId: Int): Boolean{
+        val childBoard = boardMapper.findBoard(childBoardId)
+        return childBoard?.parentId==parentBoardId
     }
 }
 
