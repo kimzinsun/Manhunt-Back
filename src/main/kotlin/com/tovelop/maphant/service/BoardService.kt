@@ -1,8 +1,12 @@
 package com.tovelop.maphant.service
 
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
+import com.tovelop.maphant.type.response.Response
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 
@@ -37,16 +41,17 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
 
     fun getIsHideByBoardId(boardId: Int): Boolean? {
-        val isHide = boardMapper.getIsHideByBoardId(boardId)
-        return isHide==1
+        val board = boardMapper.findBoard(boardId)
+        return board?.isHide==1
     }
 
     fun getUserIdByBoardId(boardId: Int): Int?{
-        return boardMapper.getUserIdByBoardId(boardId)
+        val board = boardMapper.findBoard(boardId)
+        return board?.userId
     }
     fun isModified(boardId: Int): Boolean {
-        val isModified = boardMapper.isModified(boardId)
-        return isModified!=null
+        val board = boardMapper.findBoard(boardId)
+        return board?.modifiedAt != null
     }
     fun insertBoardLike(boardId: Int, userId: Int) {
         boardMapper.insertBoardLike(boardId, userId)
@@ -81,6 +86,40 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun isInBoardByBoardId(boardId: Int): Boolean{
         val isInboardId = boardMapper.isInBoardByBoardId(boardId)
         return isInboardId!=null
+    }
+    fun completeBoard(parentBoardId: Int, childBoardId: Int, userId: Int): Boolean {
+        //질문 글, 채택할 글이 존재하는지 확인 (id로)
+        val parentBoard = boardMapper.findBoard(parentBoardId)
+        if (parentBoard==null){
+            return false
+        }
+        val childBoard = boardMapper.findBoard(childBoardId)
+        if (childBoard==null){
+            return false
+        }
+        //이미 채택됐는지 확인
+        if (parentBoard.isComplete==1){
+            return false
+        }
+        //채택하려는 글이 질문글에 대한 답변 글이 맞는지 확인
+        if (childBoard.parentId!=parentBoardId){
+            return false
+        }
+        //글 주인이 현재 유저가 맞는지 확인
+        if (parentBoard.userId!=userId){
+            return false
+        }
+
+        boardMapper.insertBoardQnaAndUpdateBoard(parentBoardId, childBoardId)
+        return true
+    }
+    fun isinCompleteByBoardId(boardId: Int): Boolean {
+        val board = boardMapper.findBoard(boardId)
+        return board?.isComplete==1
+    }
+    fun isParent(parentBoardId: Int, childBoardId: Int): Boolean{
+        val childBoard = boardMapper.findBoard(childBoardId)
+        return childBoard?.parentId==parentBoardId
     }
 }
 

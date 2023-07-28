@@ -15,9 +15,6 @@ interface BoardMapper {
     fun findBoard(boardId: Int): BoardDTO?
     fun updateBoard(updateBoardDTO: UpdateBoardDTO)
     fun deleteBoard(boardId: Int): Unit
-    fun getIsHideByBoardId(boardId: Int): Int?
-    fun getUserIdByBoardId(boardId: Int): Int?
-    fun isModified(boardId: Int): LocalDateTime
     fun insertBoardLike(boardId: Int, userId: Int)
     fun deleteBoardLike(boardId: Int, userId: Int)
     fun insertBoardReport(boardId: Int, userId: Int, reportId: Int)
@@ -28,4 +25,5 @@ interface BoardMapper {
     fun isInReportByBoardId(boardId: Int, userId: Int): BoardReportDTO?
     fun isInReportId(reportId: Int): String?
     fun isInBoardByBoardId(boardId: Int): Int?
+    fun insertBoardQnaAndUpdateBoard(parentBoardId: Int, childBoardId: Int)
 }
