@@ -87,31 +87,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         val isInboardId = boardMapper.isInBoardByBoardId(boardId)
         return isInboardId!=null
     }
-    fun completeBoard(parentBoardId: Int, childBoardId: Int, userId: Int): Boolean {
-        //질문 글, 채택할 글이 존재하는지 확인 (id로)
-        val parentBoard = boardMapper.findBoard(parentBoardId)
-        if (parentBoard==null){
-            return false
-        }
-        val childBoard = boardMapper.findBoard(childBoardId)
-        if (childBoard==null){
-            return false
-        }
-        //이미 채택됐는지 확인
-        if (parentBoard.isComplete==1){
-            return false
-        }
-        //채택하려는 글이 질문글에 대한 답변 글이 맞는지 확인
-        if (childBoard.parentId!=parentBoardId){
-            return false
-        }
-        //글 주인이 현재 유저가 맞는지 확인
-        if (parentBoard.userId!=userId){
-            return false
-        }
-
+    fun completeBoard(parentBoardId: Int, childBoardId: Int, userId: Int){
         boardMapper.insertBoardQnaAndUpdateBoard(parentBoardId, childBoardId)
-        return true
     }
     fun isinCompleteByBoardId(boardId: Int): Boolean {
         val board = boardMapper.findBoard(boardId)
