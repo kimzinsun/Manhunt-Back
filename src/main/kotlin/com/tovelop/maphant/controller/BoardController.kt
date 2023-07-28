@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 class BoardController(@Autowired val boardService: BoardService) {
     val categoryMap = mapOf("createdAt" to "created_at", "likeCnt" to "like_cnt")
 
-    @GetMapping("/main")
+    @PostMapping("/main")
     fun readBoardList(
         @RequestBody findBoardDTO: FindBoardDTO
     ): ResponseEntity<Any> {
@@ -157,54 +157,54 @@ class BoardController(@Autowired val boardService: BoardService) {
         // return: json
         return ResponseEntity.ok(Response.success(searchBoard))
     }
-//   @PostMapping("/report")
-//    fun reportBoard(@RequestParam boardId: Int,@RequestParam reportId: Int): ResponseEntity<ResponseUnit> {
-//        val auth = SecurityContextHolder.getContext().authentication
-//        if(auth == null || auth !is TokenAuthToken || !auth.isAuthenticated){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("로그인 안됨"))
-//        }
-//        if(boardService.findBoard(boardId) == null){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
-//        }
-//        if(auth.getUserData().id == boardService.getUserIdByBoardId(boardId)){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("자신의 게시글은 신고할 수 없습니다."))
-//        }
-//        if(boardService.isInReportId(reportId)){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("없는 신고 유형입니다."))
-//        }
-//        if(boardService.isInReportByBoardId(boardId,auth.getUserData().id)){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("이미 신고한 게시글입니다."))
-//        }
-//        // 신고하기
-//        boardService.insertBoardReport(boardId,auth.getUserData().id,reportId)
-//        // return: json
-//        return ResponseEntity.ok(Response.stateOnly(true))
-//    }
-//    @PostMapping("/complete")
-//    fun completeBoard(@RequestParam questId: Int,@RequestParam answerId: Int): ResponseEntity<ResponseUnit> {
-//        val auth = SecurityContextHolder.getContext().authentication
-//        if(auth == null || auth !is TokenAuthToken || !auth.isAuthenticated){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("로그인 안됨"))
-//        }
-//        if(boardService.findBoard(questId) == null || boardService.findBoard(answerId) == null){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
-//        }
-//        if(boardService.getUserIdByBoardId(questId) != auth.getUserData().id){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("자신의 게시글이 아닙니다."))
-//        }
-//        if(auth.getUserData().id == boardService.getUserIdByBoardId(answerId)){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("자신의 게시글은 체택할 수 없습니다."))
-//        }
-//        if(boardService.isInCompleteByBoardId(answerId)){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("이미 체택한 게시글입니다."))
-//        }
-//        if(!boardService.isParent(questId,answerId)){
-//            return ResponseEntity.badRequest().body(Response.error<Unit>("해당글의 답변이 아닙니다."))
-//        }
-//
-//        // 채택하기
-//        // boardService.updateCompletePost(questId,answerId)
-//        // return: json
-//        return ResponseEntity.ok(Response.stateOnly(true))
-//    }
+   @PostMapping("/report")
+    fun reportBoard(@RequestParam boardId: Int,@RequestParam reportId: Int): ResponseEntity<ResponseUnit> {
+        val auth = SecurityContextHolder.getContext().authentication
+        if(auth == null || auth !is TokenAuthToken || !auth.isAuthenticated){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("로그인 안됨"))
+        }
+        if(!boardService.isInBoardByBoardId(boardId)){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
+        }
+        if(auth.getUserData().id == boardService.getUserIdByBoardId(boardId)){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("자신의 게시글은 신고할 수 없습니다."))
+        }
+        if(!boardService.isInReportId(reportId)){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("없는 신고 유형입니다."))
+        }
+        if(boardService.isInReportByBoardId(boardId,auth.getUserData().id)){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("이미 신고한 게시글입니다."))
+        }
+        // 신고하기
+        boardService.insertBoardReport(boardId,auth.getUserData().id,reportId)
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+    @PostMapping("/complete")
+    fun completeBoard(@RequestParam questId: Int,@RequestParam answerId: Int): ResponseEntity<ResponseUnit> {
+        val auth = SecurityContextHolder.getContext().authentication
+        if(auth == null || auth !is TokenAuthToken || !auth.isAuthenticated){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("로그인 안됨"))
+        }
+        if(!boardService.isInBoardByBoardId(questId) || !boardService.isInBoardByBoardId(answerId)){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
+        }
+        if(boardService.getUserIdByBoardId(questId) != auth.getUserData().id){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("자신의 게시글이 아닙니다."))
+        }
+        if(auth.getUserData().id == boardService.getUserIdByBoardId(answerId)){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("자신의 게시글은 체택할 수 없습니다."))
+        }
+        if(boardService.isinCompleteByBoardId(answerId)){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("이미 체택한 게시글입니다."))
+        }
+        if(!boardService.isParent(questId,answerId)){
+            return ResponseEntity.badRequest().body(Response.error<Unit>("해당글의 답변이 아닙니다."))
+        }
+
+        // 채택하기
+        boardService.completeBoard(questId,answerId,auth.getUserData().id)
+        // return: json
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
 }
