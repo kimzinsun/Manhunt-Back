@@ -35,4 +35,5 @@ interface UserMapper {
     fun findMajorIdByMajorName(majorName: String): Int
 
     fun findIdBy(userId: Int): String
+    fun updateUserRole(role: String, id: Int)
 }
