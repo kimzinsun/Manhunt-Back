@@ -90,12 +90,13 @@
         from board
         where id = #{boardId}
     </select>
-    <insert id="insertBoardQnaAndUpdateBoard">
+    <insert id="insertBoardQna">
         insert into board_qna(question_id, answer_id, complete_at)
         values (#{parentBoardId}, #{childBoardId}, now());
-
-        update board
-        set is_complete = 1
-        where id = #{parentBoardId};
     </insert>
+    <update id="updateIsCompleteOfBoard">
+        update board
+        set is_complete = #{isComplete}
+        where id = #{boardId};
+    </update>
 </mapper>

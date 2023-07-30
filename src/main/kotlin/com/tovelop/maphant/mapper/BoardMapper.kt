@@ -25,5 +25,6 @@ interface BoardMapper {
     fun isInReportByBoardId(boardId: Int, userId: Int): BoardReportDTO?
     fun isInReportId(reportId: Int): String?
     fun isInBoardByBoardId(boardId: Int): Int?
-    fun insertBoardQnaAndUpdateBoard(parentBoardId: Int, childBoardId: Int)
+    fun insertBoardQna(parentBoardId: Int, childBoardId: Int)
+    fun updateIsCompleteOfBoard(boardId: Int, isComplete: Int)
 }
