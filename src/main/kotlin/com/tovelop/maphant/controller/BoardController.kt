@@ -101,6 +101,11 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
+        val reBoard = boardService.findBoard(boardId,auth.getUserData().id)
+            ?: return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
+        if (reBoard.isComplete == 1) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("체택된 게시글은 삭제할 수 없습니다."))
+        }
         // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
         // 본인 게시글 인지 확인
         if (auth.getUserData().role != "admin" || auth.getUserData().id != boardService.getUserIdByBoardId(boardId)) {
