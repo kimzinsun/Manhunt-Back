@@ -195,7 +195,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         if(auth.getUserData().id == boardService.getUserIdByBoardId(answerId)){
             return ResponseEntity.badRequest().body(Response.error<Unit>("자신의 게시글은 체택할 수 없습니다."))
         }
-        if(boardService.isinCompleteByBoardId(answerId)){
+        if(boardService.isinCompleteByBoardId(questId) || boardService.isinCompleteByBoardId(answerId)){
             return ResponseEntity.badRequest().body(Response.error<Unit>("이미 체택한 게시글입니다."))
         }
         if(!boardService.isParent(questId,answerId)){
