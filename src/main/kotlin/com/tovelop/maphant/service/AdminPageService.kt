@@ -1,10 +1,10 @@
 package com.tovelop.maphant.service
 
-import com.tovelop.maphant.dto.AdminBoardReportDTO
-import com.tovelop.maphant.dto.BoardReportInfoDTO
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.AdminPageMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService) {
@@ -28,8 +28,23 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
             else -> adminPageMapper.findBoardReportBySortType(reportSize, sortType)
         }
     }
-    fun findReportInfo(boardId: Int): List<BoardReportInfoDTO>{
-        return adminPageMapper.findReportInfo(boardId)
+    fun findBoardReportInfo(boardId: Int): List<BoardReportInfoDTO>{
+        return adminPageMapper.findBoardReportInfo(boardId)
+    }
+
+    fun findCommentReport(sortType: String, reportSize: Int): List<AdminCommentReportDTO>{
+        return when(sortType){
+            "reportedAt" -> adminPageMapper.findCommentReportByReportedAt(reportSize)
+            "mostReportedRanking" -> adminPageMapper.findCommentReportByMostReportedRanking(reportSize)
+            else -> adminPageMapper.findCommentReportBySortType(reportSize, sortType)
+        }
+    }
+    fun findCommentReportInfo(commentId: Int): List<CommentReportInfoDTO>{
+        return adminPageMapper.findCommentReportInfo(commentId)
+    }
+
+    fun insertUserReport(userReportDTO: UserReportDTO){
+        adminPageMapper.insertUserReport(userReportDTO)
     }
 //    fun insertBoardSanction(boardId: Int) {
 //        adminPageMapper.setBoardSanction(boardId)

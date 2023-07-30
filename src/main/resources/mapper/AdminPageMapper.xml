@@ -26,7 +26,7 @@
     </select>
     <select id="findBoardReportBySortType" resultType="AdminBoardReportDTO">
     </select>
-    <select id="findReportInfo" resultType="BoardReportInfoDTO">
+    <select id="findBoardReportInfo" resultType="BoardReportInfoDTO">
         select report_id reportId, reporter_user.id reporterUserId, reporter_user.email reporterUserEmail,
                reported_at boardReportedAt, report.name boardReportName
         from (select board_id, user_id, report_id, reported_at, id
@@ -35,6 +35,43 @@
             join user reporter_user on reports.user_id = reporter_user.id
             join report on reports.report_id = report.id;
     </select>
+
+    <select id="findCommentReportByReportedAt" resultType="AdminCommentReportDTO">
+        select reports.comment_id commentId, comment.body commentBody, user.id commentUserId,user.email commentUserEmail
+        from (select comment_id, user_id, report_id, id, reported_at
+              from comment_report
+              order by reported_at
+              limit #{reportSize} offset 0) as reports
+                 join comment on reports.comment_id = comment.id
+                 join user on reports.user_id = user.id
+    </select>
+    <select id="findCommentReportByMostReportedRanking" resultType="AdminCommentReportDTO">
+        select comment_ids.comment_id commentId, comment.body commentBody,
+               user.id commentUserId,user.email commentUserEmail
+        from (select comment_id
+              from comment_report
+              group by comment_id
+              order by count(*) desc
+              limit #{reportSize} offset 0) as comment_ids
+                 join comment on comment_ids.comment_id = comment.id
+                 join user on comment.user_id = user.id
+    </select>
+    <select id="findCommentReportBySortType" resultType="AdminCommentReportDTO">
+    </select>
+    <select id="findCommentReportInfo" resultType="CommentReportInfoDTO">
+        select report_id reportId, reporter_user.id reporterUserId, reporter_user.email reporterUserEmail,
+               reported_at commentReportedAt, report.name commentReportName
+        from (select comment_id, user_id, report_id, id, reported_at
+              from comment_report
+              where comment_id = #{commentId}) as reports
+                 join user reporter_user on reports.user_id = reporter_user.id
+                 join report on reports.report_id = report.id;
+    </select>
+
+    <insert id="insertUserReport">
+        insert into user_report
+        values (#{userId}, #{deadlineAt}, #{sanctionReason})
+    </insert>
 <!--    <update id="setBoardReport">-->
 <!--        update board-->
 <!--        set state = 2-->
