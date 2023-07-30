@@ -71,9 +71,7 @@ class BoardController(@Autowired val boardService: BoardService) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
         val board = boardService.findBoard(boardId,auth.getUserData().id)
-        if (board == null) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
-        }
+            ?: return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         boardService.deleteBoardLike(boardId, board.userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
