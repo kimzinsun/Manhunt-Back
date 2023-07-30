@@ -53,9 +53,12 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
-        val board = boardService.findBoard(boardId,auth.getUserData().id)
-        if (board == null) {
+        if (boardService.findBoard(boardId,auth.getUserData().id) == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
+        }
+        // 이미 좋아요를 누른 게시글인 경우
+        if (boardService.findBoardLike(boardId, auth.getUserData().id)){
+            return ResponseEntity.badRequest().body(Response.error<Any>("이미 좋아요를 누른 게시글입니다."))
         }
         boardService.insertBoardLike(boardId, auth.getUserData().id)
         return ResponseEntity.ok(Response.stateOnly(true))
