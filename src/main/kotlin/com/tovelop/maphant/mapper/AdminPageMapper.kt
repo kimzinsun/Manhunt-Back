@@ -16,7 +16,6 @@ interface AdminPageMapper {
     fun findCommentReportBySortType(reportSize: Int, sortType: String): List<AdminCommentReportDTO>
     fun findCommentReportInfo(commentId: Int): List<CommentReportInfoDTO>
     fun insertUserReport(userReportDTO: UserReportDTO)
-
 //    fun setBoardSanction(boardId: Int)
 //    fun findCommentReport()
 //    fun setCommentSanction(commentId: Int)

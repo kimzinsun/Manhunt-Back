@@ -72,13 +72,14 @@
         insert into user_report
         values (#{userId}, #{deadlineAt}, #{sanctionReason})
     </insert>
-<!--    <update id="setBoardReport">-->
+<!--    <update id="updateStateInBoardBy">-->
 <!--        update board-->
 <!--        set state = 2-->
-<!--        where id in (select board_id-->
-<!--                     from board_report-->
-<!--                     where board_id in #{boardId})-->
+<!--        where id = #{boardId}-->
 <!--    </update>-->
+
+
+
 <!--    <update id="setUserSanction">-->
 <!--        insert into user_report(user_id, deadline_at, sanction_reason)-->
 <!--        values (#{userId}, #{deadlineAt}, #{sanctionReason});-->
