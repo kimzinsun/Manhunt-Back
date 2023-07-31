@@ -1,6 +1,7 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.BoardResDto
+import com.tovelop.maphant.dto.ProfileDto
 import com.tovelop.maphant.dto.ProfileImageDto
 import com.tovelop.maphant.mapper.ProfileMapper
 import com.tovelop.maphant.type.paging.Pagination
@@ -136,5 +137,51 @@ class ProfileServiceTest {
         //then
         assertEquals("png, jpeg, jpg에 해당하는 파일만 업로드할 수 있습니다.",exception.message)
         verify(uploadUtils, times(1)).isNotImageFile(file.originalFilename as String);
+    }
+
+    @Test
+    @DisplayName("해당 유저의 id값을 fk로 갖는 Profile이 있는경우 프로필 image를 업데이트한다.")
+    fun updateProfileImage() {
+        //given
+        val userId = 1;
+        val imageUrl = "imageurl"
+        val file: MultipartFile = MockMultipartFile(
+            "test.jpeg", "test.jpeg", "byte",
+            "test".toByteArray()
+        )
+        val profile = ProfileDto(userId,imageUrl,null);
+        whenever(uploadUtils.isNotImageFile(file.originalFilename as String)).thenReturn(false)
+        whenever(profileMapper.findById(userId)).thenReturn(profile);
+
+        //when
+        val result = profileService.updateProfileImage(userId,imageUrl,file);
+
+        //then
+        assert(result == imageUrl);
+        verify(profileMapper, times(0)).insertProfile(userId, imageUrl);
+        verify(profileMapper).updateProfileImage(userId, imageUrl);
+    }
+
+    @Test
+    @DisplayName("해당 유저의 id값을 fk로 갖는 Profile이 없는경우 Profile 튜플을 insert한다.")
+    fun insertProfileImage() {
+        //given
+        val userId = 1;
+        val imageUrl = "imageurl"
+        val file: MultipartFile = MockMultipartFile(
+            "test.jpeg", "test.jpeg", "byte",
+            "test".toByteArray()
+        )
+
+        whenever(uploadUtils.isNotImageFile(file.originalFilename as String)).thenReturn(false)
+        whenever(profileMapper.findById(userId)).thenReturn(null);
+
+        //when
+        val result = profileService.updateProfileImage(userId,imageUrl,file);
+
+        //then
+        assert(result == imageUrl);
+        verify(profileMapper, times(0)).updateProfileImage(userId, imageUrl);
+        verify(profileMapper).insertProfile(userId, imageUrl);
     }
 }
