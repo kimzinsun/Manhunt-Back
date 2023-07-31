@@ -18,9 +18,9 @@
         VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), null, #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
     </insert>
     <select id="findBoard" resultType="BoardDTO">
-        select *
-        from board
-        where id = #{boardId}
+        SELECT *
+        FROM board
+        WHERE board.id = #{boardId}
     </select>
     <update id="updateBoard">
         update board
@@ -41,7 +41,7 @@
         where board_id = #{boardId} and user_id = #{userId}
     </delete>
     <insert id="insertBoardReport">
-        insert into board_report(board_id, user_id, report_id) values (#{boardId}, #{userId}, #{reportId})
+        insert into board_report(board_id, user_id, report_id, reported_at) values (#{boardId}, #{userId}, #{reportId}, now())
     </insert>
     <select id="findBoardByKeyword" resultType="BoardDTO">
         select *
@@ -90,12 +90,18 @@
         from board
         where id = #{boardId}
     </select>
-    <insert id="insertBoardQnaAndUpdateBoard">
+    <insert id="insertBoardQna">
         insert into board_qna(question_id, answer_id, complete_at)
         values (#{parentBoardId}, #{childBoardId}, now());
-
-        update board
-        set is_complete = 1
-        where id = #{parentBoardId};
     </insert>
+    <update id="updateIsCompleteOfBoard">
+        update board
+        set is_complete = #{isComplete}
+        where id = #{boardId};
+    </update>
+    <update id="updateStateOfBoard">
+        update board
+        set state = #{state}
+        where id = #{boardId}
+    </update>
 </mapper>

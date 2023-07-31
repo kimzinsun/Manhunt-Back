@@ -88,7 +88,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return isInboardId!=null
     }
     fun completeBoard(parentBoardId: Int, childBoardId: Int, userId: Int){
-        boardMapper.insertBoardQnaAndUpdateBoard(parentBoardId, childBoardId)
+        boardMapper.insertBoardQna(parentBoardId, childBoardId)
+        boardMapper.updateIsCompleteOfBoard(parentBoardId, 1)
     }
     fun isinCompleteByBoardId(boardId: Int): Boolean {
         val board = boardMapper.findBoard(boardId)
@@ -97,6 +98,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun isParent(parentBoardId: Int, childBoardId: Int): Boolean{
         val childBoard = boardMapper.findBoard(childBoardId)
         return childBoard?.parentId==parentBoardId
+    }
+    fun updateStateOfBoard(boardId: Int, state: Int) {
+        boardMapper.updateStateOfBoard(boardId, state)
     }
 }
 
