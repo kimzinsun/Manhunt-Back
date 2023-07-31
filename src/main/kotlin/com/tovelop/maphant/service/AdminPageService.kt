@@ -2,6 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.AdminPageMapper
+import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -55,7 +56,7 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
 //    fun insertCommentSanction(commentId: Int) {
 //        adminPageMapper.setBoardSanction(commentId)
 //    }
-//    fun setUserSanction(userId: Int) { //sanction = 제재
-//        adminPageMapper.setUserSanction(userId)
-//    }
+    fun findUserSanction() { //sanction = 제재
+        return adminPageMapper.findUserSanction()
+    }
 }

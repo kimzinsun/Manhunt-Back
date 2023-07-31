@@ -20,5 +20,5 @@ interface AdminPageMapper {
 //    fun findCommentReport()
 //    fun setCommentSanction(commentId: Int)
 //    fun findUserSanction()
-//    fun setUserSanction(userId: Int)
+    fun findUserSanction()
 }

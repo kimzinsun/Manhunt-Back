@@ -72,24 +72,9 @@
         insert into user_report
         values (#{userId}, #{deadlineAt}, #{sanctionReason})
     </insert>
-<!--    <update id="updateStateInBoardBy">-->
-<!--        update board-->
-<!--        set state = 2-->
-<!--        where id = #{boardId}-->
-<!--    </update>-->
-
-
-
-<!--    <update id="setUserSanction">-->
-<!--        insert into user_report(user_id, deadline_at, sanction_reason)-->
-<!--        values (#{userId}, #{deadlineAt}, #{sanctionReason});-->
-<!--        update user-->
-<!--        set state = 2-->
-<!--        where id in-->
-<!--    </update>-->
-<!--    <select id="findUserSanction">-->
-<!--        select *-->
-<!--        from user,-->
-<!--             user_report-->
-<!--    </select>-->
+    <select id="findUserSanction" resultType="UserDTO">
+        select user.id, user.nickname, user.email, user_report.deadline_at, user_report.sanction_reason
+        from (select * from user where state=2) as reportedUser
+            join user_report on user.id = user_id and user_report.deadline_at > NOW()
+    </select>
 </mapper>
