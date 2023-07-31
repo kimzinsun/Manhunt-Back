@@ -7,9 +7,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService) {
-    fun updateUserState(email: String, state: Int){
+    fun updateUserState(email: String, state: Int) {
         userService.updateUserState(email, state)
     }
+
     fun updateUserRole(role: String, id: Int) {
         userService.updateUserRole(role, id)
     }
@@ -19,7 +20,7 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
      * reportSize: 불러올 신고의 개수.
      */
     fun findBoardReport(sortType: String, reportSize: Int): List<AdminBoardReportDTO> {
-        return when(sortType){
+        return when (sortType) {
             "reportedAt" -> adminPageMapper.findBoardReportByReportedAt(reportSize)
             "mostReportedRanking" -> adminPageMapper.findBoardReportByMostReportedRanking(reportSize)
             else -> adminPageMapper.findBoardReportByMostReportedRanking(reportSize)

@@ -3,7 +3,6 @@ package com.tovelop.maphant.mapper
 import com.tovelop.maphant.dto.*
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
 
 @Mapper
 @Repository
