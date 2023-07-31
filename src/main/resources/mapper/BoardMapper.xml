@@ -18,9 +18,12 @@
         VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), null, #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
     </insert>
     <select id="findBoard" resultType="BoardDTO">
-        select *
-        from board
-        where id = #{boardId}
+        SELECT *
+        FROM board
+            LEFT OUTER JOIN poll ON board.id = poll.board_id
+            LEFT OUTER JOIN poll_option ON poll.id = poll_option.poll_id
+            LEFT OUTER JOIN poll_user ON poll_option.id = poll_user.poll_option
+        WHERE board.id = #{boardId}
     </select>
     <update id="updateBoard">
         update board
