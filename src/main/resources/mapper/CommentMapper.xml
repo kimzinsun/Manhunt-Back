@@ -70,8 +70,8 @@
           AND user_id = #{userId}
     </delete>
     <insert id="insertCommentReport">
-        INSERT INTO comment_report(comment_id, user_id, report_id)
-        VALUES (#{commentId}, #{userId}, #{reportId})
+        INSERT INTO comment_report(comment_id, user_id, report_id, reported_at)
+        VALUES (#{commentId}, #{userId}, #{reportId}, NOW())
     </insert>
     <select id="findCommentReport">
         SELECT user_id, report_id
