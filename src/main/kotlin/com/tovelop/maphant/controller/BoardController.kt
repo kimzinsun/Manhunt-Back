@@ -152,7 +152,7 @@ class BoardController(@Autowired val boardService: BoardService) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("제목과 내용을 입력해주세요."))
         }
         // 본인 게시글 확인
-        if (reBoard.userId != auth.getUserData().id) {
+        if (reBoard.userId != auth.getUserData().id && auth.getUserData().role != "admin") {
             return ResponseEntity.badRequest().body(Response.error<Unit>("권한이 없습니다."))
         }
         // 게시글 읽어오기
