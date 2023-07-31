@@ -40,8 +40,7 @@ data class BoardDTO(
             likeCnt,
             reportCnt,
             imagesUrl,
-            isLike,
-            pollDTO = null
+            isLike
         )
     }
 }

@@ -21,5 +21,4 @@ data class ExtBoardDTO(
     val reportCnt: Int,
     val imagesUrl: String?,
     val isLike: Boolean,
-    val pollDTO: PollDTO?
 )
