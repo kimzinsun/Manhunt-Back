@@ -30,7 +30,7 @@
             body=#{body},
             is_hide=#{isHide},
             modified_at=NOW()
-        where id = #{boardId}
+        where id = #{id}
     </update>
     <update id="deleteBoard">
         update board
