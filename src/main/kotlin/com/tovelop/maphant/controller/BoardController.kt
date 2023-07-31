@@ -120,9 +120,13 @@ class BoardController(@Autowired val boardService: BoardService) {
 
     @PostMapping("/create")
     fun createBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
+        val auth = SecurityContextHolder.getContext().authentication
+        if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
+            return ResponseEntity.badRequest().body(Response.error("로그인 안됨"))
+        }
         // 제목 내용 빈칸인지 확인
         return if (board.title.isNotBlank() && board.body.isNotBlank()) {
-            boardService.insertBoard(board.toBoardDTO())
+            boardService.insertBoard(board.toBoardDTO(auth.getUserId()))
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
             ResponseEntity.ok(Response.stateOnly(false))
