@@ -21,17 +21,17 @@ class CommentController(@Autowired val commentService: CommentService) {
     data class CommentRequest(
         val userId: Int,
         val commentId: Int,
-        val reportId: Int?
+        val reportId: Int?,
     )
 
     data class ReportRequest(
-        val commentId: Int
+        val commentId: Int,
     )
 
     @GetMapping("/list/{boardId}")
     fun findAllComment(
         @ModelAttribute pagingDto: PagingDto,
-        @PathVariable boardId: Int
+        @PathVariable boardId: Int,
     ): ResponseEntity<Response<PagingResponse<CommentExtDTO>>> {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth is AnonymousAuthenticationToken) {
@@ -131,6 +131,9 @@ class CommentController(@Autowired val commentService: CommentService) {
     @GetMapping("/like")
     fun findCommentLike(@RequestBody commentRequest: CommentRequest): ResponseEntity<Response<List<CommentLikeDTO>?>> {
         val comment = commentService.findCommentLike(commentRequest.userId, commentRequest.commentId)
+        if (commentService.getCommentById(commentRequest.commentId) == null) {
+            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
+        }
         return ResponseEntity.ok().body(Response.success(comment))
     }
 
