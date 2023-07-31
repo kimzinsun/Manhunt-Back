@@ -1,8 +1,8 @@
 package com.tovelop.maphant.controller
 
 
-import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 class BoardController(@Autowired val boardService: BoardService) {
     val categoryMap = mapOf("createdAt" to "created_at", "likeCnt" to "like_cnt")
 
-    @GetMapping("/main")
+    @PostMapping("/main")
     fun readBoardList(
         @RequestBody findBoardDTO: FindBoardDTO
     ): ResponseEntity<Any> {
@@ -39,7 +39,7 @@ class BoardController(@Autowired val boardService: BoardService) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 카테고리나 게시판 유형입니다."))
         }
-        val boardList = boardService.findBoardList(findBoardDTO,auth.getUserData().id,auth.getUserData().categoryId)
+        val boardList = boardService.findBoardList(findBoardDTO, auth.getUserData().id, auth.getUserData().categoryId)
         return if (boardList.isEmpty()) {
             ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         } else {
@@ -53,7 +53,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
-        val board = boardService.findBoard(boardId,auth.getUserData().id)
+        val board = boardService.findBoard(boardId, auth.getUserData().id)
         if (board == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
@@ -67,7 +67,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
-        val board = boardService.findBoard(boardId,auth.getUserData().id)
+        val board = boardService.findBoard(boardId, auth.getUserData().id)
         if (board == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
@@ -81,7 +81,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
-        val board = boardService.findBoard(boardId,auth.getUserData().id)
+        val board = boardService.findBoard(boardId, auth.getUserData().id)
         if (board == null || boardService.getIsHideByBoardId(boardId) == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
@@ -129,7 +129,7 @@ class BoardController(@Autowired val boardService: BoardService) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("로그인 안됨"))
         }
         // 게시글이 존재하지 않는 경우
-        val reBoard = boardService.findBoard(board.id,auth.getUserData().id)
+        val reBoard = boardService.findBoard(board.id, auth.getUserData().id)
             ?: return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
         // 제목 및 내용 빈칸 확인
         if (reBoard.isComplete == 1) {
@@ -148,10 +148,10 @@ class BoardController(@Autowired val boardService: BoardService) {
     }
 
     @GetMapping("/search")
-    fun searchBoard(@RequestParam content:String): Any {
+    fun searchBoard(@RequestParam content: String): Any {
         val searchBoard = boardService.findBoardByKeyword(content)
         // 검색어가 포함된 게시글 읽어오기
-        if(searchBoard.isEmpty()){
+        if (searchBoard.isEmpty()) {
             return ResponseEntity.badRequest().body(Response.error<Unit>("검색 결과가 없습니다."))
         }
         // return: json
