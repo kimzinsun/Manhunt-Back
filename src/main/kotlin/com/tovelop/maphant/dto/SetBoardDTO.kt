@@ -1,8 +1,6 @@
 package com.tovelop.maphant.dto
 
-import java.time.LocalDateTime
-
-data class SetPostDTO(
+data class SetBoardDTO(
     val parentId: Int?,
     val categoryId: Int,
     val userId: Int,

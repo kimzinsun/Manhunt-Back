@@ -15,7 +15,7 @@
     </select>
     <insert id="insertBoard">
         INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete, is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
-        VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), NOW(), #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
+        VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), null, #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
     </insert>
     <select id="findBoard" resultType="BoardDTO">
         select *
@@ -42,8 +42,8 @@
         from board
         where id = #{boardId}
     </select>
-    <select id="isModified" resultType="BoardTimeDTO">
-        select created_at, modified_at
+    <select id="isModified" resultType="java.time.LocalDateTime">
+        select modified_at
         from board
         where id = #{boardId}
     </select>
@@ -61,16 +61,53 @@
     <select id="findBoardByKeyword" resultType="BoardDTO">
         select *
         from board
-        where title like '%'+#{keyword}+'%' or body like '%'+#{keyword}+'%'
+        where lower(title) like lower(CONCAT('%',#{keyword},'%')) or lower(body) like lower(CONCAT('%',#{keyword},'%'))
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
-        select title, created_at, user.nickname, comment_cnt, like_cnt
-        from (select *
-            from (select *
-                from board
-                where category_id = #{categoryId} and type_id = #{boardTypeId}
-                order by #{sortCriterion})
-            limit #{pageSize} offset #{startRow})
-            boards join user on boards.user_id = user.id
+        select pageBoards.board_id, pageBoards.title, pageBoards.created_at, pageBoards.modified_at, pageBoards.nickname, pageBoards.comment_cnt, pageBoards.like_cnt, pageBoards.is_anonymous, pageBoards.is_hide, board_like.user_id
+        from (select boards.board_id, boards.title, boards.created_at, boards.modified_at, boards.user_id, user.nickname, boards.comment_cnt, boards.like_cnt, boards.is_hide, boards.is_anonymous
+            from (select board.id as board_id, board.title, board.created_at, board.modified_at, board.user_id, board.comment_cnt, board.like_cnt, board.is_hide, board.is_anonymous
+                from (select *
+                    from board
+                    where category_id = #{categoryId} and type_id = #{boardTypeId} and state = 0 and is_hide = 0
+                    order by #{findBoardDTO.sortCriterion}) as board
+                limit #{findBoardDTO.pageSize} offset #{startRow}) as
+                boards join user on boards.user_id = user.id) as
+            pageBoards left outer join board_like on pageBoards.board_id = board_like.board_id and pageBoards.user_id = board_like.user_id
     </select>
+    <select id="isInCategory" resultType="String">
+        select name
+        from category
+        where id = #{categoryId}
+    </select>
+    <select id="isInBoardtype" resultType="String">
+        select name
+        from board_type
+        where name = #{boardType}
+    </select>
+    <select id="findBoardLike" resultType="BoardLikeDTO">
+        select *
+        from board_like
+        where board_id = #{boardId} and user_id = #{userId}
+    </select>
+    <select id="isInReportByBoardId" resultType="BoardReportDTO">
+        select *
+        from board_report
+        where board_id = #{boardId} and user_id = #{userId}
+    </select>
+    <select id="isInReportId" resultType="String">
+        select name
+        from report
+        where id = #{reportId}
+    </select>
+    <select id="isInBoardByBoardId" resultType="Int">
+        select id
+        from board
+        where id = #{boardId}
+    </select>
+    <update id="updateBoardComplete">
+        update board
+        set is_complete = 1
+        where id = #{boardId}
+    </update>
 </mapper>
