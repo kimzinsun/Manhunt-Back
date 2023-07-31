@@ -69,17 +69,18 @@ class CommentController(@Autowired val commentService: CommentService) {
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-    @PostMapping("/delete")
-    fun deleteComment(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
+    @DeleteMapping("/{commentId}")
+    fun deleteComment(@PathVariable commentId: Int): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        val current = commentService.getCommentById(commentRequest.commentId)!!
-        if (current.user_id != auth.getUserData().id) {
+        val current = commentService.getCommentById(commentId)!!
+        val userId = auth.getUserData().id
+        if (current.user_id != userId) {
             return ResponseEntity.badRequest().body(Response.error("댓글 작성자만 삭제할 수 있습니다."))
         }
         if (current.state == 1) {
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
         }
-        commentService.deleteComment(commentRequest.userId, commentRequest.commentId)
+        commentService.deleteComment(userId, commentId)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
