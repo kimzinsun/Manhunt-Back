@@ -43,7 +43,9 @@ class DmService(
                         sender_id = sender_id,
                         receiver_id = receiver_id,
                         sender_is_deleted = false,
-                        receiver_is_deleted = false
+                        receiver_is_deleted = false,
+                        sender_unread_count=0,
+                        receiver_unread_count=0,
                     )
                 )
                 // 만든 대화방 가져오기
@@ -67,31 +69,9 @@ class DmService(
             )
         )
 
-        roomMapper.updateRoomLastContent(room.id, content)
-    }
-
-    @Transactional
-    fun getDmList(meId: Int, roomId: Int): List<DmDto> {
-        var isSender: Boolean? = null;
-        var room: RoomDto = roomMapper.findRoomById(roomId)
-
-        if (room == null) {
-            throw NullPointerException("대화방이 존재하지 않습니다.")
-        }
-
-        if (room.sender_id == meId) isSender = true
-        if (room.receiver_id == meId) isSender = false
-
-        if (isSender == null) throw NullPointerException("대화방이 존재하지 않습니다.")
-
-        //안읽은 dm읽음 처리
-        dmMapper.updateNotReadDm(roomId, !isSender)
-
-        if (isSender) {
-            return dmMapper.findDmList(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
-        }
-
-        return dmMapper.findDmList(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
+        // is_from_sender == true이면 receiver_unread_count ++
+        // is_from_sender == false이면 sender_unread_count ++
+        roomMapper.updateRoomUnreadCountAndLastContent(room.id, content, is_from_sender)
     }
 
     @Transactional
@@ -153,14 +133,14 @@ class DmService(
             //상대방이 이미 삭제한 경우
             dmMapper.updateDmVisible(roomId, VisibleChoices.ONLY_SENDER, VisibleChoices.NOBODY)
             //isSenderDeleted = true
-            roomMapper.updateSenderIsDeleted(roomId)
+            roomMapper.updateSenderIsDeletedAndSenderUnreadCountZero(roomId)
         } else {
             //상대방이 삭제 안한 경우
             dmMapper.updateDmVisible(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
             //상대방이 이미 삭제한 경우
             dmMapper.updateDmVisible(roomId, VisibleChoices.ONLY_RECEIVER, VisibleChoices.NOBODY)
             //isReceiverDeleted = true
-            roomMapper.updateReceiverIsDeleted(roomId)
+            roomMapper.updateReceiverIsDeletedAndReceiverUnreadCountZero(roomId)
         }
     }
 }

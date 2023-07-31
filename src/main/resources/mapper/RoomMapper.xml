@@ -21,9 +21,14 @@
                 #{receiver_is_deleted})
     </insert>
 
-    <update id="updateRoomLastContent">
+    <update id="updateRoomUnreadCountAndLastContent">
         UPDATE room
-        SET last_content = #{content}
+        SET last_content = #{content},
+
+            sender_unread_count = CASE
+                                    WHEN is_from_sender == false THEN sender_unread_count + 1
+            receiver_unread_count = CASE
+                                    WHEN is_from_sender == true THEN receiver_unread_count + 1
         WHERE id = #{room_id}
     </update>
 
@@ -66,15 +71,17 @@
     </select>
 
 
-    <update id="updateSenderIsDeleted">
+    <update id="updateSenderIsDeletedAndSenderUnreadCountZero">
         UPDATE room
-        SET sender_is_deleted = true
+        SET sender_is_deleted = true,
+            sender_unread_count = 0
         WHERE id = #{room_id}
     </update>
 
-    <update id="updateReceiverIsDeleted">
+    <update id="updateReceiverIsDeletedAndReceiverUnreadCountZero">
         UPDATE room
-        SET receiver_is_deleted = true
+        SET receiver_is_deleted = true,
+            receiver_unread_count = 0
         WHERE id = #{room_id}
     </update>
 
