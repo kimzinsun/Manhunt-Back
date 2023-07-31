@@ -1,6 +1,7 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.PollDTO
+import com.tovelop.maphant.dto.PollInfoDTO
 import com.tovelop.maphant.mapper.PollMapper
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
@@ -42,7 +43,9 @@ class PollService(val pollMapper: PollMapper) {
         return pollMapper.getPollIdByBoardId(boardId)
     }
 
-    fun getPoll(pollId: Int): Result<List<Map<String, Int>>> {
+    fun getPoll(pollId: Int): Result<List<PollInfoDTO>> {
+        pollMapper.selectPollInfoById(pollId);
+
         return Result.runCatching { pollMapper.selectPollInfoById(pollId) }
     }
 }

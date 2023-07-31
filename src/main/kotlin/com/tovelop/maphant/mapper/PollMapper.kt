@@ -1,6 +1,7 @@
 package com.tovelop.maphant.mapper
 
 import com.tovelop.maphant.dto.PollDTO
+import com.tovelop.maphant.dto.PollInfoDTO
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
@@ -25,6 +26,6 @@ interface PollMapper {
 
     fun getPollIdByBoardId(boardId: Int): Int
 
-    fun selectPollInfoById(pollId: Int): List<Map<String, Int>>
+    fun selectPollInfoById(pollId: Int): List<PollInfoDTO>
 
 }

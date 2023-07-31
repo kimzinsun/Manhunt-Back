@@ -45,7 +45,7 @@ class PollController(val pollService: PollService) {
 
         if (optionList.isFailure) {
             return ResponseEntity.badRequest().body(
-                Response.error<Any>("Parse Error")
+                Response.error<Any>(optionList.exceptionOrNull()!!)
             )
         }
         return ResponseEntity.ok().body(Response.success(optionList.getOrNull()))
