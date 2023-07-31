@@ -99,4 +99,9 @@
         set is_complete = #{isComplete}
         where id = #{boardId};
     </update>
+    <update id="updateStateOfBoard">
+        update board
+        set state = #{state}
+        where id = #{boardId}
+    </update>
 </mapper>
