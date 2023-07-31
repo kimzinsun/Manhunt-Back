@@ -99,6 +99,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         val childBoard = boardMapper.findBoard(childBoardId)
         return childBoard?.parentId==parentBoardId
     }
+    fun updateStateOfBoard(boardId: Int, state: Int) {
+        boardMapper.updateStateOfBoard(boardId, state)
+    }
 }
 
 

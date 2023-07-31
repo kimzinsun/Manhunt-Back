@@ -18,9 +18,9 @@
         VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), null, #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
     </insert>
     <select id="findBoard" resultType="BoardDTO">
-        select *
-        from board
-        where id = #{boardId}
+        SELECT *
+        FROM board
+        WHERE board.id = #{boardId}
     </select>
     <update id="updateBoard">
         update board
@@ -98,5 +98,10 @@
         update board
         set is_complete = #{isComplete}
         where id = #{boardId};
+    </update>
+    <update id="updateStateOfBoard">
+        update board
+        set state = #{state}
+        where id = #{boardId}
     </update>
 </mapper>
