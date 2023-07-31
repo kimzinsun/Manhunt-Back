@@ -137,5 +137,4 @@ class ProfileServiceTest {
         assertEquals("png, jpeg, jpg에 해당하는 파일만 업로드할 수 있습니다.",exception.message)
         verify(uploadUtils, times(1)).isNotImageFile(file.originalFilename as String);
     }
-
 }
