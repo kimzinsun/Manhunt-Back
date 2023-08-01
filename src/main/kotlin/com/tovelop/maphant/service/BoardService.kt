@@ -73,8 +73,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return boardMapper.isInCategory(categoryId) != null
     }
 
-    fun isInBoardtype(boardType: String): Boolean {
-        return boardMapper.isInBoardtype(boardType) != null
+    fun isInBoardType(boardType: String): Boolean {
+        return boardMapper.isInBoardType(boardType) != null
     }
 
     fun findBoardLike(boardId: Int, userId: Int): Boolean {
@@ -113,6 +113,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
     fun updateStateOfBoard(boardId: Int, state: Int) {
         boardMapper.updateStateOfBoard(boardId, state)
+    }
+    fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO> {
+        return boardMapper.findAnswerBoardListByParentBoardId(parentBoardId)
     }
 }
 

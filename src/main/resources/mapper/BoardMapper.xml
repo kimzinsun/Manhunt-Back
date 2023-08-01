@@ -106,7 +106,7 @@
         from category
         where id = #{categoryId}
     </select>
-    <select id="isInBoardtype" resultType="String">
+    <select id="isInBoardType" resultType="String">
         select name
         from board_type
         where name = #{boardType}
@@ -147,4 +147,9 @@
         set state = #{state}
         where id = #{boardId}
     </update>
+    <select id="findAnswerBoardListByParentBoardId" resultType="BoardDTO">
+        select *
+        from board
+        where parent_id = #{parentBoardId}
+    </select>
 </mapper>
