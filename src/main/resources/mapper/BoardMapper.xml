@@ -147,4 +147,9 @@
         set state = #{state}
         where id = #{boardId}
     </update>
+    <select id="findAnswerBoardListByParentBoardId" resultType="BoardDTO">
+        select *
+        from board
+        where parent_id = #{parentBoardId}
+    </select>
 </mapper>
