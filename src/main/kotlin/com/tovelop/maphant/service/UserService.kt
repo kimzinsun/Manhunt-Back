@@ -119,4 +119,7 @@ class UserService(val mapper: UserMapper) {
         return matchResult?.value
     }
 
+    fun updateUserRole(role: String, id: Int) {
+        mapper.updateUserRole(role, id)
+    }
 }
