@@ -2,7 +2,6 @@ package com.tovelop.maphant.service
 
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
-import com.google.firebase.messaging.MulticastMessage
 import com.tovelop.maphant.dto.FcmMessageDTO
 import com.tovelop.maphant.mapper.FcmMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +20,7 @@ class FcmService(
 
         println("$title\n$body")
 
-        for(token in tokens) {
+        for (token in tokens!!) {
             val messageBuilder = Message.builder()
                 .setToken(token)
                 .setNotification(
@@ -31,7 +30,7 @@ class FcmService(
                         .build()
                 )
 
-            for(key in fcmMessageDTO.etc.keys) {
+            for (key in fcmMessageDTO.etc.keys) {
                 messageBuilder.putData(key, fcmMessageDTO.etc[key])
             }
 
@@ -46,5 +45,8 @@ class FcmService(
         fcmMapper.saveFcmToken(userId, token)
     }
 
-    fun sendByUserId()
+    fun sendByUserId(userId: Int): List<String> {
+        return fcmMapper.selectTokenById(userId)
+    }
+
 }

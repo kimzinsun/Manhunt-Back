@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FcmMapper {
     fun saveFcmToken(userId: Int, token: String)
+
+    fun selectTokenById(userId: Int): List<String>
 }

@@ -5,6 +5,12 @@
 <mapper namespace="com.tovelop.maphant.mapper.FcmMapper">
     <insert id="saveFcmToken">
         insert into user_device(id, user_id, fcm_token)
-        values(null, #{userId}, #{token});
+        values (null, #{userId}, #{token});
     </insert>
+
+    <select id="selectTokenById" resultType="string">
+        SELECT fcm_token
+        FROM user_device
+        WHERE user_id = #{userId}
+    </select>
 </mapper>
