@@ -88,4 +88,12 @@
         from user_report
         where user_id = #{userId}
     </select>
+    <delete id="deleteRecentUserReportByUserId">
+        delete from user_report
+        where user_id = #{userId}
+          and deadline_at =
+            (select max(deadline_at)
+            from user_report
+            where user_id = #{userId});
+    </delete>
 </mapper>

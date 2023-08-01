@@ -65,4 +65,7 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
     fun findUserAllSanctionByUserId(userId: Int): List<UserReportDTO> {
         return adminPageMapper.findUserAllSanctionByUserId(userId)
     }
+    fun deleteRecentUserReportByUserId(userId: Int){
+        adminPageMapper.deleteRecentUserReportByUserId(userId)
+    }
 }
