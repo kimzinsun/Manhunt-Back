@@ -2,6 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.ResultDmDto
 import com.tovelop.maphant.dto.RoomDto
+import com.tovelop.maphant.dto.RoomListResultDto
 import com.tovelop.maphant.dto.VisibleChoices
 import com.tovelop.maphant.mapper.DmMapper
 import com.tovelop.maphant.mapper.RoomMapper
@@ -37,6 +38,26 @@ class DmServiceTest {
 
     @InjectMocks
     private lateinit var dmService: DmService
+
+    @Test
+    @DisplayName("findRoomList를 호출시 List<RoomListResultDto>를 반환타입으로 가져야한다.")
+    fun findRoomLisTest() {
+        //given
+        val userId = 1;
+        val expectResult = listOf(
+            RoomListResultDto(
+                1,"test",userId,2, LocalDateTime.MAX,false,false,2,"nick"
+            )
+        )
+        whenever(roomMapper.findRoomList(userId)).thenReturn(expectResult)
+
+        //when
+        val result = dmService.findRoomList(userId)
+
+        //then
+        assert(result == expectResult)
+        verify(roomMapper).findRoomList(userId)
+    }
 
     @Test
     @DisplayName("sender_id로 만들어진 대화방이 있으면 해당 대화방을 외래키로 가지는 dm을 만든다.")
