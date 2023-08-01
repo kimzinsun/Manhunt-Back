@@ -45,7 +45,7 @@ class CommentController(@Autowired val commentService: CommentService) {
             if (it.modified_at == null) {
                 it.timeFormat(it, it.created_at.formatTime())
             } else {
-                it.timeFormat(it, it.modified_at.formatTime())
+                it.timeFormat(it, it.modified_at.formatTime() + "(수정됨)")
             }
         }
 
