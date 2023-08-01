@@ -19,7 +19,7 @@ interface BoardMapper {
     fun insertBoardReport(boardId: Int, userId: Int, reportId: Int)
     fun findBoardByKeyword(keyword: String): List<BoardDTO>
     fun isInCategory(categoryId: Int): String?
-    fun isInBoardtype(boardType: String): String?
+    fun isInBoardType(boardType: String): String?
     fun findBoardLike(boardId: Int, userId: Int): BoardLikeDTO?
     fun isInReportByBoardId(boardId: Int, userId: Int): BoardReportDTO?
     fun isInReportId(reportId: Int): String?
