@@ -4,13 +4,13 @@ import com.sendgrid.*
 import com.sendgrid.helpers.mail.Mail
 import com.sendgrid.helpers.mail.objects.Content
 import com.sendgrid.helpers.mail.objects.Email
-import com.tovelop.maphant.storage.RedisMockup
+import com.tovelop.maphant.service.RedisService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class SendGrid(@Autowired val redisMockup: RedisMockup) {
+class SendGrid(@Autowired val redisService: RedisService) {
     @Value("\${SEND_GRID_API}")
     val apiKey: String = ""
     val from = Email("admin@ssda.dawoony.com", "과끼리 관리자")
@@ -47,30 +47,24 @@ class SendGrid(@Autowired val redisMockup: RedisMockup) {
             request.body = mail.build()
 
             val response: Response = sg.api(request)
-            println(response.statusCode)
-            println(response.body)
-            println(response.headers)
         } catch (e: Exception) {
             throw e
         }
     }
 
     fun saveEmailToken(email: String): String {
-        val random = (0..999999).random().toString().padStart(4, '0')
-        val isEmailExist = redisMockup.get(email) == null
+        val random = RandomGenerator.generateRandomNumber(6)
+        val isEmailExist = redisService.get(email) == null
 
-        return if (isEmailExist) {
-            redisMockup.del(email)
-            redisMockup.set(email, random)
-            random
-        } else {
-            redisMockup.set(email, random)
-            random
-        }
+        if (isEmailExist)
+            redisService.del(email)
+
+        redisService.set(email, random)
+        return random
     }
 
     fun confirmEmailToken(email: String, token: String): Boolean {
-        val orgToken = redisMockup.get(email)
+        val orgToken = redisService.get(email)
         return orgToken == token
     }
 }

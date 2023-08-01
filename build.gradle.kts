@@ -30,6 +30,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
     implementation("org.projectlombok:lombok:1.18.22")
+    implementation("com.sendgrid:sendgrid-java:4.9.3")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    runtimeOnly("com.mysql:mysql-connector-j")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2")
     implementation("commons-io:commons-io:2.5")
     implementation("com.google.firebase:firebase-admin:9.2.0")
     testImplementation("org.springframework.security:spring-security-test")
@@ -39,6 +44,9 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("com.sendgrid:sendgrid-java:4.9.3")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+    testImplementation("org.springframework:spring-test:5.3.10")
 
 }
 
