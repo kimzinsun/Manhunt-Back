@@ -51,6 +51,18 @@
           AND is_read = false
     </update>
 
+    <update id="updateSenderUnreadDmZero">
+        UPDATE room
+        SET sender_unread_count = 0
+        WHERE id = #{room_id}
+    </update>
+
+    <update id="updateReceiverUnreadDmZero">
+        UPDATE room
+        SET receiver_unread_count = 0
+        WHERE id = #{room_id}
+    </update>
+
     <update id="updateDmVisible">
         UPDATE dm
         SET visible = #{newVisible}

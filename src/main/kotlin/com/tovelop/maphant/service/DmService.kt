@@ -70,8 +70,11 @@ class DmService(
         )
 
         // is_from_sender == true이면 receiver_unread_count ++
+        if(is_from_sender){
+            roomMapper.updateSenderUnreadCountAndLastContent(room.id, content)
+        }
         // is_from_sender == false이면 sender_unread_count ++
-        roomMapper.updateRoomUnreadCountAndLastContent(room.id, content, is_from_sender)
+        else roomMapper.updateReceiverUnreadCountAndLastContent(room.id, content)
     }
 
     @Transactional
@@ -88,8 +91,14 @@ class DmService(
 
         if (isSender == null) throw NullPointerException("대화방이 존재하지 않습니다.")
 
-        //안읽은 dm읽음 처리
-        dmMapper.updateNotReadDm(roomId, !isSender)
+        //안읽은 dm읽음 처리, unread_count = 0으로 업데이트
+        dmMapper.updateNotReadDm(roomId, isSender)
+
+        if(isSender){
+            dmMapper.updateSenderUnreadDmZero(roomId)
+        }
+        else dmMapper.updateReceiverUnreadDmZero(roomId)
+
 
         if (isSender) {
             val count = dmMapper.findDmCount(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER);
