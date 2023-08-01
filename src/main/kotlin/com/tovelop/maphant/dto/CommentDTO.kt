@@ -32,7 +32,7 @@ data class ReplyDTO(
     val board_id: Int,
     val body: String,
     val is_anonymous: Boolean,
-    val created_at: LocalDateTime,
+    val created_at: LocalDateTime?,
     val like_cnt: Int,
     val state: Int,
 )

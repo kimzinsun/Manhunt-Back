@@ -55,8 +55,8 @@ class CommentController(@Autowired val commentService: CommentService) {
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-    @PostMapping("/reply/{parentId}")
-    fun replyComment(@RequestBody replyDTO: ReplyDTO, @PathVariable parentId: Int): ResponseEntity<ResponseUnit> {
+    @PostMapping("/reply")
+    fun replyComment(@RequestBody replyDTO: ReplyDTO): ResponseEntity<ResponseUnit> {
         SecurityContextHolder.getContext().authentication as TokenAuthToken
         val rep = replyDTO.body
         if (rep.isBlank()) {
@@ -106,7 +106,6 @@ class CommentController(@Autowired val commentService: CommentService) {
 //        }
         commentService.updateComment(updateCommentDTO)
         return ResponseEntity.ok().body(Response.stateOnly(true))
-        // TODO : 댓글 수정 시간
     }
 
     @PostMapping("/like")
