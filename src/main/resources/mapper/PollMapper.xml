@@ -53,9 +53,7 @@
     </select>
 
     <resultMap id="pollOptionResultMap" type="com.tovelop.maphant.dto.PollOption">
-        <id property="optionId" column="id"/>
-        <result property="optionName" column="option_name"/>
-        <result property="optionCount" column="option_cnt"/>
+
     </resultMap>
 
 
@@ -64,7 +62,11 @@
         <result property="expireDate" column="expire_date"/>
         <result property="state" column="state"/>
         <result property="selectedOptionId" column="poll_option"/>
-        <collection property="pollOptions" resultMap="pollOptionResultMap"/>
+        <collection property="pollOptions" ofType="com.tovelop.maphant.dto.PollOption">
+            <id property="optionId" column="id"/>
+            <result property="optionName" column="option_name"/>
+            <result property="optionCount" column="option_cnt"/>
+        </collection>
     </resultMap>
 
     <select id="selectPollInfoById" resultMap="pollInfoResultMap">

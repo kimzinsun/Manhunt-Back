@@ -3,11 +3,11 @@ package com.tovelop.maphant.dto
 import java.time.LocalDateTime
 
 data class PollInfoDTO(
-    val title: String,
-    val expireDate: LocalDateTime?,
-    val state: Char,
-    val selectedOptionId: Int?,
-    val pollOptions: List<PollOption>
+    var title: String = "",
+    var expireDate: LocalDateTime? = LocalDateTime.now(),
+    var state: Char = 't',
+    var selectedOptionId: Int? = 0,
+    var pollOptions: List<PollOption>? = null
 )
 
-data class PollOption(val optionId: Int, val optionName: String, val optionCount: Int)
+data class PollOption(var optionId: Int = 0, var optionName: String = "", var optionCount: Int = 0)
