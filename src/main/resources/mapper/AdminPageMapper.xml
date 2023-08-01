@@ -72,9 +72,20 @@
         insert into user_report(deadline_at, sanction_reason, user_id)
         values (#{deadlineAt}, #{sanctionReason}, #{userId})
     </insert>
-    <select id="findUserSanction" resultType="UserDTO">
-        select user.id userId, user.nickname userNickname, user.email userEmail, user_report.deadline_at deadlineAt, user_report.sanction_reason sanctionReason
+    <select id="findCurrentUserSanction" resultType="CurrentUserSanctionDTO">
+        select reportedUser.id userId, reportedUser.nickname userNickname, reportedUser.email userEmail,
+               user_report.deadline_at deadlineAt, user_report.sanction_reason sanctionReason
         from (select * from user where state=2) as reportedUser
-            join user_report on user.id = user_id and user_report.deadline_at > NOW()
+            join user_report on reportedUser.id = user_id and user_report.deadline_at > NOW()
+    </select>
+    <select id="findAllUserSanction" resultType="AllUserSanctionDTO">
+        select user.id userId, user.nickname userNickname, user.email userEmail
+        from (select distinct user_id from user_report) as reportedUserIds
+            join user on reportedUserIds.user_id = user.id
+    </select>
+    <select id="findUserAllSanctionByUserId" resultType="UserReportDTO">
+        select *
+        from user_report
+        where user_id = #{userId}
     </select>
 </mapper>
