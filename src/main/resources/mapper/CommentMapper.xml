@@ -7,10 +7,11 @@
         SELECT comment.id,
                comment.user_id,
                user.nickname,
-               board.id,
+               comment.board_id,
                comment.body,
                comment.is_anonymous,
                comment.created_at,
+               comment.modified_at,
                comment.like_cnt,
                IFNULL(comment_like.comment_id, 0)
         FROM comment
@@ -20,8 +21,7 @@
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
         WHERE board_id = #{boardId}
           AND comment.state = 0
-            LIMIT #{params.recordSize}
-        OFFSET #{params.offset}
+        LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
     <insert id="insertComment">
         INSERT INTO comment(board_id, user_id, body, created_at, is_anonymous)
@@ -45,6 +45,7 @@
                body,
                is_anonymous,
                created_at,
+               modified_at,
                like_cnt,
                state
         FROM comment

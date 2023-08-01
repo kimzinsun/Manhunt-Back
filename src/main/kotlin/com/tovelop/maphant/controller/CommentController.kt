@@ -8,7 +8,6 @@ import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import com.tovelop.maphant.utils.FormatterHelper.Companion.formatTime
-import com.tovelop.maphant.utils.FormatterHelper.Companion.timeBetween
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AnonymousAuthenticationToken
@@ -34,7 +33,7 @@ class CommentController(@Autowired val commentService: CommentService) {
     fun findAllComment(
         @ModelAttribute pagingDto: PagingDto,
         @PathVariable boardId: Int,
-    ): ResponseEntity<Response<PagingResponse<CommentExtDTO>>> {
+    ): ResponseEntity<Response<List<FormatTimeDTO>>> {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth is AnonymousAuthenticationToken) {
             return ResponseEntity.badRequest().body(Response.error("로그인 후 이용해주세요."))
@@ -42,8 +41,15 @@ class CommentController(@Autowired val commentService: CommentService) {
         val userId = (auth as TokenAuthToken).getUserData().id
         val comment = commentService.getCommentList(boardId, userId, pagingDto)
 
-        comment.list[0].created_at.formatTime();
-        return ResponseEntity.ok().body(Response.success(comment))
+        val commentTime = comment.list.map {
+            if (it.modified_at == null) {
+                it.timeFormat(it, it.created_at.formatTime())
+            } else {
+                it.timeFormat(it, it.modified_at.formatTime())
+            }
+        }
+
+        return ResponseEntity.ok().body(Response.success(commentTime))
     }
 
     @PostMapping("/insert")
