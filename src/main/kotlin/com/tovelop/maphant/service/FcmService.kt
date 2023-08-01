@@ -3,11 +3,15 @@ package com.tovelop.maphant.service
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import com.tovelop.maphant.dto.FcmMessageDTO
+import com.tovelop.maphant.mapper.FcmMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class FcmService(@Autowired private val notificationService: NotificationService) {
+class FcmService(
+    @Autowired private val notificationService: NotificationService,
+    @Autowired private val fcmMapper: FcmMapper,
+) {
 
     fun send(fcmMessageDTO: FcmMessageDTO) {
         val messageBuilder = Message.builder()
@@ -27,5 +31,9 @@ class FcmService(@Autowired private val notificationService: NotificationService
         notificationService.createNotification(fcmMessageDTO)
         val response = FirebaseMessaging.getInstance().send(message)
         println("Successfully sent message: $response")
+    }
+
+    fun saveFcmToken(userId: Int, token: String) {
+        fcmMapper.saveFcmToken(userId, token)
     }
 }
