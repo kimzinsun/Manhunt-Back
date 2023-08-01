@@ -41,7 +41,8 @@ class PollController(val pollService: PollService) {
     @GetMapping("/my-poll/{poll_id}")
     @ResponseBody
     fun pollInfo(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
-        val optionList = pollService.getPoll(pollId)
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val optionList = pollService.getPoll(pollId, auth.getUserData().id)
 
         if (optionList.isFailure) {
             return ResponseEntity.badRequest().body(
