@@ -22,7 +22,7 @@ class FormatterHelper {
             if (diffHour < 24)
                 return "${diffHour}시간 전"
 
-            val diffDay = diffHour / 60;
+            val diffDay = diffHour / 24;
             if (diffDay < 7)
                 return "${diffDay}일 전";
 
