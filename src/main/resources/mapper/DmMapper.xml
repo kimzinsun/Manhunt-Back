@@ -39,7 +39,7 @@
                 #{item}
             </foreach>
         </if>
-        ORDER BY time DESC
+--         ORDER BY time DESC
         LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
 

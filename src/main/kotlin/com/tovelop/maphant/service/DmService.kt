@@ -8,6 +8,7 @@ import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.paging.dm.DmPagingResponse
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -30,6 +31,12 @@ class DmService(
 
     @Transactional
     fun sendDm(sender_id: Int, receiver_id: Int, content: String) {
+
+        val receiverNickname = userMapper.findNicknameIdBy(receiver_id);
+        if(receiverNickname == null) {
+            throw NullPointerException("receiver_id에 해당하는 user가 없습니다.")
+        }
+
         var is_sender: Boolean = true
         var room: RoomDto = roomMapper.findRoom(sender_id, receiver_id);
 
@@ -112,7 +119,7 @@ class DmService(
             val list =
                 dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
 
-            val otherName = userMapper.findIdBy(room.receiver_id)
+            val otherName = userMapper.findNicknameIdBy(room.receiver_id) as String;
             return DmPagingResponse(room.receiver_id, otherName, list, pagination)
         }
 
@@ -122,7 +129,7 @@ class DmService(
             return PagingResponse(Collections.emptyList(), null)
         val list =
             dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
-        val otherName = userMapper.findIdBy(room.sender_id)
+        val otherName = userMapper.findNicknameIdBy(room.sender_id) as String
         return DmPagingResponse(room.sender_id, otherName, list, pagination)
     }
 
