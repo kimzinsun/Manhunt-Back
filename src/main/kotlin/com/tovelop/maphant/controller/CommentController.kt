@@ -7,6 +7,8 @@ import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.FormatterHelper.Companion.formatTime
+import com.tovelop.maphant.utils.FormatterHelper.Companion.timeBetween
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AnonymousAuthenticationToken
@@ -39,6 +41,8 @@ class CommentController(@Autowired val commentService: CommentService) {
         }
         val userId = (auth as TokenAuthToken).getUserData().id
         val comment = commentService.getCommentList(boardId, userId, pagingDto)
+
+        comment.list[0].created_at.formatTime();
         return ResponseEntity.ok().body(Response.success(comment))
     }
 
