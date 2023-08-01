@@ -9,6 +9,7 @@ data class CommentDTO(
     val body: String,
     val is_anonymous: Boolean,
     val created_at: LocalDateTime?,
+    val modified_at: LocalDateTime?,
     val like_cnt: Int,
     val state: Int,
 )
@@ -67,6 +68,7 @@ data class CommentReportDTO(
 data class UpdateCommentDTO(
     val id: Int,
     val body: String,
+    val modified_at: LocalDateTime?,
 )
 
 data class FormatTimeDTO(

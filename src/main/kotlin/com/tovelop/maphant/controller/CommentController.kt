@@ -98,8 +98,9 @@ class CommentController(@Autowired val commentService: CommentService) {
     fun updateComment(@RequestBody updateCommentDTO: UpdateCommentDTO): ResponseEntity<ResponseUnit> {
         val current = commentService.getCommentById(updateCommentDTO.id)!!
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val userId = auth.getUserData().id
 
-        if (current.user_id != auth.getUserData().id) {
+        if (current.user_id != userId) {
             return ResponseEntity.badRequest().body(Response.error("댓글 작성자만 수정할 수 있습니다."))
         }
         if (current.state == 1) {
