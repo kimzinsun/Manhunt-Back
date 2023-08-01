@@ -18,4 +18,6 @@ interface RoomMapper {
     fun findRoomList(user_id: Int): List<RoomListResultDto>
     fun updateSenderIsDeletedAndSenderUnreadCountZero(room_id: Int): Boolean
     fun updateReceiverIsDeletedAndReceiverUnreadCountZero(room_id: Int): Boolean
+
+    fun findUnReadDmCount(user_id: Int): Int
 }
