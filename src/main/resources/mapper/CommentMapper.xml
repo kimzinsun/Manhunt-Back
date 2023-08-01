@@ -34,7 +34,8 @@
     </delete>
     <update id="updateComment">
         UPDATE comment
-        SET body = #{body}
+        SET body        = #{body},
+            modified_at = NOW()
         WHERE id = #{id}
     </update>
     <select id="getCommentById">
