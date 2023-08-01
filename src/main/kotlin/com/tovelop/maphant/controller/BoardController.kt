@@ -53,9 +53,12 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
-        val board = boardService.findBoard(boardId,auth.getUserData().id)
-        if (board == null) {
+        if (boardService.findBoard(boardId,auth.getUserData().id) == null) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
+        }
+        // 이미 좋아요를 누른 게시글인 경우
+        if (boardService.findBoardLike(boardId, auth.getUserData().id)){
+            return ResponseEntity.badRequest().body(Response.error<Any>("이미 좋아요를 누른 게시글입니다."))
         }
         boardService.insertBoardLike(boardId, auth.getUserData().id)
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -68,9 +71,7 @@ class BoardController(@Autowired val boardService: BoardService) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
         val board = boardService.findBoard(boardId,auth.getUserData().id)
-        if (board == null) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
-        }
+            ?: return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         boardService.deleteBoardLike(boardId, board.userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -99,6 +100,11 @@ class BoardController(@Autowired val boardService: BoardService) {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
+        }
+        val reBoard = boardService.findBoard(boardId,auth.getUserData().id)
+            ?: return ResponseEntity.badRequest().body(Response.error<Unit>("게시글이 존재하지 않습니다."))
+        if (reBoard.isComplete == 1) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("체택된 게시글은 삭제할 수 없습니다."))
         }
         // 관리자 권한 확인(관리자는 모든 게시글 삭제 가능)
         // 본인 게시글 인지 확인
@@ -195,7 +201,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         if(auth.getUserData().id == boardService.getUserIdByBoardId(answerId)){
             return ResponseEntity.badRequest().body(Response.error<Unit>("자신의 게시글은 체택할 수 없습니다."))
         }
-        if(boardService.isinCompleteByBoardId(answerId)){
+        if(boardService.isinCompleteByBoardId(questId) || boardService.isinCompleteByBoardId(answerId)){
             return ResponseEntity.badRequest().body(Response.error<Unit>("이미 체택한 게시글입니다."))
         }
         if(!boardService.isParent(questId,answerId)){

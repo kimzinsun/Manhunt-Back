@@ -46,16 +46,24 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
     fun insertUserReport(userReportDTO: UserReportDTO){
         adminPageMapper.insertUserReport(userReportDTO)
     }
-//    fun insertBoardSanction(boardId: Int) {
-//        adminPageMapper.setBoardSanction(boardId)
-//    }
-//    fun findCommentReport() {
-//        adminPageMapper.findBoardReport()
-//    }
-//    fun insertCommentSanction(commentId: Int) {
-//        adminPageMapper.setBoardSanction(commentId)
-//    }
-//    fun setUserSanction(userId: Int) { //sanction = 제재
-//        adminPageMapper.setUserSanction(userId)
-//    }
+    /**
+     * 현재 제재중인 유저들의 정보와 제재에 대한 정보를 가져옴
+     */
+    fun findCurrentUserSanction(): List<CurrentUserSanctionDTO> { //sanction = 제재
+        return adminPageMapper.findCurrentUserSanction()
+    }
+
+    /**
+     * 제재를 받은 적이 있는 모든 유저의 정보를 가져옴
+     */
+    fun findAllUserSanction(): List<AllUserSanctionDTO> {
+        return adminPageMapper.findAllUserSanction()
+    }
+
+    /**
+     * 특정 유저에 대한 모든 제재 내역을 가져온다.
+     */
+    fun findUserAllSanctionByUserId(userId: Int): List<UserReportDTO> {
+        return adminPageMapper.findUserAllSanctionByUserId(userId)
+    }
 }
