@@ -32,6 +32,6 @@ interface UserMapper {
     fun findCategoryIdByCategoryName(categoryName: String): Int
     fun findMajorIdByMajorName(majorName: String): Int
 
-    fun findIdBy(userId: Int): String
     fun updateUserRole(role: String, id: Int)
+    fun findNicknameIdBy(userId: Int): String?
 }

@@ -2,9 +2,7 @@ package com.tovelop.maphant.controller
 
 
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
-import com.tovelop.maphant.dto.FindBoardDTO
-import com.tovelop.maphant.dto.SetBoardDTO
-import com.tovelop.maphant.dto.UpdateBoardDTO
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -37,7 +35,7 @@ class BoardController(@Autowired val boardService: BoardService) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
         }
-        if (!boardService.isInCategory(auth.getUserData().categoryId) || !boardService.isInBoardtype(findBoardDTO.boardType)) {
+        if (!boardService.isInCategory(auth.getUserData().categoryId) || !boardService.isInBoardType(findBoardDTO.boardType)) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 카테고리나 게시판 유형입니다."))
         }
@@ -77,8 +75,8 @@ class BoardController(@Autowired val boardService: BoardService) {
         boardService.deleteBoardLike(boardId, board.userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-
-    @GetMapping("/{boardId}")
+    data class BoardInfo(val board:ExtBoardDTO, val answerList:List<BoardDTO>?)
+    @PostMapping("/{boardId}")
     fun readBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
@@ -93,7 +91,11 @@ class BoardController(@Autowired val boardService: BoardService) {
                 return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
             }
         }
-        return ResponseEntity.ok(Response.success(board))
+        if(board.typeId == 2 && board.parentId == null){
+            val answerList = boardService.findAnswerBoardListByParentBoardId(board.id!!)
+            return ResponseEntity.ok(Response.success(BoardInfo(board,answerList)))
+        }
+        return ResponseEntity.ok(Response.success(BoardInfo(board,null)))
     }
 
     @DeleteMapping("/{boardId}")
