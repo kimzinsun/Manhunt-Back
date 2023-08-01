@@ -11,9 +11,13 @@ import org.springframework.stereotype.Repository
 interface RoomMapper {
     fun findRoom(sender_id: Int, receiver_id: Int): RoomDto
     fun createRoom(createHeaderDto: CreateRoomDto): Boolean
-    fun updateRoomLastContent(room_id: Int, content: String): Boolean
+    fun updateSenderUnreadCountAndLastContent(room_id: Int, content: String): Boolean
+    fun updateReceiverUnreadCountAndLastContent(room_id: Int, content: String): Boolean
+
     fun findRoomById(room_id: Int): RoomDto
     fun findRoomList(user_id: Int): List<RoomListResultDto>
-    fun updateSenderIsDeleted(room_id: Int): Boolean
-    fun updateReceiverIsDeleted(room_id: Int): Boolean
+    fun updateSenderIsDeletedAndSenderUnreadCountZero(room_id: Int): Boolean
+    fun updateReceiverIsDeletedAndReceiverUnreadCountZero(room_id: Int): Boolean
+
+    fun findUnReadDmCount(user_id: Int): Int
 }

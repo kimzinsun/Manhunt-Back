@@ -11,4 +11,7 @@ data class RoomDto(
     val time: LocalDateTime,
     var sender_is_deleted: Boolean,
     var receiver_is_deleted: Boolean,
+    // unread_count 추가
+    val sender_unread_count: Int,
+    val receiver_unread_count: Int,
 )
