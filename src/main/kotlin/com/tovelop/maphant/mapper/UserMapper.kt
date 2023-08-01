@@ -34,5 +34,5 @@ interface UserMapper {
     fun findCategoryIdByCategoryName(categoryName: String): Int
     fun findMajorIdByMajorName(majorName: String): Int
 
-    fun findIdBy(userId: Int): String
+    fun findNicknameIdBy(userId: Int): String?
 }

@@ -124,7 +124,7 @@
         WHERE name=#{majorName}
     </select>
 
-    <select id="findIdBy" resultType="String">
+    <select id="findNicknameIdBy" resultType="String">
         SELECT nickname
         FROM user
         WHERE id = #{userId}
