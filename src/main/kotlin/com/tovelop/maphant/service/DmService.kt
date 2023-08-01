@@ -103,7 +103,7 @@ class DmService(
         if (isSender == null) throw NullPointerException("대화방이 존재하지 않습니다.")
 
         //안읽은 dm읽음 처리, unread_count = 0으로 업데이트
-        dmMapper.updateNotReadDm(roomId, isSender)
+        dmMapper.updateNotReadDm(roomId, !isSender)
 
         if(isSender){
             dmMapper.updateSenderUnreadDmZero(roomId)

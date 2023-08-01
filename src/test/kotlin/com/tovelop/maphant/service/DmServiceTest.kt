@@ -18,10 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -40,13 +37,29 @@ class DmServiceTest {
     private lateinit var dmService: DmService
 
     @Test
+    @DisplayName("")
+    fun findUnReadDmCountTest() {
+        //given
+        val userId = 1
+        val expectResult = 10
+        whenever(roomMapper.findUnReadDmCount(userId)).thenReturn(expectResult)
+
+        //when
+        val result = dmService.findUnReadDmCount(userId)
+
+        //then
+        assert(result == expectResult)
+        verify(roomMapper).findUnReadDmCount(userId)
+    }
+
+    @Test
     @DisplayName("findRoomList를 호출시 List<RoomListResultDto>를 반환타입으로 가져야한다.")
     fun findRoomLisTest() {
         //given
         val userId = 1;
         val expectResult = listOf(
             RoomListResultDto(
-                1,"test",userId,2, LocalDateTime.MAX,false,false,2,"nick"
+                1,"test",userId,2, LocalDateTime.MAX,false,false,2,"nick",0
             )
         )
         whenever(roomMapper.findRoomList(userId)).thenReturn(expectResult)
@@ -60,6 +73,24 @@ class DmServiceTest {
     }
 
     @Test
+    @DisplayName("receiver_id에 해당하는 user 튜플이 없는경우 예외를 반환한다.")
+    fun sendDmNotReceiverUser() {
+        //given
+        val sender_id = 1
+        val receiver_id = 2;
+        val content = "test"
+        whenever(userMapper.findNicknameIdBy(receiver_id)).thenReturn(null)
+
+        //when
+        val exception = assertThrows<NullPointerException> {
+            dmService.sendDm(sender_id,receiver_id, content)
+        }
+
+        //then
+        assertEquals("receiver_id에 해당하는 user가 없습니다.",exception.message)
+    }
+
+    @Test
     @DisplayName("sender_id로 만들어진 대화방이 있으면 해당 대화방을 외래키로 가지는 dm을 만든다.")
     fun sendDmWithSenderId() {
         //given
@@ -67,10 +98,10 @@ class DmServiceTest {
         val receiver_id = 2
         val content = "test"
         val room = RoomDto(
-            1, "test", sender_id, receiver_id, LocalDateTime.now(), false, false
+            1, "test", sender_id, receiver_id, LocalDateTime.now(), false, false,0,0
         )
         whenever(roomMapper.findRoom(sender_id,receiver_id)).thenReturn(room)
-
+        whenever(userMapper.findNicknameIdBy(receiver_id)).thenReturn("test")
         //when
         dmService.sendDm(sender_id,receiver_id, content)
 
@@ -78,7 +109,7 @@ class DmServiceTest {
         verify(roomMapper, times(0)).findRoom(receiver_id,sender_id)
         verify(roomMapper, times(0)).createRoom(any());
         verify(dmMapper, times(1)).createDm(any())
-        verify(roomMapper).updateRoomLastContent(room.id,content);
+        verify(roomMapper).updateSenderUnreadCountAndLastContent(room.id,content);
     }
 
     @Test
@@ -89,11 +120,11 @@ class DmServiceTest {
         val receiver_id = 2
         val content = "test"
         val room = RoomDto(
-            1, "test", receiver_id, sender_id, LocalDateTime.now(), false, false
+            1, "test", receiver_id, sender_id, LocalDateTime.now(), false, false,0,0
         )
         whenever(roomMapper.findRoom(sender_id,receiver_id)).thenReturn(null)
         whenever(roomMapper.findRoom(receiver_id,sender_id)).thenReturn(room)
-
+        whenever(userMapper.findNicknameIdBy(receiver_id)).thenReturn("test")
         //when
         dmService.sendDm(sender_id,receiver_id, content)
 
@@ -101,7 +132,7 @@ class DmServiceTest {
         verify(roomMapper, times(1)).findRoom(receiver_id,sender_id)
         verify(roomMapper, times(0)).createRoom(any());
         verify(dmMapper, times(1)).createDm(any())
-        verify(roomMapper).updateRoomLastContent(room.id,content);
+        verify(roomMapper).updateReceiverUnreadCountAndLastContent(room.id,content);
     }
 
     @Test
@@ -112,11 +143,11 @@ class DmServiceTest {
         val receiver_id = 2
         val content = "test"
         val room = RoomDto(
-            1, "test", sender_id, receiver_id, LocalDateTime.now(), false, false
+            1, "test", sender_id, receiver_id, LocalDateTime.now(), false, false,0,0
         )
         whenever(roomMapper.findRoom(sender_id,receiver_id)).thenReturn(null).thenReturn(room)
         whenever(roomMapper.findRoom(receiver_id,sender_id)).thenReturn(null)
-
+        whenever(userMapper.findNicknameIdBy(receiver_id)).thenReturn("test")
         //when
         dmService.sendDm(sender_id,receiver_id, content)
 
@@ -125,7 +156,7 @@ class DmServiceTest {
         verify(roomMapper, times(1)).findRoom(receiver_id,sender_id)
         verify(roomMapper, times(1)).createRoom(any());
         verify(dmMapper, times(1)).createDm(any())
-        verify(roomMapper).updateRoomLastContent(room.id,content);
+        verify(roomMapper).updateSenderUnreadCountAndLastContent(room.id,content);
     }
 
     @Test
@@ -154,7 +185,7 @@ class DmServiceTest {
         val roomId = 1;
         val params = PagingDto(1,10);
         val room = RoomDto(
-            1, "test", 2, 3, LocalDateTime.now(), false, false
+            1, "test", 2, 3, LocalDateTime.now(), false, false,0,0
         )
         whenever(roomMapper.findRoomById(roomId)).thenReturn(room)
 
@@ -176,7 +207,7 @@ class DmServiceTest {
         val params = PagingDto(1,10);
         val isSender = true
         val room = RoomDto(
-            1, "test", meId, 3, LocalDateTime.now(), false, false
+            1, "test", meId, 3, LocalDateTime.now(), false, false,0,0
         )
         val count = 10
         val pagination = Pagination(count,params)
@@ -187,7 +218,7 @@ class DmServiceTest {
         whenever(dmMapper.findDmCount(roomId,VisibleChoices.BOTH,VisibleChoices.ONLY_SENDER)).thenReturn(count)
         whenever(dmMapper.findDmListWithPaging(isSender,roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER))
             .thenReturn(list)
-        whenever(userMapper.findIdBy(room.receiver_id)).thenReturn(otherName)
+        whenever(userMapper.findNicknameIdBy(room.receiver_id)).thenReturn(otherName)
 
         val expectResult = DmPagingResponse(room.receiver_id, otherName, list, pagination)
 
@@ -201,9 +232,10 @@ class DmServiceTest {
         assert(result.other_nickname == expectResult.other_nickname)
 
         verify(dmMapper).updateNotReadDm(roomId,!isSender)
+        verify(dmMapper).updateSenderUnreadDmZero(roomId)
         verify(dmMapper).findDmCount(roomId,VisibleChoices.BOTH,VisibleChoices.ONLY_SENDER)
         verify(dmMapper).findDmListWithPaging(isSender,roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
-        verify(userMapper).findIdBy(room.receiver_id)
+        verify(userMapper).findNicknameIdBy(room.receiver_id)
     }
 
     @Test
@@ -215,7 +247,7 @@ class DmServiceTest {
         val params = PagingDto(1,10);
         val isSender = false
         val room = RoomDto(
-            1, "test", 2, meId, LocalDateTime.now(), false, false
+            1, "test", 2, meId, LocalDateTime.now(), false, false,0,0
         )
         val count = 10
         val pagination = Pagination(count,params)
@@ -226,7 +258,7 @@ class DmServiceTest {
         whenever(dmMapper.findDmCount(roomId,VisibleChoices.BOTH,VisibleChoices.ONLY_RECEIVER)).thenReturn(count)
         whenever(dmMapper.findDmListWithPaging(isSender,roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER))
             .thenReturn(list)
-        whenever(userMapper.findIdBy(room.sender_id)).thenReturn(otherName)
+        whenever(userMapper.findNicknameIdBy(room.sender_id)).thenReturn(otherName)
 
         val expectResult = DmPagingResponse(room.sender_id, otherName, list, pagination)
 
@@ -240,9 +272,10 @@ class DmServiceTest {
         assert(result.other_nickname == expectResult.other_nickname)
 
         verify(dmMapper).updateNotReadDm(roomId,!isSender)
+        verify(dmMapper).updateReceiverUnreadDmZero(roomId)
         verify(dmMapper).findDmCount(roomId,VisibleChoices.BOTH,VisibleChoices.ONLY_RECEIVER)
         verify(dmMapper).findDmListWithPaging(isSender,roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
-        verify(userMapper).findIdBy(room.sender_id)
+        verify(userMapper).findNicknameIdBy(room.sender_id)
     }
 
     @Test
@@ -268,7 +301,7 @@ class DmServiceTest {
         //given
         val meId = 1;
         val roomId = 1;
-        val room = RoomDto(roomId,"test",2,3,LocalDateTime.now(),false,false)
+        val room = RoomDto(roomId,"test",2,3,LocalDateTime.now(),false,false,0,0)
         whenever(roomMapper.findRoomById(roomId)).thenReturn(room)
 
         //when
@@ -286,7 +319,7 @@ class DmServiceTest {
         //given
         val meId = 1;
         val roomId = 1;
-        val room = RoomDto(roomId,"test",meId,3,LocalDateTime.now(),false,false)
+        val room = RoomDto(roomId,"test",meId,3,LocalDateTime.now(),false,false,0,0)
         whenever(roomMapper.findRoomById(roomId)).thenReturn(room)
 
         //when
@@ -295,7 +328,7 @@ class DmServiceTest {
         //then
         verify(dmMapper).updateDmVisible(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
         verify(dmMapper).updateDmVisible(roomId, VisibleChoices.ONLY_SENDER, VisibleChoices.NOBODY)
-        verify(roomMapper).updateSenderIsDeleted(roomId)
+        verify(roomMapper).updateSenderIsDeletedAndSenderUnreadCountZero(roomId)
     }
 
     @Test
@@ -304,7 +337,7 @@ class DmServiceTest {
         //given
         val meId = 1;
         val roomId = 1;
-        val room = RoomDto(roomId,"test",2,meId,LocalDateTime.now(),false,false)
+        val room = RoomDto(roomId,"test",2,meId,LocalDateTime.now(),false,false,0,0)
         whenever(roomMapper.findRoomById(roomId)).thenReturn(room)
 
         //when
@@ -313,7 +346,7 @@ class DmServiceTest {
         //then
         verify(dmMapper).updateDmVisible(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
         verify(dmMapper).updateDmVisible(roomId, VisibleChoices.ONLY_RECEIVER, VisibleChoices.NOBODY)
-        verify(roomMapper).updateReceiverIsDeleted(roomId)
+        verify(roomMapper).updateReceiverIsDeletedAndReceiverUnreadCountZero(roomId)
     }
 
 }
