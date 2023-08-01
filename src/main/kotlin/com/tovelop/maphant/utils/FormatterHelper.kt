@@ -11,7 +11,7 @@ class FormatterHelper {
             val secDiff = now - this.toEpochSecond(ZoneOffset.UTC);
 
             if (secDiff < 60) {
-                return "방금전"
+                return "방금 전"
             }
 
             val diffMin = secDiff / 60
@@ -30,7 +30,15 @@ class FormatterHelper {
             if (diffWeek < 4)
                 return "${diffWeek}주 전";
 
-            return "오래 됨"
+            val diffMonth = diffWeek / 4;
+            if (diffMonth < 12)
+                return "${diffMonth}달 전";
+
+            val diffYear = diffMonth / 12;
+            if (diffYear < 1000)
+                return "${diffYear}년 전";
+
+            return "오래 전"
         }
     }
 }
