@@ -114,6 +114,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun updateStateOfBoard(boardId: Int, state: Int) {
         boardMapper.updateStateOfBoard(boardId, state)
     }
+    fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO> {
+        return boardMapper.findAnswerBoardListByParentBoardId(parentBoardId)
+    }
 }
 
 
