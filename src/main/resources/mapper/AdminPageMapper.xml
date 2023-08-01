@@ -69,11 +69,11 @@
     </select>
 
     <insert id="insertUserReport">
-        insert into user_report
-        values (#{userId}, #{deadlineAt}, #{sanctionReason})
+        insert into user_report(deadline_at, sanction_reason, user_id)
+        values (#{deadlineAt}, #{sanctionReason}, #{userId})
     </insert>
     <select id="findUserSanction" resultType="UserDTO">
-        select user.id, user.nickname, user.email, user_report.deadline_at, user_report.sanction_reason
+        select user.id userId, user.nickname userNickname, user.email userEmail, user_report.deadline_at deadlineAt, user_report.sanction_reason sanctionReason
         from (select * from user where state=2) as reportedUser
             join user_report on user.id = user_id and user_report.deadline_at > NOW()
     </select>
