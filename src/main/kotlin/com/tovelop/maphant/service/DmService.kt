@@ -20,6 +20,10 @@ class DmService(
     private val userMapper: UserMapper
 ) {
 
+    fun findUnReadDmCount(userId:Int):Int {
+        return roomMapper.findUnReadDmCount(userId);
+    }
+
     fun findRoomList(userId: Int): List<RoomListResultDto> {
         return roomMapper.findRoomList(userId)
     }

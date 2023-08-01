@@ -49,8 +49,7 @@
                r1.receiver_is_deleted,
                u1.id       AS other_id,
                u1.nickname AS other_nickname,
-               r1.sender_unread_count,
-               r1.receiver_unread_count
+               r1.sender_unread_count as unread_count
         FROM room r1
                  INNER JOIN user u1 ON r1.receiver_id = u1.id
         WHERE sender_id = #{user_id}
@@ -65,8 +64,7 @@
                r1.receiver_is_deleted,
                u1.id       AS other_id,
                u1.nickname AS other_nickname,
-               r1.sender_unread_count,
-               r1.receiver_unread_count
+               r1.receiver_unread_count as unread_count
         FROM room r1
                  INNER JOIN user u1
                             ON r1.sender_id = u1.id
@@ -89,5 +87,16 @@
             receiver_unread_count = 0
         WHERE id = #{room_id}
     </update>
+
+    <select id="findUnReadDmCount">
+        select SUM(
+                       CASE
+                           WHEN sender_id = #{user_id} THEN sender_unread_count
+                           WHEN receiver_id = #{user_id} THEN receiver_unread_count
+                           END
+                   )
+        FROM room
+        WHERE sender_id = #{user_id} OR receiver_id = #{user_id}
+    </select>
 
 </mapper>
