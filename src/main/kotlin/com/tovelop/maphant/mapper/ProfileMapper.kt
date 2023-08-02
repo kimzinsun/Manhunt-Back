@@ -24,9 +24,6 @@ interface ProfileMapper {
 
     fun findAllBoardByIdWithPaging(userId: Int, params: PagingDto): List<BoardResDto>
 
-    //회원의 모든 작성 댓글 목록 불러오기(comment로 옮겨야함)
-    fun findAllCommentsById(userId: Int)
-
     fun insertProfile(userId: Int, imageUrl: String): Boolean
 
     fun getBoardCount(userId: Int): Int
