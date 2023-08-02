@@ -23,4 +23,5 @@ interface AdminPageMapper {
     fun updateBoardStateByUserId(userId: Int, beforeState: Int, afterState: Int)
     fun updateCommentSanction(commentId: Int)
     fun updateCommentStateByUserId(userId: Int, beforeState: Int, afterState: Int)
+    fun findAllAppUserId(): List<Int>
 }

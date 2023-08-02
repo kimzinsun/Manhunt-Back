@@ -105,17 +105,16 @@ class AdminPageService(
     }
 
     /**
-     * 유저 아이디 리스트가 비어있을 시, 모든 유저에게 보냄.
+     * userIdList = 푸쉬 메시지를 받을 유저들의 id 리스트, 만약 비어 있다면 모든 앱 사용 유저에게 푸쉬 메시지를 전송
      */
     fun sendPushMessage(userIdList: List<Int>, title: String, body: String) {
-        if (userIdList.isNullOrEmpty()){
+        if (userIdList.isEmpty()){
             //모든 유저 id가져와서 메시지 전송
-            //val allUserIdList = 가져오는 부분
+            val allAppUserId = adminPageMapper.findAllAppUserId()
             //메시지 전송
+            allAppUserId.map { fcmService.send(FcmMessageDTO(it, title, body)) }
             return
         }
-
-        userIdList.map { fcmService.send(FcmMessageDTO(it, )) }
-
+        userIdList.map { fcmService.send(FcmMessageDTO(it, title, body)) }
     }
 }

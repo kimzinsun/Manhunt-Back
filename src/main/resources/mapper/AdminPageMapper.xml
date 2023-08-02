@@ -106,4 +106,9 @@
         set state = #{afterState}
         where user_id = #{userId} and state = #{beforeState}
     </update>
+
+    <select id="findAllAppUserId" resultType="Int">
+        select user_id
+        from user_device
+    </select>
 </mapper>
