@@ -13,7 +13,7 @@ class FcmService(
     @Autowired private val fcmMapper: FcmMapper,
 ) {
 
-    fun send(fcmMessageDTO: FcmMessageDTO) {
+    private fun sendByTokens(fcmMessageDTO: FcmMessageDTO) {
         val title = fcmMessageDTO.title
         val body = fcmMessageDTO.body
         val tokens = fcmMessageDTO.getTokens()
@@ -45,10 +45,10 @@ class FcmService(
         fcmMapper.saveFcmToken(userId, token)
     }
 
-    fun sendByUserId(messageDTO: FcmMessageDTO) {
+    fun send(messageDTO: FcmMessageDTO) {
         val tokens = fcmMapper.selectTokenById(messageDTO.userId)
         if(tokens.isEmpty()) return
         messageDTO.setTokens(tokens)
-        send(messageDTO)
+        sendByTokens(messageDTO)
     }
 }
