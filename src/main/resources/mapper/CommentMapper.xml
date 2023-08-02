@@ -21,6 +21,7 @@
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
         WHERE board_id = #{boardId}
           AND comment.state = 0
+        ORDER BY comment.created_at DESC
         LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
     <select id="findAllCommentByUser" resultType="CommentExtDTO">
@@ -38,6 +39,8 @@
                      LEFT OUTER JOIN comment_like
                                      ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
         WHERE comment.user_id = #{userId}
+        ORDER BY comment.created_at DESC
+
             LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
     <insert id="insertComment">
