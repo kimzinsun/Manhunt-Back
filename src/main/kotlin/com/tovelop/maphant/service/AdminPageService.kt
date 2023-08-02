@@ -13,7 +13,8 @@ class AdminPageService(
     @Autowired val adminPageMapper: AdminPageMapper,
     @Autowired val userMapper: UserMapper,
     @Autowired val boardMapper: BoardMapper,
-    @Autowired val commentMapper: CommentMapper) {
+    @Autowired val commentMapper: CommentMapper,
+    @Autowired val fcmService: FcmService) {
     fun updateUserState(email: String, state: Int){
         userMapper.updateUserState(email, state)
     }
@@ -101,5 +102,20 @@ class AdminPageService(
     }
     fun updateCommentUnblockByUserId(userId: Int) {
         adminPageMapper.updateCommentStateByUserId(userId, 3, 0)
+    }
+
+    /**
+     * 유저 아이디 리스트가 비어있을 시, 모든 유저에게 보냄.
+     */
+    fun sendPushMessage(userIdList: List<Int>, title: String, body: String) {
+        if (userIdList.isNullOrEmpty()){
+            //모든 유저 id가져와서 메시지 전송
+            //val allUserIdList = 가져오는 부분
+            //메시지 전송
+            return
+        }
+
+        userIdList.map { fcmService.send(FcmMessageDTO(it, )) }
+
     }
 }
