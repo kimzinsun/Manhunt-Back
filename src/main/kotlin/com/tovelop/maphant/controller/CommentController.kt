@@ -35,11 +35,16 @@ class CommentController(@Autowired val commentService: CommentService) {
         @PathVariable boardId: Int,
     ): ResponseEntity<Response<List<FormatTimeDTO>>> {
         val auth = SecurityContextHolder.getContext().authentication
+
         if (auth is AnonymousAuthenticationToken) {
             return ResponseEntity.badRequest().body(Response.error("로그인 후 이용해주세요."))
         }
         val userId = (auth as TokenAuthToken).getUserData().id
         val comment = commentService.getCommentList(boardId, userId, pagingDto)
+
+        if (boardId < 1 || comment.list.isEmpty()) {
+            return ResponseEntity.badRequest().body(Response.error("게시글을 찾을 수 없습니다."))
+        }
 
         val commentTime = comment.list.map {
             if (it.modified_at == null) {
@@ -48,7 +53,6 @@ class CommentController(@Autowired val commentService: CommentService) {
                 it.timeFormat(it, it.modified_at.formatTime() + "(수정됨)")
             }
         }
-
         return ResponseEntity.ok().body(Response.success(commentTime))
     }
 
