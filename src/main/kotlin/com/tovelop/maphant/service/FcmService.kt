@@ -47,6 +47,7 @@ class FcmService(
 
     fun sendByUserId(messageDTO: FcmMessageDTO) {
         val tokens = fcmMapper.selectTokenById(messageDTO.userId)
+        if(tokens.isEmpty()) return
         messageDTO.setTokens(tokens)
         send(messageDTO)
     }
