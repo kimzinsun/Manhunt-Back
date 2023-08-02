@@ -30,8 +30,10 @@ class FcmService(
                         .build()
                 )
 
-            for (key in fcmMessageDTO.etc.keys) {
-                messageBuilder.putData(key, fcmMessageDTO.etc[key])
+            if(fcmMessageDTO.etc != null) {
+                for (key in fcmMessageDTO.etc.keys) {
+                    messageBuilder.putData(key, fcmMessageDTO.etc[key])
+                }
             }
 
             val message = messageBuilder.build()

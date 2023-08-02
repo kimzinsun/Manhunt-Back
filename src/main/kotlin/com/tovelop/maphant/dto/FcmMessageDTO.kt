@@ -4,7 +4,7 @@ data class FcmMessageDTO(
     val userId: Int,
     val title: String,
     val body: String,
-    val etc: Map<String, String>, // send more key-value (ex. chatting service - sender, message, etc...)*/
+    val etc: Map<String, String>? = null, // send more key-value (ex. chatting service - sender, message, etc...)*/
 ) {
     private var to: List<String>? = null // receiver's-fcm-token
     fun setTokens(tokens: List<String>) {
