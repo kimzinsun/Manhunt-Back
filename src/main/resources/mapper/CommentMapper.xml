@@ -96,4 +96,10 @@
         WHERE id = #{id}
     </update>
 
+    <select id="cntComment">
+        SELECT COUNT(*)
+        FROM comment
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>

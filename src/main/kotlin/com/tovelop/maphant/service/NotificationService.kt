@@ -17,7 +17,7 @@ class NotificationService(
     }
 
     fun createNotification(notification: FcmMessageDTO) {
-        val data: Map<String, String> = notification.etc
+        val data: Map<String, String>? = notification.etc
         // convert map to json string
         val jsonStr = ObjectMapper().writeValueAsString(data)
 
