@@ -6,6 +6,7 @@ import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import org.checkerframework.common.value.qual.EnumVal
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -14,32 +15,44 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
-    val categoryMap = mapOf("createdAt" to "created_at", "likeCnt" to "like_cnt")
+    val sortCriterionList= listOf("created_at", "like_cnt")
+    @GetMapping("/boardType")
+    fun readBoardType(): ResponseEntity<Any> {
+        return ResponseEntity.ok().body(Response.success(boardService.getAllBoardType()))
+    }
 
-    @PostMapping("/main")
+    @GetMapping("/sortCriterion")
+    fun readSortCriterion(): ResponseEntity<Any> {
+        return ResponseEntity.ok().body(Response.success(sortCriterionList))
+    }
+
+    @GetMapping("")
     fun readBoardList(
-        @RequestBody findBoardDTO: FindBoardDTO
+        @RequestParam boardTypeId: Int,
+        @RequestParam page: Int,
+        @RequestParam pageSize: Int,
+        @RequestParam sortCriterion: String
     ): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
             return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
         }
         //pageNum과 pageSize는 양의 정수
-        if (findBoardDTO.page <= 0) {
+        if (page <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageNum가 일치하지 않습니다."))
         }
-        if (findBoardDTO.pageSize <= 0) {
+        if (pageSize <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageSize가 일치하지 않습니다."))
         }
-        if (findBoardDTO.sortCriterion !in categoryMap.keys) {
+        if (sortCriterion !in sortCriterionList) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
         }
-        if (!boardService.isInCategory(auth.getUserData().categoryId) || !boardService.isInBoardType(findBoardDTO.boardType)) {
+        if (!boardService.isInCategory(auth.getUserData().categoryId) || !boardService.isInBoardTypeId(boardTypeId)) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 카테고리나 게시판 유형입니다."))
         }
-        val boardList = boardService.findBoardList(findBoardDTO, auth.getUserData().id, auth.getUserData().categoryId)
+        val boardList = boardService.findBoardList(FindBoardDTO(boardTypeId,page,pageSize,sortCriterion), auth.getUserData().id, auth.getUserData().categoryId)
         return if (boardList.isEmpty()) {
             ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         } else {
@@ -75,7 +88,9 @@ class BoardController(@Autowired val boardService: BoardService) {
         boardService.deleteBoardLike(boardId, board.userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-    data class BoardInfo(val board:ExtBoardDTO, val answerList:List<BoardDTO>?)
+
+    data class BoardInfo(val board: ExtBoardDTO, val answerList: List<BoardDTO>?)
+
     @PostMapping("/{boardId}")
     fun readBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
@@ -87,15 +102,15 @@ class BoardController(@Autowired val boardService: BoardService) {
             return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
         }
         if (boardService.getIsHideByBoardId(boardId)!!) {
-            if (board.userId != auth.getUserData().id && auth.getUserData().role !="admin") {
+            if (board.userId != auth.getUserData().id && auth.getUserData().role != "admin") {
                 return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
             }
         }
-        if(board.typeId == 2 && board.parentId == null){
+        if (board.typeId == 2 && board.parentId == null) {
             val answerList = boardService.findAnswerBoardListByParentBoardId(board.id!!)
-            return ResponseEntity.ok(Response.success(BoardInfo(board,answerList)))
+            return ResponseEntity.ok(Response.success(BoardInfo(board, answerList)))
         }
-        return ResponseEntity.ok(Response.success(BoardInfo(board,null)))
+        return ResponseEntity.ok(Response.success(BoardInfo(board, null)))
     }
 
     @DeleteMapping("/{boardId}")
@@ -220,3 +235,4 @@ class BoardController(@Autowired val boardService: BoardService) {
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }
+
