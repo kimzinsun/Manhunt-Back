@@ -43,6 +43,8 @@ class UserData(
 
     fun getUserCategoryId() = this.userData.categoryId
 
+    fun getUserRole() = this.userData.role
+
     fun zeroisePassword() {
         this.userData.password = ""
     }
