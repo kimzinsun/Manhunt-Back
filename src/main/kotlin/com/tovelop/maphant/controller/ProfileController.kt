@@ -24,35 +24,35 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/profile")
-class ProfileController (
+class ProfileController(
     val profileService: ProfileService,
     private val awsS3Service: AwsS3Service
-){
+) {
 
     @GetMapping
-    fun getProfileImage(): ResponseEntity<Response<ProfileImageDto>>{
+    fun getProfileImage(): ResponseEntity<Response<ProfileImageDto>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId:Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
         return ResponseEntity.ok().body(Response.success(profileService.getProfileImage(userId)));
     }
 
     @PatchMapping
-    fun updateProfileImage(@RequestParam file:MultipartFile): ResponseEntity<Response<String>>{
+    fun updateProfileImage(@RequestParam file: MultipartFile): ResponseEntity<Response<String>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
-        val imageUrl:String = awsS3Service.uploadFile(file)
+        val imageUrl: String = awsS3Service.uploadFile(file)
         profileService.updateProfileImage(userId, imageUrl, file)
 
         return ResponseEntity.ok().body(Response.success(imageUrl));
     }
 
     @GetMapping("/board")
-    fun getBoardList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<BoardResDto>>>{
+    fun getBoardList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<BoardResDto>>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId:Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
-        return ResponseEntity.ok().body(Response.success(profileService.getBoardsList(userId,pagingDto)));
+        return ResponseEntity.ok().body(Response.success(profileService.getBoardsList(userId, pagingDto)));
     }
 }

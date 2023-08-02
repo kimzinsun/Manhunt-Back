@@ -39,7 +39,7 @@ class CommentController(@Autowired val commentService: CommentService) {
         if (auth is AnonymousAuthenticationToken) {
             return ResponseEntity.badRequest().body(Response.error("로그인 후 이용해주세요."))
         }
-        val userId = (auth as TokenAuthToken).getUserData().id
+        val userId = (auth as TokenAuthToken).getUserId()
         val comment = commentService.getCommentList(boardId, userId, pagingDto)
 
         if (boardId < 1 || comment.list.isEmpty()) {
@@ -87,7 +87,7 @@ class CommentController(@Autowired val commentService: CommentService) {
     fun deleteComment(@PathVariable commentId: Int): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val current = commentService.getCommentById(commentId)!!
-        val userId = auth.getUserData().id
+        val userId = auth.getUserId()
         if (current.user_id != userId) {
             return ResponseEntity.badRequest().body(Response.error("댓글 작성자만 삭제할 수 있습니다."))
         }
@@ -102,7 +102,7 @@ class CommentController(@Autowired val commentService: CommentService) {
     fun updateComment(@RequestBody updateCommentDTO: UpdateCommentDTO): ResponseEntity<ResponseUnit> {
         val current = commentService.getCommentById(updateCommentDTO.id)!!
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        val userId = auth.getUserData().id
+        val userId = auth.getUserId()
 
         if (current.user_id != userId) {
             return ResponseEntity.badRequest().body(Response.error("댓글 작성자만 수정할 수 있습니다."))
@@ -176,7 +176,7 @@ class CommentController(@Autowired val commentService: CommentService) {
         if (commentRequest.reportId == null) {
             return ResponseEntity.badRequest().body(Response.error("신고 사유를 선택해주세요."))
         }
-        commentService.insertCommentReport(auth.getUserData().id, commentRequest.commentId, commentRequest.reportId)
+        commentService.insertCommentReport(auth.getUserId(), commentRequest.commentId, commentRequest.reportId)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
