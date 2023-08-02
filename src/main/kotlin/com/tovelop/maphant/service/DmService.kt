@@ -8,6 +8,7 @@ import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.paging.dm.DmPagingResponse
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -20,12 +21,22 @@ class DmService(
     private val userMapper: UserMapper
 ) {
 
+    fun findUnReadDmCount(userId:Int):Int {
+        return roomMapper.findUnReadDmCount(userId);
+    }
+
     fun findRoomList(userId: Int): List<RoomListResultDto> {
         return roomMapper.findRoomList(userId)
     }
 
     @Transactional
     fun sendDm(sender_id: Int, receiver_id: Int, content: String) {
+
+        val receiverNickname = userMapper.findNicknameIdBy(receiver_id);
+        if(receiverNickname == null) {
+            throw NullPointerException("receiver_id에 해당하는 user가 없습니다.")
+        }
+
         var is_sender: Boolean = true
         var room: RoomDto = roomMapper.findRoom(sender_id, receiver_id);
 
@@ -43,7 +54,9 @@ class DmService(
                         sender_id = sender_id,
                         receiver_id = receiver_id,
                         sender_is_deleted = false,
-                        receiver_is_deleted = false
+                        receiver_is_deleted = false,
+                        sender_unread_count=0,
+                        receiver_unread_count=0,
                     )
                 )
                 // 만든 대화방 가져오기
@@ -67,31 +80,12 @@ class DmService(
             )
         )
 
-        roomMapper.updateRoomLastContent(room.id, content)
-    }
-
-    @Transactional
-    fun getDmList(meId: Int, roomId: Int): List<DmDto> {
-        var isSender: Boolean? = null;
-        var room: RoomDto = roomMapper.findRoomById(roomId)
-
-        if (room == null) {
-            throw NullPointerException("대화방이 존재하지 않습니다.")
+        // is_from_sender == true이면 receiver_unread_count ++
+        if(is_from_sender){
+            roomMapper.updateSenderUnreadCountAndLastContent(room.id, content)
         }
-
-        if (room.sender_id == meId) isSender = true
-        if (room.receiver_id == meId) isSender = false
-
-        if (isSender == null) throw NullPointerException("대화방이 존재하지 않습니다.")
-
-        //안읽은 dm읽음 처리
-        dmMapper.updateNotReadDm(roomId, !isSender)
-
-        if (isSender) {
-            return dmMapper.findDmList(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
-        }
-
-        return dmMapper.findDmList(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
+        // is_from_sender == false이면 sender_unread_count ++
+        else roomMapper.updateReceiverUnreadCountAndLastContent(room.id, content)
     }
 
     @Transactional
@@ -108,8 +102,14 @@ class DmService(
 
         if (isSender == null) throw NullPointerException("대화방이 존재하지 않습니다.")
 
-        //안읽은 dm읽음 처리
+        //안읽은 dm읽음 처리, unread_count = 0으로 업데이트
         dmMapper.updateNotReadDm(roomId, !isSender)
+
+        if(isSender){
+            dmMapper.updateSenderUnreadDmZero(roomId)
+        }
+        else dmMapper.updateReceiverUnreadDmZero(roomId)
+
 
         if (isSender) {
             val count = dmMapper.findDmCount(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER);
@@ -119,7 +119,7 @@ class DmService(
             val list =
                 dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
 
-            val otherName = userMapper.findIdBy(room.receiver_id)
+            val otherName = userMapper.findNicknameIdBy(room.receiver_id) as String;
             return DmPagingResponse(room.receiver_id, otherName, list, pagination)
         }
 
@@ -129,7 +129,7 @@ class DmService(
             return PagingResponse(Collections.emptyList(), null)
         val list =
             dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
-        val otherName = userMapper.findIdBy(room.sender_id)
+        val otherName = userMapper.findNicknameIdBy(room.sender_id) as String
         return DmPagingResponse(room.sender_id, otherName, list, pagination)
     }
 
@@ -153,14 +153,14 @@ class DmService(
             //상대방이 이미 삭제한 경우
             dmMapper.updateDmVisible(roomId, VisibleChoices.ONLY_SENDER, VisibleChoices.NOBODY)
             //isSenderDeleted = true
-            roomMapper.updateSenderIsDeleted(roomId)
+            roomMapper.updateSenderIsDeletedAndSenderUnreadCountZero(roomId)
         } else {
             //상대방이 삭제 안한 경우
             dmMapper.updateDmVisible(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
             //상대방이 이미 삭제한 경우
             dmMapper.updateDmVisible(roomId, VisibleChoices.ONLY_RECEIVER, VisibleChoices.NOBODY)
             //isReceiverDeleted = true
-            roomMapper.updateReceiverIsDeleted(roomId)
+            roomMapper.updateReceiverIsDeletedAndReceiverUnreadCountZero(roomId)
         }
     }
 }

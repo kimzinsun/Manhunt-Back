@@ -19,7 +19,7 @@ class RoomController(private val dmService: DmService) {
     fun getRoomList(): SuccessResponse<List<RoomListResultDto>> {
 
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
         return SuccessResponse(dmService.findRoomList(userId))
     }
@@ -30,7 +30,7 @@ class RoomController(private val dmService: DmService) {
         @PathVariable("roomId") roomId: Int
     ): SuccessResponse<PagingResponse<ResultDmDto>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
         // 서비스 호출
         return SuccessResponse(dmService.getDmList(userId, roomId, params))
@@ -39,7 +39,7 @@ class RoomController(private val dmService: DmService) {
     @DeleteMapping("/{roomId}")
     fun deleteRoom(@PathVariable("roomId") roomId: Int): SuccessResponse<String> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
         dmService.deleteRoom(userId, roomId);
 
