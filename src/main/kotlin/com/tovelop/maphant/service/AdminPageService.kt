@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService) {
+class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService, @Autowired val boardService: BoardService) {
     fun updateUserState(email: String, state: Int){
         userService.updateUserState(email, state)
     }
@@ -67,5 +67,31 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
     }
     fun deleteRecentUserReportByUserId(userId: Int){
         adminPageMapper.deleteRecentUserReportByUserId(userId)
+    }
+    fun updateBoardSanction(boardId: Int) {
+        boardService.updateStateOfBoard(boardId, 2)
+    }
+
+    /**
+     *유저 제재에 의한 게시글 블락 처리
+     */
+    fun updateBoardBlockByUserId(userId: Int) {
+        adminPageMapper.updateBoardStateByUserId(userId,0, 3)
+    }
+
+    /**
+     *유저 제재 해제에 의한 게시글 언블락 처리
+     */
+    fun updateBoardUnblockByUserId(userId: Int) {
+        adminPageMapper.updateBoardStateByUserId(userId, 3, 0)
+    }
+    fun updateCommentSanction(commentId: Int) {
+        adminPageMapper.updateCommentSanction(commentId, 2)
+    }
+    fun updateCommentBlockByUserId(userId: Int) {
+        adminPageMapper.updateCommentStateByUserId(userId, 0, 3)
+    }
+    fun updateCommentUnblockByUserId(userId: Int) {
+        adminPageMapper.updateCommentStateByUserId(userId, 3, 0)
     }
 }

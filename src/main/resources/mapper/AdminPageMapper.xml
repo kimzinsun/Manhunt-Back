@@ -96,4 +96,19 @@
             from user_report
             where user_id = #{userId});
     </delete>
+    <update id="updateBoardStateByUserId">
+        update board
+        set state = #{afterState}
+        where user_id = #{userId} and state = #{beforeState}
+    </update>
+    <update id="updateCommentSanction">
+        update comment
+        set state = 2
+        where id = #{commentId}
+    </update>
+    <update id="updateCommentStateByUserId">
+        update comment
+        set state = #{afterState}
+        where user_id = #{userId} and state = #{beforeState}
+    </update>
 </mapper>

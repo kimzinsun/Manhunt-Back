@@ -20,4 +20,7 @@ interface AdminPageMapper {
     fun findAllUserSanction(): List<AllUserSanctionDTO>
     fun findUserAllSanctionByUserId(userId: Int): List<UserReportDTO>
     fun deleteRecentUserReportByUserId(userId: Int)
+    fun updateBoardStateByUserId(userId: Int, beforeState: Int, afterState: Int)
+    fun updateCommentSanction(commentId: Int)
+    fun updateCommentStateByUserId(userId: Int, beforeState: Int, afterState: Int)
 }
