@@ -15,6 +15,7 @@ class UserService(val mapper: UserMapper) {
             mapper.findMajorIdByMajorName(major)
         )
     }
+
     fun getAllCategories() = mapper.getAllCategories()
     fun getAllMajors() = mapper.getAllMajors()
     fun getAllUnivNames() = mapper.getAllUnivNames()
@@ -118,4 +119,7 @@ class UserService(val mapper: UserMapper) {
         return matchResult?.value
     }
 
+    fun updateUserRole(role: String, id: Int) {
+        mapper.updateUserRole(role, id)
+    }
 }
