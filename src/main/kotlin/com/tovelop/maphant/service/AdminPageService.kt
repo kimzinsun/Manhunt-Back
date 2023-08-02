@@ -2,22 +2,24 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.AdminPageMapper
+import com.tovelop.maphant.mapper.BoardMapper
+import com.tovelop.maphant.mapper.CommentMapper
+import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-<<<<<<< HEAD
-class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService, @Autowired val boardService: BoardService) {
+class AdminPageService(
+    @Autowired val adminPageMapper: AdminPageMapper,
+    @Autowired val userMapper: UserMapper,
+    @Autowired val boardMapper: BoardMapper,
+    @Autowired val commentMapper: CommentMapper) {
     fun updateUserState(email: String, state: Int){
-=======
-class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService) {
-    fun updateUserState(email: String, state: Int) {
->>>>>>> 4fcd8ead5ed2d1c751466290896e47b0f4278b9c
-        userService.updateUserState(email, state)
+        userMapper.updateUserState(email, state)
     }
 
     fun updateUserRole(role: String, id: Int) {
-        userService.updateUserRole(role, id)
+        userMapper.updateUserRole(role, id)
     }
 
     /**
@@ -75,7 +77,7 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
         adminPageMapper.deleteRecentUserReportByUserId(userId)
     }
     fun updateBoardSanction(boardId: Int) {
-        boardService.updateStateOfBoard(boardId, 2)
+        boardMapper.updateStateOfBoard(boardId, 2)
     }
 
     /**
@@ -92,7 +94,7 @@ class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowir
         adminPageMapper.updateBoardStateByUserId(userId, 3, 0)
     }
     fun updateCommentSanction(commentId: Int) {
-        adminPageMapper.updateCommentSanction(commentId, 2)
+        commentMapper.changeState(commentId, 2)
     }
     fun updateCommentBlockByUserId(userId: Int) {
         adminPageMapper.updateCommentStateByUserId(userId, 0, 3)
