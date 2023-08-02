@@ -3,7 +3,6 @@ package com.tovelop.maphant.dto
 data class SetBoardDTO(
     val parentId: Int?,
     val categoryId: Int,
-    val userId: Int,
     val typeId: Int,
     val title: String,
     val body: String,
@@ -11,7 +10,7 @@ data class SetBoardDTO(
     val isComplete: Int,
     val isAnonymous: Int
 ) {
-    fun toBoardDTO(): BoardDTO {
+    fun toBoardDTO(userId:Int): BoardDTO {
         return BoardDTO(
             id=null,
             parentId = parentId,

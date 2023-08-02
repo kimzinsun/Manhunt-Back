@@ -2,26 +2,22 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.AdminPageMapper
-import com.tovelop.maphant.mapper.BoardMapper
-import com.tovelop.maphant.mapper.CommentMapper
-import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
-class AdminPageService(
-    @Autowired val adminPageMapper: AdminPageMapper,
-    @Autowired val userMapper: UserMapper,
-    @Autowired val boardMapper: BoardMapper,
-    @Autowired val commentMapper: CommentMapper,
-    @Autowired val fcmService: FcmService) {
+<<<<<<< HEAD
+class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService, @Autowired val boardService: BoardService) {
     fun updateUserState(email: String, state: Int){
-        userMapper.updateUserState(email, state)
+=======
+class AdminPageService(@Autowired val adminPageMapper: AdminPageMapper, @Autowired val userService: UserService) {
+    fun updateUserState(email: String, state: Int) {
+>>>>>>> 4fcd8ead5ed2d1c751466290896e47b0f4278b9c
+        userService.updateUserState(email, state)
     }
 
     fun updateUserRole(role: String, id: Int) {
-        userMapper.updateUserRole(role, id)
+        userService.updateUserRole(role, id)
     }
 
     /**
@@ -79,7 +75,7 @@ class AdminPageService(
         adminPageMapper.deleteRecentUserReportByUserId(userId)
     }
     fun updateBoardSanction(boardId: Int) {
-        boardMapper.updateStateOfBoard(boardId, 2)
+        boardService.updateStateOfBoard(boardId, 2)
     }
 
     /**
@@ -96,26 +92,12 @@ class AdminPageService(
         adminPageMapper.updateBoardStateByUserId(userId, 3, 0)
     }
     fun updateCommentSanction(commentId: Int) {
-        commentMapper.changeState(commentId, 2)
+        adminPageMapper.updateCommentSanction(commentId, 2)
     }
     fun updateCommentBlockByUserId(userId: Int) {
         adminPageMapper.updateCommentStateByUserId(userId, 0, 3)
     }
     fun updateCommentUnblockByUserId(userId: Int) {
         adminPageMapper.updateCommentStateByUserId(userId, 3, 0)
-    }
-
-    /**
-     * userIdList = 푸쉬 메시지를 받을 유저들의 id 리스트, 만약 비어 있다면 모든 앱 사용 유저에게 푸쉬 메시지를 전송
-     */
-    fun sendPushMessage(userIdList: List<Int>, title: String, body: String) {
-        if (userIdList.isEmpty()){
-            //모든 유저 id가져와서 메시지 전송
-            val allAppUserId = adminPageMapper.findAllAppUserId()
-            //메시지 전송
-            allAppUserId.map { fcmService.send(FcmMessageDTO(it, title, body)) }
-            return
-        }
-        userIdList.map { fcmService.send(FcmMessageDTO(it, title, body)) }
     }
 }

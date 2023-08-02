@@ -22,6 +22,10 @@ interface DmMapper {
 
     fun updateNotReadDm(room_id: Int, is_from_sender: Boolean): Boolean
 
+    fun updateSenderUnreadDmZero(room_id: Int)
+
+    fun updateReceiverUnreadDmZero(room_id: Int)
+
     //roomId에 해당하는 대화방의 Dm객체의 oldVisible을 newVisible로 바꿔준다
     fun updateDmVisible(room_id: Int, oldVisible: VisibleChoices, newVisible: VisibleChoices): Boolean
 
