@@ -22,10 +22,11 @@ class DmController(private val dmService: DmService) {
     @PostMapping
     fun sendDM(@RequestBody @Validated requestSendDmDto: RequestSendDmDto): SuccessResponse<String> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
+        val userNickname = auth.getUserData().nickname
         val userId: Int = auth.getUserId()!!
 
         // 서비스 호출
-        dmService.sendDm(userId, requestSendDmDto.receiver_id as Int, requestSendDmDto.content as String)
+        dmService.sendDm(userNickname,userId, requestSendDmDto.receiver_id as Int, requestSendDmDto.content as String)
         return SuccessResponse("메시지를 전송하였습니다.")
     }
 
