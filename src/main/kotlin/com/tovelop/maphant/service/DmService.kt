@@ -19,6 +19,7 @@ class DmService(
     private val roomMapper: RoomMapper,
     private val dmMapper: DmMapper,
     private val userMapper: UserMapper
+
 ) {
 
     fun findUnReadDmCount(userId:Int):Int {
@@ -30,7 +31,7 @@ class DmService(
     }
 
     @Transactional
-    fun sendDm(sender_id: Int, receiver_id: Int, content: String) {
+    fun sendDm(userNickname:String, sender_id: Int, receiver_id: Int, content: String) {
 
         val receiverNickname = userMapper.findNicknameIdBy(receiver_id);
         if(receiverNickname == null) {
@@ -67,7 +68,11 @@ class DmService(
         }
         var is_from_sender: Boolean = false
         if (is_sender) is_from_sender = true
-
+//        fcmService.send(FcmMessageDTO(
+//            receiver_id,
+//            userNickname,
+//            content
+//        ))
         dmMapper.createDm(
             DmDto(
                 id = null,
