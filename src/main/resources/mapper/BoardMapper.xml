@@ -152,4 +152,8 @@
         from board
         where parent_id = #{parentBoardId}
     </select>
+    <select id="getAllBoardType" resultType="BoardTypeDTO">
+        select *
+        from board_type
+    </select>
 </mapper>
