@@ -21,7 +21,7 @@ class FcmMessageController(private val fcmService: FcmService) {
     @PostMapping("/send")
     fun send(@RequestBody fcmMessageDTO: FcmMessageDTO): ResponseEntity<Any> {
         return try {
-            fcmService.send(fcmMessageDTO)
+            fcmService.sendByUserId(fcmMessageDTO)
             ResponseEntity.ok().build()
         } catch (e: Exception) {
             e.printStackTrace()

@@ -16,7 +16,7 @@ class FcmService(
     fun send(fcmMessageDTO: FcmMessageDTO) {
         val title = fcmMessageDTO.title
         val body = fcmMessageDTO.body
-        val tokens = fcmMessageDTO.to
+        val tokens = fcmMessageDTO.getTokens()
 
         println("$title\n$body")
 
@@ -45,8 +45,9 @@ class FcmService(
         fcmMapper.saveFcmToken(userId, token)
     }
 
-    fun sendByUserId(userId: Int): List<String> {
-        return fcmMapper.selectTokenById(userId)
+    fun sendByUserId(messageDTO: FcmMessageDTO) {
+        val tokens = fcmMapper.selectTokenById(messageDTO.userId)
+        messageDTO.setTokens(tokens)
+        send(messageDTO)
     }
-
 }
