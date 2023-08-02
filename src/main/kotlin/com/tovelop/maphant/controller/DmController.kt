@@ -22,7 +22,7 @@ class DmController(private val dmService: DmService) {
     @PostMapping
     fun sendDM(@RequestBody @Validated requestSendDmDto: RequestSendDmDto): SuccessResponse<String> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
         // 서비스 호출
         dmService.sendDm(userId, requestSendDmDto.receiver_id as Int, requestSendDmDto.content as String)
@@ -32,7 +32,7 @@ class DmController(private val dmService: DmService) {
     @GetMapping("/unread/count")
     fun findAllUnreadDm(): ResponseEntity<Response<Int>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
         return ResponseEntity.ok().body(Response.success(dmService.findUnReadDmCount(userId)));
     }
