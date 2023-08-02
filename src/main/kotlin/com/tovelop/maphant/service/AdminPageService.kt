@@ -30,22 +30,22 @@ class AdminPageService(
      * sortType: 정렬 기준 (reportedAt: 오래된 신고부터, mostReportedRanking: 신고를 많이 받은 순서로)
      * reportSize: 불러올 신고의 개수.
      */
-    fun findBoardReport(sortType: String, reportSize: Int): List<AdminBoardReportDTO> {
+    fun findBoardReport(sortType: String, reportSize: Int): List<AdminBoardReportDTO>? {
         return when (sortType) {
             "reportedAt" -> adminPageMapper.findBoardReportByReportedAt(reportSize)
             "mostReportedRanking" -> adminPageMapper.findBoardReportByMostReportedRanking(reportSize)
-            else -> adminPageMapper.findBoardReportBySortType(reportSize, sortType)
+            else -> null
         }
     }
     fun findBoardReportInfo(boardId: Int): List<BoardReportInfoDTO>{
         return adminPageMapper.findBoardReportInfo(boardId)
     }
 
-    fun findCommentReport(sortType: String, reportSize: Int): List<AdminCommentReportDTO>{
+    fun findCommentReport(sortType: String, reportSize: Int): List<AdminCommentReportDTO>?{
         return when(sortType){
             "reportedAt" -> adminPageMapper.findCommentReportByReportedAt(reportSize)
             "mostReportedRanking" -> adminPageMapper.findCommentReportByMostReportedRanking(reportSize)
-            else -> adminPageMapper.findCommentReportBySortType(reportSize, sortType)
+            else -> null
         }
     }
     fun findCommentReportInfo(commentId: Int): List<CommentReportInfoDTO>{
