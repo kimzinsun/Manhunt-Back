@@ -1,6 +1,10 @@
 package com.tovelop.maphant.mapper
 
+<<<<<<< HEAD
 import com.tovelop.maphant.dto.*
+=======
+import com.tovelop.maphant.dto.AdminBoardReportDTO
+>>>>>>> 4fcd8ead5ed2d1c751466290896e47b0f4278b9c
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
