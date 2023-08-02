@@ -48,4 +48,5 @@ class CommentService(val commentMapper: CommentMapper) {
 
     fun insertReply(replyDTO: ReplyDTO) = commentMapper.insertReply(replyDTO)
 
+    fun changeState(commentId: Int, state: Int) = commentMapper.changeState(commentId, state)
 }

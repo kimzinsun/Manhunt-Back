@@ -90,4 +90,10 @@
         WHERE board_id = #{boardId}
     </select>
 
+    <update id="changeState">
+        UPDATE comment
+        SET state = #{state}
+        WHERE id = #{id}
+    </update>
+
 </mapper>

@@ -24,4 +24,5 @@ interface CommentMapper {
     fun getCommentById(commentId: Int): CommentDTO?
     fun getCommentCount(boardId: Int): Int
     fun insertReply(replyDTO: ReplyDTO)
+    fun changeState(commentId: Int, state: Int)
 }

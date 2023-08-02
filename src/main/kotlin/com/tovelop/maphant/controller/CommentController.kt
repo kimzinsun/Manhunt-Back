@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/comment")
 class CommentController(@Autowired val commentService: CommentService) {
-    // TODO : 관리자 권한 추가
+
 
     data class CommentRequest(
         val userId: Int,
