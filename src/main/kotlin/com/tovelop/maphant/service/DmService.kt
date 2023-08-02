@@ -18,8 +18,8 @@ import java.util.*
 class DmService(
     private val roomMapper: RoomMapper,
     private val dmMapper: DmMapper,
-    private val userMapper: UserMapper
-
+    private val userMapper: UserMapper,
+    private val fcmService: FcmService
 ) {
 
     fun findUnReadDmCount(userId:Int):Int {
@@ -68,11 +68,7 @@ class DmService(
         }
         var is_from_sender: Boolean = false
         if (is_sender) is_from_sender = true
-//        fcmService.send(FcmMessageDTO(
-//            receiver_id,
-//            userNickname,
-//            content
-//        ))
+
         dmMapper.createDm(
             DmDto(
                 id = null,
@@ -91,6 +87,13 @@ class DmService(
         }
         // is_from_sender == false이면 sender_unread_count ++
         else roomMapper.updateReceiverUnreadCountAndLastContent(room.id, content)
+
+
+        fcmService.send(FcmMessageDTO(
+            receiver_id,
+            userNickname,
+            content
+        ))
     }
 
     @Transactional
