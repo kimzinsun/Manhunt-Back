@@ -7,10 +7,11 @@
         SELECT comment.id,
                comment.user_id,
                user.nickname,
-               board.id,
+               comment.board_id,
                comment.body,
                comment.is_anonymous,
                comment.created_at,
+               comment.modified_at,
                comment.like_cnt,
                IFNULL(comment_like.comment_id, 0)
         FROM comment
@@ -20,6 +21,7 @@
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
         WHERE board_id = #{boardId}
           AND comment.state = 0
+        LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
     <insert id="insertComment">
         INSERT INTO comment(board_id, user_id, body, created_at, is_anonymous)
@@ -32,7 +34,8 @@
     </delete>
     <update id="updateComment">
         UPDATE comment
-        SET body = #{body}
+        SET body        = #{body},
+            modified_at = NOW()
         WHERE id = #{id}
     </update>
     <select id="getCommentById">
@@ -42,6 +45,7 @@
                body,
                is_anonymous,
                created_at,
+               modified_at,
                like_cnt,
                state
         FROM comment
@@ -68,11 +72,11 @@
           AND user_id = #{userId}
     </delete>
     <insert id="insertCommentReport">
-        INSERT INTO comment_report(comment_id, user_id, report_id)
-        VALUES (#{commentId}, #{userId}, #{reportId})
+        INSERT INTO comment_report(comment_id, user_id, report_id, reported_at)
+        VALUES (#{commentId}, #{userId}, #{reportId}, NOW())
     </insert>
     <select id="findCommentReport">
-        SELECT *
+        SELECT user_id, report_id
         FROM comment_report
         WHERE comment_report.comment_id = #{commentId}
     </select>
@@ -80,5 +84,10 @@
         INSERT INTO comment(user_id, board_id, parent_id, body, created_at, is_anonymous)
         values (#{user_id}, #{board_id}, #{parent_id}, #{body}, NOW(), #{is_anonymous})
     </insert>
+    <select id="getCommentCount">
+        SELECT COUNT(*)
+        FROM comment
+        WHERE board_id = #{boardId}
+    </select>
 
 </mapper>
