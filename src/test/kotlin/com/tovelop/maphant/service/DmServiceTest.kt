@@ -33,11 +33,14 @@ class DmServiceTest {
     @Mock
     private lateinit var userMapper: UserMapper
 
+    @Mock
+    private lateinit var fcmService: FcmService
+
     @InjectMocks
     private lateinit var dmService: DmService
 
     @Test
-    @DisplayName("")
+    @DisplayName("사용자의 안읽은 쪽지 개수를 반환한다.")
     fun findUnReadDmCountTest() {
         //given
         val userId = 1
