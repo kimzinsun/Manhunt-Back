@@ -112,13 +112,6 @@ class UserService(val mapper: UserMapper) {
         val matchResult = pattern.find(email)
         return matchResult?.value
     }
-
-    fun extractFromUrl(url: String): String? {
-        val pattern = """(?<=\/\/|www\.)[^\.]+\.(ac\.kr|edu)""".toRegex()
-        val matchResult = pattern.find(url)
-        return matchResult?.value
-    }
-
     fun updateUserRole(role: String, id: Int) {
         mapper.updateUserRole(role, id)
     }
