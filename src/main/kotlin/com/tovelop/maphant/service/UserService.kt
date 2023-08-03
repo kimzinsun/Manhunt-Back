@@ -54,8 +54,7 @@ class UserService(val mapper: UserMapper) {
 
     fun matchEmail(email: String, univId: Int?): Boolean {
         val universityName = this.extractFromEmail(email)
-        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(univId))
-        return universityName == universityUrl
+        return universityName == mapper.findUniversityUrlBy(univId)
     }
 
     fun getUser(emails: List<String>): UserDTO? {
