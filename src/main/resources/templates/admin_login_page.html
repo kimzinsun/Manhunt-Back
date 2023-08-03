@@ -4,12 +4,45 @@
   <meta charset="UTF-8">
   <title>과끼리 관리자 페이지</title>
   <link rel="stylesheet" th:href="@{/admin_login_page.css}">
-  <script>
+  <script th:inline="javascript">
     function loginHandler() {
         const email = document.querySelector("#user_email").value;
         const password = document.querySelector("#user_password").value;
 
-        console.log(email, password);
+        if(email == "" || password == "") alert("이메일 또는 패스워드를 올바르게 입력해주세요");
+
+        fetch("http://localhost:8080/user/login", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
+        })
+            .then(res => res.json())
+            .then(res => {
+                const pubKey = res["pubKey"];
+                const privKey = res["privKey"];
+
+                sessionStorage.setItem("pubKey", pubKey);
+                sessionStorage.setItem("privKey", privKey);
+
+                const timestamp = parseInt(Date.now() / 1000);
+
+                const hasher = [[${hasher}]];
+                console.log(hasher.encode("hello"))
+
+                // fetch("localhost:8080/admin/", {
+                //     method: "GET",
+                //     headers: {
+                //         "x-auth": pubKey,
+                //         "x-timestamp": timestamp,
+                //         "x-sign": hasher.encode(timestamp + privKey)
+                //     }
+                // })
+            });
     }
   </script>
 </head>
@@ -19,8 +52,14 @@
     <form id="login-form">
       <input id="user_email" type="email" placeholder="이메일을 입력해주세요">
       <input id="user_password" type="password"placeholder="패스워드를 입력해주세요">
-      <input type="button" value="Login" onclick="loginHandler()">
+      <input type="button" value="Login" onclick="testHandler()">
     </form>
   </div>
+  <script th:inline="javascript">
+      function testHandler() {
+          const hasher = [[${hasher}]];
+          console.log(hasher.encode("hello"));
+      }
+  </script>
 </body>
 </html>
