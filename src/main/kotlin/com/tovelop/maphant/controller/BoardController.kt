@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*
 class BoardController(@Autowired val boardService: BoardService) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
+    data class SortCriterionInfo(val id: Int, val name: String)
+
     @GetMapping("/boardType")
     fun readBoardType(): ResponseEntity<Any> {
         val boardTypeList = boardService.getAllBoardType()
@@ -28,7 +30,7 @@ class BoardController(@Autowired val boardService: BoardService) {
 
     @GetMapping("/sortCriterion")
     fun readSortCriterion(): ResponseEntity<Any> {
-        return ResponseEntity.ok().body(Response.success(sortCriterionMap))
+        return ResponseEntity.ok().body(Response.success(sortCriterionMap.map { SortCriterionInfo(it.key, it.value) }))
     }
 
     data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
