@@ -27,6 +27,8 @@ class BoardController(@Autowired val boardService: BoardService) {
         return ResponseEntity.ok().body(Response.success(sortCriterionList))
     }
 
+    data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
+
     @GetMapping("")
     fun readBoardList(
         @RequestParam boardTypeId: Int,
@@ -50,15 +52,27 @@ class BoardController(@Autowired val boardService: BoardService) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
         }
-        if (!boardService.isInCategory(auth.getUserCategoryId()) || !boardService.isInBoardTypeId(boardTypeId)) {
+        if (!boardService.isInCategory(auth.getUserCategoryId()) || !(boardService.isInBoardTypeId(boardTypeId) || boardTypeId == 0)) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 게시판 유형입니다."))
         }
-        val boardList = boardService.findBoardList(
-            FindBoardDTO(boardTypeId, page, pageSize, sortCriterion),
-            auth.getUserId(),
-            auth.getUserCategoryId()
-        )
+        val boardList =
+            if (boardTypeId == 0) {
+                boardService.getAllBoardType().map{
+                    BoardListInfo(it.name,boardService.findBoardList(
+                        FindBoardDTO(it.id, page, pageSize, sortCriterion),
+                        auth.getUserId(),
+                        auth.getUserCategoryId()
+                    ))
+                }
+            } else {
+                boardService.findBoardList(
+                    FindBoardDTO(boardTypeId, page, pageSize, sortCriterion),
+                    auth.getUserId(),
+                    auth.getUserCategoryId()
+                )
+            }
+
         return if (boardList.isEmpty()) {
             ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
         } else {
