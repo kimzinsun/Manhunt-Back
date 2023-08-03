@@ -43,12 +43,12 @@
     <select id="findUniversityIdBy" resultType="int">
         SELECT id
         FROM univ
-        WHERE name = #{univName}
+        WHERE name = #{univName} LIMIT 1
     </select>
     <select id="findUniversityUrlBy" resultType="String">
         SELECT link
         FROM univ
-        WHERE id = #{univId}
+        WHERE id = #{univId} LIMIT 1
     </select>
     <select id="isUniversityExist" resultType="Boolean">
         SELECT EXISTS(SELECT * FROM univ WHERE id = #{universityId})
