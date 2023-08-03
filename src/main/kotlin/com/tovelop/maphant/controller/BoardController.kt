@@ -21,11 +21,7 @@ class BoardController(@Autowired val boardService: BoardService) {
 
     @GetMapping("/boardType")
     fun readBoardType(): ResponseEntity<Any> {
-        val boardTypeList = boardService.getAllBoardType()
-        var postCntSum = 0
-        boardTypeList.map { postCntSum += it.postCnt }
-        boardTypeList.add(0, BoardTypeDTO(0, "전체 게시판을 뜻함", postCntSum))
-        return ResponseEntity.ok().body(Response.success(boardTypeList))
+        return ResponseEntity.ok().body(Response.success(boardService.getAllBoardType()))
     }
 
     @GetMapping("/sortCriterion")
