@@ -2,12 +2,14 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
+import com.tovelop.maphant.type.paging.PagingDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.Random
 
 
 @Service
-class BoardService(@Autowired val boardMapper: BoardMapper) {
+class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private val redisService: RedisService) {
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
         return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
     }
@@ -118,6 +120,15 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
     fun getAllBoardType(): List<BoardTypeDTO> {
         return boardMapper.getAllBoardType()
+    }
+
+    fun findHotBoardList(sessionId:String, pagingDto: PagingDto) {
+        if(pagingDto.page == 1) {
+            redisService.set(sessionId, Random().nextLong().toString())
+        }
+        val seed = redisService.get(sessionId);
+
+
     }
 }
 

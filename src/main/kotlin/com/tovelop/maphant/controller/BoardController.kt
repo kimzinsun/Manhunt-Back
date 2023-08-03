@@ -4,11 +4,14 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
+import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import com.tovelop.maphant.utils.SecurityHelper.Companion.isLogged
+import jakarta.servlet.http.HttpServletRequest
 import org.checkerframework.common.value.qual.EnumVal
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
@@ -25,6 +28,12 @@ class BoardController(@Autowired val boardService: BoardService) {
     @GetMapping("/sortCriterion")
     fun readSortCriterion(): ResponseEntity<Any> {
         return ResponseEntity.ok().body(Response.success(sortCriterionList))
+    }
+
+    @GetMapping("/hot")
+    fun readHotBoard(@ModelAttribute pagingDto: PagingDto, request: HttpServletRequest) {
+        val sessionId = request.session.id
+
     }
 
     @GetMapping("")
