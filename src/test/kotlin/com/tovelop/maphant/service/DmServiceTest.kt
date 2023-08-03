@@ -33,11 +33,14 @@ class DmServiceTest {
     @Mock
     private lateinit var userMapper: UserMapper
 
+    @Mock
+    private lateinit var fcmService: FcmService
+
     @InjectMocks
     private lateinit var dmService: DmService
 
     @Test
-    @DisplayName("")
+    @DisplayName("사용자의 안읽은 쪽지 개수를 반환한다.")
     fun findUnReadDmCountTest() {
         //given
         val userId = 1
@@ -78,12 +81,13 @@ class DmServiceTest {
         //given
         val sender_id = 1
         val receiver_id = 2;
+        val userNickname = "user"
         val content = "test"
         whenever(userMapper.findNicknameIdBy(receiver_id)).thenReturn(null)
 
         //when
         val exception = assertThrows<NullPointerException> {
-            dmService.sendDm(sender_id,receiver_id, content)
+            dmService.sendDm(userNickname,sender_id,receiver_id, content)
         }
 
         //then
@@ -96,6 +100,7 @@ class DmServiceTest {
         //given
         val sender_id = 1
         val receiver_id = 2
+        val userNickname = "user"
         val content = "test"
         val room = RoomDto(
             1, "test", sender_id, receiver_id, LocalDateTime.now(), false, false,0,0
@@ -103,7 +108,7 @@ class DmServiceTest {
         whenever(roomMapper.findRoom(sender_id,receiver_id)).thenReturn(room)
         whenever(userMapper.findNicknameIdBy(receiver_id)).thenReturn("test")
         //when
-        dmService.sendDm(sender_id,receiver_id, content)
+        dmService.sendDm(userNickname,sender_id,receiver_id, content)
 
         //then
         verify(roomMapper, times(0)).findRoom(receiver_id,sender_id)
@@ -118,6 +123,7 @@ class DmServiceTest {
         //given
         val sender_id = 1
         val receiver_id = 2
+        val userNickname = "user"
         val content = "test"
         val room = RoomDto(
             1, "test", receiver_id, sender_id, LocalDateTime.now(), false, false,0,0
@@ -126,7 +132,7 @@ class DmServiceTest {
         whenever(roomMapper.findRoom(receiver_id,sender_id)).thenReturn(room)
         whenever(userMapper.findNicknameIdBy(receiver_id)).thenReturn("test")
         //when
-        dmService.sendDm(sender_id,receiver_id, content)
+        dmService.sendDm(userNickname,sender_id,receiver_id, content)
 
         //then
         verify(roomMapper, times(1)).findRoom(receiver_id,sender_id)
@@ -141,6 +147,7 @@ class DmServiceTest {
         //given
         val sender_id = 1
         val receiver_id = 2
+        val userNickname = "user"
         val content = "test"
         val room = RoomDto(
             1, "test", sender_id, receiver_id, LocalDateTime.now(), false, false,0,0
@@ -149,7 +156,7 @@ class DmServiceTest {
         whenever(roomMapper.findRoom(receiver_id,sender_id)).thenReturn(null)
         whenever(userMapper.findNicknameIdBy(receiver_id)).thenReturn("test")
         //when
-        dmService.sendDm(sender_id,receiver_id, content)
+        dmService.sendDm(userNickname,sender_id,receiver_id, content)
 
         //then
         verify(roomMapper, times(2)).findRoom(sender_id,receiver_id)

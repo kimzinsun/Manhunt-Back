@@ -18,8 +18,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
 
     fun findBoardList(findBoardDTO: FindBoardDTO, userId: Int, categoryId: Int): List<PageBoardDTO> {
         val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
-        val boardTypeId = boardMapper.getBoardTypeIdByBoardTypeName(findBoardDTO.boardType)
-        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId, boardTypeId)
+        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId)
     }
 
     fun insertBoard(boardDTO: BoardDTO) {
@@ -73,8 +72,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return boardMapper.isInCategory(categoryId) != null
     }
 
-    fun isInBoardType(boardType: String): Boolean {
-        return boardMapper.isInBoardType(boardType) != null
+    fun isInBoardTypeId(boardType: Int): Boolean {
+        return boardMapper.isInBoardTypeId(boardType) != null
     }
 
     fun findBoardLike(boardId: Int, userId: Int): Boolean {
@@ -116,6 +115,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     }
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO> {
         return boardMapper.findAnswerBoardListByParentBoardId(parentBoardId)
+    }
+    fun getAllBoardType(): MutableList<BoardTypeDTO> {
+        return boardMapper.getAllBoardType()
     }
 }
 

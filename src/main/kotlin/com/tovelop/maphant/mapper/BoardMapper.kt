@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 interface BoardMapper {
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int
     fun getCategoryIdByCategoryName(categoryName: String): Int
-    fun findBoardList(findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int, boardTypeId: Int): List<PageBoardDTO>
+    fun findBoardList(findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int): List<PageBoardDTO>
     fun insertBoard(boardDTO: BoardDTO)
     fun findBoard(boardId: Int): BoardDTO?
     fun updateBoard(updateBoardDTO: UpdateBoardDTO)
@@ -19,7 +19,7 @@ interface BoardMapper {
     fun insertBoardReport(boardId: Int, userId: Int, reportId: Int)
     fun findBoardByKeyword(keyword: String): List<BoardDTO>
     fun isInCategory(categoryId: Int): String?
-    fun isInBoardType(boardType: String): String?
+    fun isInBoardTypeId(boardTypeId: Int): Int?
     fun findBoardLike(boardId: Int, userId: Int): BoardLikeDTO?
     fun isInReportByBoardId(boardId: Int, userId: Int): BoardReportDTO?
     fun isInReportId(reportId: Int): String?
@@ -28,4 +28,5 @@ interface BoardMapper {
     fun updateIsCompleteOfBoard(boardId: Int, isComplete: Int)
     fun updateStateOfBoard(boardId: Int, state: Int)
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO>
-    }
+    fun getAllBoardType(): MutableList<BoardTypeDTO>
+}

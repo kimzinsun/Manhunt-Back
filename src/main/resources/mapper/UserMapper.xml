@@ -43,12 +43,12 @@
     <select id="findUniversityIdBy" resultType="int">
         SELECT id
         FROM univ
-        WHERE name = #{univName}
+        WHERE name = #{univName} LIMIT 1
     </select>
     <select id="findUniversityUrlBy" resultType="String">
         SELECT link
         FROM univ
-        WHERE id = #{univId}
+        WHERE id = #{univId} LIMIT 1
     </select>
     <select id="isUniversityExist" resultType="Boolean">
         SELECT EXISTS(SELECT * FROM univ WHERE id = #{universityId})
@@ -93,15 +93,15 @@
         WHERE email = #{email}
     </select>
     <select id="getAllCategories" resultType="String">
-        SELECT name
+        SELECT distinct name
         FROM category
     </select>
     <select id="getAllMajors" resultType="String">
-        SELECT name
+        SELECT distinct name
         FROM major
     </select>
     <select id="getAllUnivNames" resultType="String">
-        SELECT name
+        SELECT distinct name
         FROM univ
     </select>
     <insert id="insertCategoryIdMajorIdByUserId">
@@ -116,12 +116,12 @@
     <select id="findCategoryIdByCategoryName" resultType="Int">
         SELECT id
         FROM category
-        WHERE name = #{categoryName}
+        WHERE name = #{categoryName} LIMIT 1
     </select>
     <select id="findMajorIdByMajorName" resultType="Int">
         SELECT id
         FROM major
-        WHERE name = #{majorName}
+        WHERE name = #{majorName} LIMIT 1
     </select>
 
     <select id="findNicknameIdBy" resultType="String">
