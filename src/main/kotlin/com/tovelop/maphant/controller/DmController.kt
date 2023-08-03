@@ -2,7 +2,7 @@ package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.MockupCustomUserToken
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
-import com.tovelop.maphant.dto.ProfileImageDto
+import com.tovelop.maphant.dto.ProfileNicknameAndBodyAndImageDto
 import com.tovelop.maphant.dto.RequestSendDmDto
 import com.tovelop.maphant.service.DmService
 import com.tovelop.maphant.type.response.Response

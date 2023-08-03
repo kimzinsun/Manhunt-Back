@@ -8,8 +8,9 @@
         FROM profile
         WHERE user_id = #{user_id}
     </select>
-    <select id="findImageById" resultType="ProfileImageDto">
+    <select id="findNicknameAndBodyAndImageById" resultType="ProfileNicknameAndBodyAndImageDto">
         SELECT user.nickname as user_name,
+               body,
                profile_img
         FROM user LEFT OUTER JOIN profile
             ON profile.user_id = user.id
@@ -19,6 +20,18 @@
     <update id="updateProfileImage">
         UPDATE profile
         SET profile_img = #{imageUrl}
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="updateProfileNickname">
+        UPDATE user
+        SET user.nickname = #{nickname}
+        WHERE user.id = #{userId}
+    </update>
+
+    <update id="updateProfileBody">
+        UPDATE profile
+        SET body = #{body}
         WHERE user_id = #{userId}
     </update>
 
