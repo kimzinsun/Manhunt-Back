@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserMapper {
     fun insertUser(user: UserDTO)
+    fun updateUserStateByUserId(userId: Int, state: Int)
     fun countSameEmails(email: String): Int
     fun countSameNickName(nickName: String): Int
     fun countSamePhoneNum(phNum: String): Int

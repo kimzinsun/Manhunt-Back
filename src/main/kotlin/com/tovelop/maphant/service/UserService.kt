@@ -16,6 +16,10 @@ class UserService(val mapper: UserMapper) {
         )
     }
 
+    fun updateUserStateByUserId(userId: Int, state: Int) {
+        mapper.updateUserStateByUserId(userId, state)
+    }
+
     fun getAllCategories() = mapper.getAllCategories()
     fun getAllMajors() = mapper.getAllMajors()
     fun getAllUnivNames() = mapper.getAllUnivNames()
@@ -111,6 +115,7 @@ class UserService(val mapper: UserMapper) {
         val matchResult = pattern.find(email)
         return matchResult?.value
     }
+
     fun updateUserRole(role: String, id: Int) {
         mapper.updateUserRole(role, id)
     }

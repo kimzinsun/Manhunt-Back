@@ -3,6 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.UserMapper">
+    <update id="updateUserStateByUserId">
+        UPDATE user
+        SET state           = #{state},
+            lastmodified_at = NOW()
+        WHERE id = #{userId}
+    </update>
     <select id="countSameEmails" resultType="java.lang.Integer">
         SELECT COUNT(*)
         FROM user
@@ -31,9 +37,6 @@
         VALUES (#{email}, #{password}, #{nickname}, #{name}, #{phNum}, #{sno}, #{role}, NOW(), #{state}, NOW(),
                 NOW(), #{univId})
     </insert>
-    <update id="updateUser" databaseId="id"
-    >
-    </update>
     <select id="findEmailBysNo" resultType="String">
         SELECT email
         FROM user
