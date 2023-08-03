@@ -93,15 +93,15 @@
         WHERE email = #{email}
     </select>
     <select id="getAllCategories" resultType="String">
-        SELECT name
+        SELECT distinct name
         FROM category
     </select>
     <select id="getAllMajors" resultType="String">
-        SELECT name
+        SELECT distinct name
         FROM major
     </select>
     <select id="getAllUnivNames" resultType="String">
-        SELECT name
+        SELECT distinct name
         FROM univ
     </select>
     <insert id="insertCategoryIdMajorIdByUserId">
