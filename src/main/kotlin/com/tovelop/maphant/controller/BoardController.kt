@@ -77,11 +77,7 @@ class BoardController(@Autowired val boardService: BoardService) {
                 )
             }
 
-        return if (boardList.isEmpty()) {
-            ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
-        } else {
-            ResponseEntity.ok().body(Response.success(boardList))
-        }
+        return ResponseEntity.ok().body(Response.success(boardList))
     }
 
     @PostMapping("/like/{boardId}")
