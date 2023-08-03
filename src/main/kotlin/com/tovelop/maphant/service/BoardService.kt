@@ -116,7 +116,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO> {
         return boardMapper.findAnswerBoardListByParentBoardId(parentBoardId)
     }
-    fun getAllBoardType(): List<BoardTypeDTO> {
+    fun getAllBoardType(): MutableList<BoardTypeDTO> {
         return boardMapper.getAllBoardType()
     }
 }

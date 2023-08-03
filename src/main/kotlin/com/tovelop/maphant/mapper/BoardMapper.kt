@@ -28,5 +28,5 @@ interface BoardMapper {
     fun updateIsCompleteOfBoard(boardId: Int, isComplete: Int)
     fun updateStateOfBoard(boardId: Int, state: Int)
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO>
-    fun getAllBoardType(): List<BoardTypeDTO>
-    }
+    fun getAllBoardType(): MutableList<BoardTypeDTO>
+}
