@@ -15,20 +15,18 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/board")
 class BoardController(@Autowired val boardService: BoardService) {
-    val sortCriterionList = listOf("created_at", "like_cnt")
+    val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
+
+    data class SortCriterionInfo(val id: Int, val name: String)
 
     @GetMapping("/boardType")
     fun readBoardType(): ResponseEntity<Any> {
-        val boardTypeList=boardService.getAllBoardType()
-        var postCntSum=0
-        boardTypeList.map { postCntSum+=it.postCnt}
-        boardTypeList.add(0,BoardTypeDTO(0,"전체 게시판을 뜻함",postCntSum))
-        return ResponseEntity.ok().body(Response.success(boardTypeList))
+        return ResponseEntity.ok().body(Response.success(boardService.getAllBoardType()))
     }
 
     @GetMapping("/sortCriterion")
     fun readSortCriterion(): ResponseEntity<Any> {
-        return ResponseEntity.ok().body(Response.success(sortCriterionList))
+        return ResponseEntity.ok().body(Response.success(sortCriterionMap.map { SortCriterionInfo(it.key, it.value) }))
     }
 
     data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
@@ -38,7 +36,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         @RequestParam boardTypeId: Int,
         @RequestParam page: Int,
         @RequestParam pageSize: Int,
-        @RequestParam sortCriterion: String
+        @RequestParam sortCriterionId: Int
     ): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth.isNotLogged()) {
@@ -52,7 +50,7 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (pageSize <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageSize가 일치하지 않습니다."))
         }
-        if (sortCriterion !in sortCriterionList) {
+        if (sortCriterionId !in sortCriterionMap) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
         }
@@ -62,16 +60,18 @@ class BoardController(@Autowired val boardService: BoardService) {
         }
         val boardList =
             if (boardTypeId == 0) {
-                boardService.getAllBoardType().map{
-                    BoardListInfo(it.name,boardService.findBoardList(
-                        FindBoardDTO(it.id, page, pageSize, sortCriterion),
-                        auth.getUserId(),
-                        auth.getUserCategoryId()
-                    ))
+                boardService.getAllBoardType().map {
+                    BoardListInfo(
+                        it.name, boardService.findBoardList(
+                            FindBoardDTO(it.id, page, pageSize, sortCriterionMap[sortCriterionId]!!),
+                            auth.getUserId(),
+                            auth.getUserCategoryId()
+                        )
+                    )
                 }
             } else {
                 boardService.findBoardList(
-                    FindBoardDTO(boardTypeId, page, pageSize, sortCriterion),
+                    FindBoardDTO(boardTypeId, page, pageSize, sortCriterionMap[sortCriterionId]!!),
                     auth.getUserId(),
                     auth.getUserCategoryId()
                 )
