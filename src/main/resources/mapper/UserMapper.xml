@@ -116,12 +116,12 @@
     <select id="findCategoryIdByCategoryName" resultType="Int">
         SELECT id
         FROM category
-        WHERE name = #{categoryName}
+        WHERE name = #{categoryName} LIMIT 1
     </select>
     <select id="findMajorIdByMajorName" resultType="Int">
         SELECT id
         FROM major
-        WHERE name = #{majorName}
+        WHERE name = #{majorName} LIMIT 1
     </select>
 
     <select id="findNicknameIdBy" resultType="String">
