@@ -3,6 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.AdminPageMapper">
+    <update id="updateUserState">
+        update user
+        set state = #{state}
+        where id = #{userId}
+    </update>
     <select id="findBoardReportByReportedAt" resultType="AdminBoardReportDTO">
         select board_id boardId, board.title boardTitle, board.body boardBody,
                board_user.id boardUserId, board_user.email boardUserEmail

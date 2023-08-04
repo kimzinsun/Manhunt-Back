@@ -16,8 +16,8 @@ class AdminPageService(
     @Autowired val boardMapper: BoardMapper,
     @Autowired val commentMapper: CommentMapper,
     @Autowired val fcmService: FcmService) {
-    fun updateUserState(email: String, state: Int){
-        userMapper.updateUserState(email, state)
+    fun updateUserState(userId: Int, state: Int) {
+        adminPageMapper.updateUserState(userId, state)
     }
 
     fun updateUserRole(role: String, id: Int) {

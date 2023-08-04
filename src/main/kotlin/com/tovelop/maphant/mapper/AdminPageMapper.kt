@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 @Mapper
 @Repository
 interface AdminPageMapper {
+    fun updateUserState(userId: Int, state: Int)
     fun findBoardReportByReportedAt(reportSize: Int): List<AdminBoardReportDTO>
     fun findBoardReportByMostReportedRanking(reportSize: Int): List<AdminBoardReportDTO>
     fun findBoardReportBySortType(reportSize: Int, sortType: String): List<AdminBoardReportDTO>
