@@ -41,4 +41,12 @@ class RedisService(@Autowired private val template: RedisTemplate<String, String
     fun expire(key: String, timeout: Long) {
         template.expire(key, timeout, java.util.concurrent.TimeUnit.SECONDS)
     }
+    fun setKeepTTL(key: String, value: String) {
+        val timeout = template.getExpire(key)
+        set(key, value)
+
+        if (timeout > 0) {
+            expire(key, timeout)
+        }
+    }
 }
