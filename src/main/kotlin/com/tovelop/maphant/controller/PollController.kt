@@ -27,7 +27,7 @@ class PollController(val pollService: PollService) {
     fun selectOption(@PathVariable("poll_id") pollId: Int, @RequestBody pollOption: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
 
-        val optionResult = pollService.increaseOptionCount(auth.getUserData().id!!, pollId, pollOption)
+        val optionResult = pollService.increaseOptionCount(auth.getUserId()!!, pollId, pollOption)
 
         if (!optionResult) {
             return ResponseEntity.badRequest().body(
@@ -41,11 +41,12 @@ class PollController(val pollService: PollService) {
     @GetMapping("/my-poll/{poll_id}")
     @ResponseBody
     fun pollInfo(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
-        val optionList = pollService.getPoll(pollId)
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val optionList = pollService.getPoll(pollId, auth.getUserId())
 
         if (optionList.isFailure) {
             return ResponseEntity.badRequest().body(
-                Response.error<Any>("Parse Error")
+                Response.error<Any>(optionList.exceptionOrNull()!!)
             )
         }
         return ResponseEntity.ok().body(Response.success(optionList.getOrNull()))
