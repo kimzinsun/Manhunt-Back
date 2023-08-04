@@ -21,6 +21,10 @@ class BoardService(@Autowired val boardMapper: BoardMapper) {
         return boardMapper.findBoardList(findBoardDTO, startRow, categoryId)
     }
 
+    fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int {
+        return boardMapper.getBoardSizeByCategoryIdAndBoardTypeId(categoryId, boardTypeId)
+    }
+
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
     }
