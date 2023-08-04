@@ -38,4 +38,7 @@ class RedisService(@Autowired private val template: RedisTemplate<String, String
     fun del(key: String) {
         template.delete(key)
     }
+    fun expire(key: String, timeout: Long) {
+        template.expire(key, timeout, java.util.concurrent.TimeUnit.SECONDS)
+    }
 }
