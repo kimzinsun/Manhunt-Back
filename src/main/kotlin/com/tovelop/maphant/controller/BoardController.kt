@@ -4,6 +4,7 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
+import com.tovelop.maphant.service.RateLimitingService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/board")
-class BoardController(@Autowired val boardService: BoardService) {
+class BoardController(@Autowired val boardService: BoardService, @Autowired val rateLimitingService: RateLimitingService) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
     data class SortCriterionInfo(val id: Int, val name: String)
@@ -162,9 +163,13 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth.isNotLogged()) {
             return ResponseEntity.badRequest().body(Response.error("로그인 안됨"))
         }
+        if (rateLimitingService.isBanned(auth.getUserId())) {
+            return ResponseEntity.badRequest().body(Response.error("게시글 작성이 금지된 사용자입니다."))
+        }
         // 제목 내용 빈칸인지 확인
         return if (board.title.isNotBlank() && board.body.isNotBlank()) {
             boardService.insertBoard(board.toBoardDTO(auth.getUserId()))
+            rateLimitingService.requestCheck(auth.getUserId(),"WRITE_POST")
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
             ResponseEntity.ok(Response.stateOnly(false))
