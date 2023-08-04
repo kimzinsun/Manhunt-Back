@@ -29,6 +29,6 @@ interface BoardMapper {
     fun updateStateOfBoard(boardId: Int, state: Int)
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO>
     fun getAllBoardType(): List<BoardTypeDTO>
-    fun getAllBoardWithPopularity(seed: Int): List<BoardDTO>
+    fun getAllBoardSortedByPopularity(seed: Int): List<BoardDTO>
 }
 

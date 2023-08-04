@@ -157,7 +157,7 @@
         from board_type
     </select>
 
-    <select id="getAllBoardWithPopularity" resultType="BoardDTO">
+    <select id="getAllBoardSortedByPopularity" resultType="BoardDTO">
         SELECT parent_id AS parentId,
                category_id AS categoryId,
                user_id AS userId,
