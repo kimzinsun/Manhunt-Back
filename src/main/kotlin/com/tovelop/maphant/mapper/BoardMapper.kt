@@ -10,6 +10,7 @@ interface BoardMapper {
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int
     fun getCategoryIdByCategoryName(categoryName: String): Int
     fun findBoardList(findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int, boardTypeId: Int): List<PageBoardDTO>
+    fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int
     fun insertBoard(boardDTO: BoardDTO)
     fun findBoard(boardId: Int): BoardDTO?
     fun updateBoard(updateBoardDTO: UpdateBoardDTO)

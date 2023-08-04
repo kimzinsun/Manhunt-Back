@@ -101,6 +101,12 @@
                  left outer join board_like on pageBoards.board_id = board_like.board_id and
                                                pageBoards.user_id = board_like.user_id
     </select>
+    <select id="getBoardSizeByCategoryIdAndBoardTypeId" resultType="Int">
+        select count(*)
+        from board
+        where category_id = #{categoryId}
+          and type_id = #{boardTypeId}
+    </select>
     <select id="isInCategory" resultType="String">
         select name
         from category
