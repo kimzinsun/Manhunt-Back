@@ -1,6 +1,7 @@
 package com.tovelop.maphant.mapper
 
 import com.tovelop.maphant.dto.UserDTO
+import com.tovelop.maphant.dto.user.UserNicknameDTO
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
@@ -35,4 +36,7 @@ interface UserMapper {
 
     fun updateUserRole(role: String, id: Int)
     fun findNicknameIdBy(userId: Int): String?
+
+
+    fun searchUserByNickname(nickname: String): List<UserNicknameDTO>
 }

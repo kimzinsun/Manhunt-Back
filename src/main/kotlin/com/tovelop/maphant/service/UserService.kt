@@ -30,6 +30,8 @@ class UserService(val mapper: UserMapper) {
         mapper.updateUserState(email, state)
     }
 
+    fun searchUserByNickname(nickname: String) = mapper.searchUserByNickname(nickname)
+
     fun updateUserPasswordByEmail(email: String, newPassword: String) {
         mapper.updateUserPasswordByEmail(email, newPassword)
     }
