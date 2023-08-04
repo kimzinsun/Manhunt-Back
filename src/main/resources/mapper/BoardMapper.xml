@@ -156,4 +156,26 @@
         select *
         from board_type
     </select>
+
+    <select id="getAllBoardWithPopularity" resultType="BoardDTO">
+        SELECT parent_id AS parentId,
+               category_id AS categoryId,
+               user_id AS userId,
+               type_id AS typeId,
+               title,
+               body,
+               state,
+               is_hide AS isHide,
+               is_complete AS isComplete,
+               is_anonymous AS isAnonymous,
+               created_at AS createdAt,
+               modified_at AS modifiedAt,
+               comment_cnt AS commentCnt,
+               like_cnt AS likeCnt,
+               report_cnt AS reportCnt,
+               images_url AS imagesUrl
+        FROM board
+        ORDER BY hot(like_cnt, created_at,  #{seed}) DESC
+    </select>
+
 </mapper>
