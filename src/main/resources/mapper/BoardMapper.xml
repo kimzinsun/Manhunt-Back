@@ -91,10 +91,10 @@
                     from (select *
                           from board
                           where category_id = #{categoryId}
-                            and type_id = #{boardTypeId}
+                            and type_id = #{findBoardDTO.boardTypeId}
                             and state = 0
                             and is_hide = 0
-                          order by #{findBoardDTO.sortCriterion}) as board
+                          order by ${findBoardDTO.sortCriterion} DESC) as board
                         limit #{findBoardDTO.pageSize}
                     offset #{startRow}) as boards
                        join user on boards.user_id = user.id) as pageBoards
@@ -112,10 +112,10 @@
         from category
         where id = #{categoryId}
     </select>
-    <select id="isInBoardType" resultType="String">
-        select name
+    <select id="isInBoardTypeId" resultType="Int">
+        select id
         from board_type
-        where name = #{boardType}
+        where id = #{boardTypeId}
     </select>
     <select id="findBoardLike" resultType="BoardLikeDTO">
         select *

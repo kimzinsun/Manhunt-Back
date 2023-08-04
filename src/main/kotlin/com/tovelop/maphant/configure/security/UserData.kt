@@ -9,7 +9,7 @@ class UserData(
     private val email: String,
     private val password: String,
     private val userData: UserDataDTO,
-): UserDetails {
+) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val authorities = mutableListOf<GrantedAuthority>()
         val roleWithPrefix = "ROLE_${userData.role}"
@@ -40,6 +40,10 @@ class UserData(
     fun getUserData() = this.userData
 
     fun getUserID() = this.userData.id
+
+    fun getUserCategoryId() = this.userData.categoryId
+
+    fun getUserRole() = this.userData.role
 
     fun zeroisePassword() {
         this.userData.password = ""

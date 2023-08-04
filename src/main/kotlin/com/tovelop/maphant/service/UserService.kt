@@ -54,8 +54,7 @@ class UserService(val mapper: UserMapper) {
 
     fun matchEmail(email: String, univId: Int?): Boolean {
         val universityName = this.extractFromEmail(email)
-        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(univId))
-        return universityName == universityUrl
+        return universityName == mapper.findUniversityUrlBy(univId)
     }
 
     fun getUser(emails: List<String>): UserDTO? {
@@ -112,13 +111,6 @@ class UserService(val mapper: UserMapper) {
         val matchResult = pattern.find(email)
         return matchResult?.value
     }
-
-    fun extractFromUrl(url: String): String? {
-        val pattern = """(?<=\/\/|www\.)[^\.]+\.(ac\.kr|edu)""".toRegex()
-        val matchResult = pattern.find(url)
-        return matchResult?.value
-    }
-
     fun updateUserRole(role: String, id: Int) {
         mapper.updateUserRole(role, id)
     }
