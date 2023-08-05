@@ -160,24 +160,81 @@
 
     </select>
 
-    <select id="getAllBoardSortedByPopularity" resultType="BoardDTO">
-        SELECT parent_id AS parentId,
-               category_id AS categoryId,
-               user_id AS userId,
-               type_id AS typeId,
+    <select id="findHotBoardsWithBoardType" resultType="HotBoardDto">
+        SELECT b.id AS boardId,
                title,
                body,
-               state,
-               is_hide AS isHide,
-               is_complete AS isComplete,
-               is_anonymous AS isAnonymous,
-               created_at AS createdAt,
-               modified_at AS modifiedAt,
-               comment_cnt AS commentCnt,
+               user_id AS userId,
+               IF(is_anonymous, '익명',u.nickname) AS userNickname,
+               type_id AS typeId,
+               type AS t.name,
+                comment_cnt AS commentCnt,
                like_cnt AS likeCnt,
-               report_cnt AS reportCnt,
-               images_url AS imagesUrl
+               is_anonymous AS isAnonymous,
+               is_hide AS isHide,
+               blike.user_id = #{userId} as isLike,
+               created_at AS createdAt,
+               modified_at AS modifiedAt
+        FROM board b
+            INNER JOIN user u ON b.user_id = u.id
+            INNER JOIN board_type t ON b.type_id = t.id
+            LEFT OUTER JOIN board_like blike ON b.id = blike.board_id
+        WHERE
+            is_hide = 0 AND
+            state = 0 AND
+            category_id = #{categoryId}
+            type_id = #{boardType} AND
+            like_cnt >= 10
+        ORDER BY hot(like_cnt, created_at) + RAND(#{seed}) DESC
+        LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
+    </select>
+
+    <select id="getHotBoardCountWithBoardType">
+        SELECT COUNT(*)
         FROM board
-        ORDER BY hot(like_cnt, created_at,  #{seed}) DESC
+        WHERE
+            is_hide = 0 AND
+            state = 0 AND
+            category_id = #{categoryId}
+            type_id = #{boardType} AND
+            like_cnt >= 10
+    </select>
+
+    <select id="findHotBoards" resultType="HotBoardDto">
+        SELECT b.id AS boardId,
+               title,
+               body,
+               user_id AS userId,
+               IF(is_anonymous, '익명',u.nickname) AS userNickname,
+               type_id AS typeId,
+               type AS t.name,
+                comment_cnt AS commentCnt,
+               like_cnt AS likeCnt,
+               is_anonymous AS isAnonymous,
+               is_hide AS isHide,
+               blike.user_id = #{userId} as isLike,
+               created_at AS createdAt,
+               modified_at AS modifiedAt
+        FROM board b
+                 INNER JOIN user u ON b.user_id = u.id
+                 INNER JOIN board_type t ON b.type_id = t.id
+                 LEFT OUTER JOIN board_like blike ON b.id = blike.board_id
+        WHERE
+            is_hide = 0 AND
+            state = 0 AND
+            category_id = #{categoryId} AND
+            like_cnt >= 10
+        ORDER BY hot(like_cnt, created_at) + RAND(#{seed}) DESC
+            LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
+    </select>
+
+    <select id="getHotBoardCount">
+        SELECT COUNT(*)
+        FROM board
+        WHERE
+            is_hide = 0 AND
+            state = 0 AND
+            category_id = #{categoryId} AND
+            like_cnt >= 10
     </select>
 </mapper>

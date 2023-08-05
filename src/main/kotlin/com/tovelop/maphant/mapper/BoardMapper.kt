@@ -30,8 +30,9 @@ interface BoardMapper {
     fun updateStateOfBoard(boardId: Int, state: Int)
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO>
     fun getAllBoardType(): List<BoardTypeDTO>
-    fun findAllHotBoard(seed:Long, pagingDto: PagingDto): List<BoardDTO>
-    fun getBoardCount(): Int
-    fun getAllBoardSortedByPopularity(seed: Int): List<BoardDTO>
+    fun findHotBoardsWithBoardType(userId: Int, categoryId:Int, boardType:Int, seed: Long, pagingDto: PagingDto): List<HotBoardDto>
+    fun getHotBoardCountWithBoardType(categoryId:Int, boardType:Int): Int
+    fun findHotBoards(userId: Int, categoryId:Int, seed: Long, pagingDto: PagingDto): List<HotBoardDto>
+    fun getHotBoardCount(categoryId:Int): Int
 }
 
