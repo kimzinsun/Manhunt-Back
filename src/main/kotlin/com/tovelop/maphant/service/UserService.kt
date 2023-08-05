@@ -16,6 +16,10 @@ class UserService(val mapper: UserMapper) {
         )
     }
 
+    fun updateUserStateByUserId(userId: Int, state: Int) {
+        mapper.updateUserStateByUserId(userId, state)
+    }
+
     fun getAllCategories() = mapper.getAllCategories()
     fun getAllMajors() = mapper.getAllMajors()
     fun getAllUnivNames() = mapper.getAllUnivNames()
@@ -25,6 +29,8 @@ class UserService(val mapper: UserMapper) {
     fun updateUserState(email: String, state: Int) {
         mapper.updateUserState(email, state)
     }
+
+    fun searchUserByNickname(nickname: String) = mapper.searchUserByNickname(nickname)
 
     fun updateUserPasswordByEmail(email: String, newPassword: String) {
         mapper.updateUserPasswordByEmail(email, newPassword)
@@ -54,8 +60,7 @@ class UserService(val mapper: UserMapper) {
 
     fun matchEmail(email: String, univId: Int?): Boolean {
         val universityName = this.extractFromEmail(email)
-        val universityUrl = this.extractFromUrl(mapper.findUniversityUrlBy(univId))
-        return universityName == universityUrl
+        return universityName == mapper.findUniversityUrlBy(univId)
     }
 
     fun getUser(emails: List<String>): UserDTO? {
@@ -113,10 +118,7 @@ class UserService(val mapper: UserMapper) {
         return matchResult?.value
     }
 
-    fun extractFromUrl(url: String): String? {
-        val pattern = """(?<=\/\/|www\.)[^\.]+\.(ac\.kr|edu)""".toRegex()
-        val matchResult = pattern.find(url)
-        return matchResult?.value
+    fun updateUserRole(role: String, id: Int) {
+        mapper.updateUserRole(role, id)
     }
-
 }

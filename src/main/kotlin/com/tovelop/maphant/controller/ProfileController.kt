@@ -1,10 +1,7 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
-import com.tovelop.maphant.dto.BoardDTO
-import com.tovelop.maphant.dto.BoardResDto
-import com.tovelop.maphant.dto.ProfileImageDto
-import com.tovelop.maphant.dto.UserDataDTO
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.AwsS3Service
 import com.tovelop.maphant.service.ProfileService
 import com.tovelop.maphant.type.paging.PagingDto
@@ -24,35 +21,43 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/profile")
-class ProfileController (
+class ProfileController(
     val profileService: ProfileService,
     private val awsS3Service: AwsS3Service
-){
+) {
 
     @GetMapping
-    fun getProfileImage(): ResponseEntity<Response<ProfileImageDto>>{
+    fun getProfileImage(): ResponseEntity<Response<ProfileImageDto>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId:Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
         return ResponseEntity.ok().body(Response.success(profileService.getProfileImage(userId)));
     }
 
     @PatchMapping
-    fun updateProfileImage(@RequestParam file:MultipartFile): ResponseEntity<Response<String>>{
+    fun updateProfileImage(@RequestParam file: MultipartFile): ResponseEntity<Response<String>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()!!
 
-        val imageUrl:String = awsS3Service.uploadFile(file)
+        val imageUrl: String = awsS3Service.uploadFile(file)
         profileService.updateProfileImage(userId, imageUrl, file)
 
         return ResponseEntity.ok().body(Response.success(imageUrl));
     }
 
-    @GetMapping("/board")
-    fun getBoardList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<BoardResDto>>>{
+    @GetMapping("/comment")
+    fun getCommentList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<CommentExtDTO>>>{
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId:Int = auth.getUserData().id!!
+        val userId: Int = auth.getUserId()
 
-        return ResponseEntity.ok().body(Response.success(profileService.getBoardsList(userId,pagingDto)));
+        return return ResponseEntity.ok().body(Response.success(profileService.getCommentList(userId, pagingDto)));
+    }
+
+    @GetMapping("/board")
+    fun getBoardList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<BoardResDto>>> {
+        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
+        val userId: Int = auth.getUserId()!!
+
+        return ResponseEntity.ok().body(Response.success(profileService.getBoardsList(userId, pagingDto)));
     }
 }
