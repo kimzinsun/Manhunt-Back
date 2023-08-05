@@ -101,6 +101,12 @@
                  left outer join board_like on pageBoards.board_id = board_like.board_id and
                                                pageBoards.user_id = board_like.user_id
     </select>
+    <select id="getBoardSizeByCategoryIdAndBoardTypeId" resultType="Int">
+        select count(*)
+        from board
+        where category_id = #{categoryId}
+          and type_id = #{boardTypeId}
+    </select>
     <select id="isInCategory" resultType="String">
         select name
         from category
@@ -156,36 +162,33 @@
         select *
         from board_type
     </select>
-    <select id="findAllHotBoard">
-
-    </select>
 
     <select id="findHotBoardsWithBoardType" resultType="HotBoardDto">
         SELECT b.id AS boardId,
                title,
                body,
-               user_id AS userId,
+               b.user_id AS userId,
                IF(is_anonymous, '익명',u.nickname) AS userNickname,
                type_id AS typeId,
-               type AS t.name,
-                comment_cnt AS commentCnt,
+               t.name AS type,
+               comment_cnt AS commentCnt,
                like_cnt AS likeCnt,
                is_anonymous AS isAnonymous,
                is_hide AS isHide,
-               blike.user_id = #{userId} as isLike,
-               created_at AS createdAt,
-               modified_at AS modifiedAt
+               IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
+               b.created_at AS createdAt,
+               b.modified_at AS modifiedAt
         FROM board b
             INNER JOIN user u ON b.user_id = u.id
             INNER JOIN board_type t ON b.type_id = t.id
-            LEFT OUTER JOIN board_like blike ON b.id = blike.board_id
+            LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
         WHERE
             is_hide = 0 AND
-            state = 0 AND
-            category_id = #{categoryId}
+            b.state = 0 AND
+            category_id = #{categoryId} AND
             type_id = #{boardType} AND
-            like_cnt >= 10
-        ORDER BY hot(like_cnt, created_at) + RAND(#{seed}) DESC
+            like_cnt >= 0
+        ORDER BY hot(like_cnt, b.created_at) + RAND(#{seed}) DESC
         LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
     </select>
 
@@ -195,37 +198,37 @@
         WHERE
             is_hide = 0 AND
             state = 0 AND
-            category_id = #{categoryId}
+            category_id = #{categoryId} AND
             type_id = #{boardType} AND
-            like_cnt >= 10
+            like_cnt >= 0
     </select>
 
     <select id="findHotBoards" resultType="HotBoardDto">
         SELECT b.id AS boardId,
                title,
                body,
-               user_id AS userId,
+               b.user_id AS userId,
                IF(is_anonymous, '익명',u.nickname) AS userNickname,
                type_id AS typeId,
-               type AS t.name,
-                comment_cnt AS commentCnt,
+               t.name AS type,
+               comment_cnt AS commentCnt,
                like_cnt AS likeCnt,
                is_anonymous AS isAnonymous,
                is_hide AS isHide,
-               blike.user_id = #{userId} as isLike,
-               created_at AS createdAt,
-               modified_at AS modifiedAt
+               IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
+               b.created_at AS createdAt,
+               b.modified_at AS modifiedAt
         FROM board b
                  INNER JOIN user u ON b.user_id = u.id
                  INNER JOIN board_type t ON b.type_id = t.id
-                 LEFT OUTER JOIN board_like blike ON b.id = blike.board_id
+                 LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
         WHERE
             is_hide = 0 AND
-            state = 0 AND
+            b.state = 0 AND
             category_id = #{categoryId} AND
-            like_cnt >= 10
-        ORDER BY hot(like_cnt, created_at) + RAND(#{seed}) DESC
-            LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
+            like_cnt >= 0
+        ORDER BY hot(like_cnt, b.created_at) + RAND(#{seed}) DESC
+        LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
     </select>
 
     <select id="getHotBoardCount">
@@ -235,6 +238,6 @@
             is_hide = 0 AND
             state = 0 AND
             category_id = #{categoryId} AND
-            like_cnt >= 10
+            like_cnt >= 0
     </select>
 </mapper>

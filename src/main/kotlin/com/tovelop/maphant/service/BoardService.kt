@@ -25,6 +25,10 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         return boardMapper.findBoardList(findBoardDTO, startRow, categoryId)
     }
 
+    fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int {
+        return boardMapper.getBoardSizeByCategoryIdAndBoardTypeId(categoryId, boardTypeId)
+    }
+
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
     }
@@ -120,30 +124,39 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO> {
         return boardMapper.findAnswerBoardListByParentBoardId(parentBoardId)
     }
-    fun getAllBoardType(): List<BoardTypeDTO> {
+    fun getAllBoardType(): MutableList<BoardTypeDTO> {
         return boardMapper.getAllBoardType()
     }
 
-    fun findHotBoardList(userId: Int, categoryId: Int, boardTypeId: Int?, sessionId:String, pagingDto: PagingDto): PagingResponse<HotBoardDto> {
-        if(pagingDto.page == 1) { //페이지가 1일떈 새로운 seed값 생성 해당 값은 세션종료시 자동 삭제
-            redisService.set(sessionId, Random().nextLong().toString())
+    fun findHotBoardList(userId: Int, category: Int, boardTypeId: Int?, sessionId:String, pagingDto: PagingDto): PagingResponse<HotBoardDto> {
+        //페이지가 1일떈 새로운 seed값 생성 10분 후 삭제
+        if(pagingDto.page == 1) {
+            redisService.set("seed|$sessionId", Random().nextLong().toString())
+            redisService.expire("seed|$sessionId", 60 * 10)
         }
 
-        val seed = redisService.get(sessionId)?.toLong() as Long;
+        var seed = redisService.get("seed|$sessionId")?.toLong();
+
+        //사용자가 page가 1이아닌 2부터 요청할 경우 && redis에 seed값이 없을 경우 null일 수 있음
+        if(seed == null) {
+            seed = Random().nextLong()
+            redisService.set("seed|$sessionId", seed.toString())
+            redisService.expire("seed|$sessionId", 60 * 10)
+        }
 
         val pagination:Pagination
         val hotBoards:List<HotBoardDto>
 
-        if(boardTypeId != null) {
-            val count = boardMapper.getHotBoardCountWithBoardType(categoryId,boardTypeId);
-            pagination = Pagination(count,pagingDto)
-            hotBoards = boardMapper.findHotBoardsWithBoardType(userId,categoryId,boardTypeId, seed, pagingDto)
-        }else {
-            val count = boardMapper.getHotBoardCount(categoryId);
-            pagination = Pagination(count,pagingDto)
-            hotBoards = boardMapper.findHotBoards(userId,categoryId, seed, pagingDto)
-        }
 
+        if(boardTypeId != null) {
+            val count = boardMapper.getHotBoardCountWithBoardType(category,boardTypeId);
+            pagination = Pagination(count,pagingDto)
+            hotBoards = boardMapper.findHotBoardsWithBoardType(userId,category,boardTypeId, seed, pagingDto)
+        }else {
+            val count = boardMapper.getHotBoardCount(category);
+            pagination = Pagination(count,pagingDto)
+            hotBoards = boardMapper.findHotBoards(userId,category, seed, pagingDto)
+        }
 
         return PagingResponse(hotBoards,pagination)
     }
