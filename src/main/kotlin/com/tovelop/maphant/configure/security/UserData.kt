@@ -41,7 +41,7 @@ class UserData(
 
     fun getUserID() = this.userData.id
 
-    fun getUserCategoryId() = this.userData.categoryId
+    fun getUserCategories() = this.userData.category
 
     fun getUserRole() = this.userData.role
 

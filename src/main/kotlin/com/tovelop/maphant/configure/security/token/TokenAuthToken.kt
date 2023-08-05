@@ -42,9 +42,8 @@ class TokenAuthToken(
         return userData?.getUserID() ?: throw BadCredentialsException("No user")
     }
 
-    fun getUserCategoryId(): Int {
-        return userData?.getUserCategoryId() ?: throw BadCredentialsException("No user")
-    }
+    fun getUserCategories() = userData?.getUserCategories() ?: throw BadCredentialsException("유저의 계열정보가 존재하지 않습니다.")
+
 
     fun getUserRole(): String {
         return userData?.getUserRole() ?: throw BadCredentialsException("No user")
