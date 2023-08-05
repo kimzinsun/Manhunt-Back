@@ -124,15 +124,26 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         return boardMapper.getAllBoardType()
     }
 
-    fun findHotBoardList(user:UserDataDTO,sessionId:String, pagingDto: PagingDto): PagingResponse<BoardDTO> {
-        if(pagingDto.page == 1) { //페이지가 1일떈 새로운 seed값 생성
+    fun findHotBoardList(userId: Int, categoryId: Int, boardTypeId: Int?, sessionId:String, pagingDto: PagingDto): PagingResponse<HotBoardDto> {
+        if(pagingDto.page == 1) { //페이지가 1일떈 새로운 seed값 생성 해당 값은 세션종료시 자동 삭제
             redisService.set(sessionId, Random().nextLong().toString())
         }
+
         val seed = redisService.get(sessionId)?.toLong() as Long;
 
-        val count = boardMapper.getBoardCount();
-        val pagination = Pagination(count,pagingDto)
-        val hotBoards = boardMapper.findAllHotBoard(seed, pagingDto)
+        val pagination:Pagination
+        val hotBoards:List<HotBoardDto>
+
+        if(boardTypeId != null) {
+            val count = boardMapper.getHotBoardCountWithBoardType(categoryId,boardTypeId);
+            pagination = Pagination(count,pagingDto)
+            hotBoards = boardMapper.findHotBoardsWithBoardType(userId,categoryId,boardTypeId, seed, pagingDto)
+        }else {
+            val count = boardMapper.getHotBoardCount(categoryId);
+            pagination = Pagination(count,pagingDto)
+            hotBoards = boardMapper.findHotBoards(userId,categoryId, seed, pagingDto)
+        }
+
 
         return PagingResponse(hotBoards,pagination)
     }

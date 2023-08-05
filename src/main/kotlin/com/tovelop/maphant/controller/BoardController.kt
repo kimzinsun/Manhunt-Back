@@ -33,13 +33,17 @@ class BoardController(@Autowired val boardService: BoardService) {
     }
 
     @GetMapping("/hot")
-    fun readHotBoard(@ModelAttribute @Valid pagingDto: PagingDto, request: HttpServletRequest): PagingResponse<BoardDTO> {
+    fun readHotBoard(request: HttpServletRequest,
+                     @RequestParam(required = false) boardTypeId:Int?,
+                     @ModelAttribute @Valid pagingDto: PagingDto
+    ): ResponseEntity<Response<PagingResponse<HotBoardDto>>> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        val user = auth.getUserData()
+        val userId = auth.getUserId()
+        val categoryId = auth.getUserCategoryId()
 
         val sessionId = request.session.id
 
-        return boardService.findHotBoardList(user,sessionId,pagingDto)
+        return ResponseEntity.ok().body(Response.success(boardService.findHotBoardList(userId,categoryId,boardTypeId,sessionId,pagingDto)))
     }
 
     @GetMapping("")
