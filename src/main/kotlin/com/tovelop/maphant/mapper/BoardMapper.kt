@@ -1,6 +1,7 @@
 package com.tovelop.maphant.mapper
 
 import com.tovelop.maphant.dto.*
+import com.tovelop.maphant.type.paging.PagingDto
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
@@ -29,6 +30,7 @@ interface BoardMapper {
     fun updateStateOfBoard(boardId: Int, state: Int)
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO>
     fun getAllBoardType(): List<BoardTypeDTO>
-    fun getAllPopularBoard(): List<BoardDTO>
+    fun findAllHotBoard(seed:Long, pagingDto: PagingDto): List<BoardDTO>
+    fun getBoardCount(): Int
 }
 

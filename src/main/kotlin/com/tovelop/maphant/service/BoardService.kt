@@ -2,7 +2,9 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
+import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.Random
@@ -122,13 +124,17 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         return boardMapper.getAllBoardType()
     }
 
-    fun findHotBoardList(sessionId:String, pagingDto: PagingDto) {
-        if(pagingDto.page == 1) {
+    fun findHotBoardList(user:UserDataDTO,sessionId:String, pagingDto: PagingDto): PagingResponse<BoardDTO> {
+        if(pagingDto.page == 1) { //페이지가 1일떈 새로운 seed값 생성
             redisService.set(sessionId, Random().nextLong().toString())
         }
-        val seed = redisService.get(sessionId);
+        val seed = redisService.get(sessionId)?.toLong() as Long;
 
+        val count = boardMapper.getBoardCount();
+        val pagination = Pagination(count,pagingDto)
+        val hotBoards = boardMapper.findAllHotBoard(seed, pagingDto)
 
+        return PagingResponse(hotBoards,pagination)
     }
 }
 
