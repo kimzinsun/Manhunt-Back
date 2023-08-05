@@ -187,7 +187,7 @@
             b.state = 0 AND
             category_id = #{categoryId} AND
             type_id = #{boardType} AND
-            like_cnt >= 0
+            like_cnt >= 10
         ORDER BY hot(like_cnt, b.created_at) + RAND(#{seed}) DESC
         LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
     </select>
@@ -200,7 +200,7 @@
             state = 0 AND
             category_id = #{categoryId} AND
             type_id = #{boardType} AND
-            like_cnt >= 0
+            like_cnt >= 10
     </select>
 
     <select id="findHotBoards" resultType="HotBoardDto">
@@ -226,7 +226,7 @@
             is_hide = 0 AND
             b.state = 0 AND
             category_id = #{categoryId} AND
-            like_cnt >= 0
+            like_cnt >= 10
         ORDER BY hot(like_cnt, b.created_at) + RAND(#{seed}) DESC
         LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
     </select>
@@ -238,6 +238,6 @@
             is_hide = 0 AND
             state = 0 AND
             category_id = #{categoryId} AND
-            like_cnt >= 0
+            like_cnt >= 10
     </select>
 </mapper>
