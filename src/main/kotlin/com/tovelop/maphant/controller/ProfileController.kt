@@ -56,7 +56,7 @@ class ProfileController(
     @GetMapping("/board")
     fun getBoardList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<BoardResDto>>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserId()!!
+        val userId: Int = auth.getUserId()
 
         return ResponseEntity.ok().body(Response.success(profileService.getBoardsList(userId, pagingDto)));
     }
