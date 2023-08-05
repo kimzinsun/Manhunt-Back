@@ -32,5 +32,6 @@ interface BoardMapper {
     fun getAllBoardType(): List<BoardTypeDTO>
     fun findAllHotBoard(seed:Long, pagingDto: PagingDto): List<BoardDTO>
     fun getBoardCount(): Int
+    fun getAllBoardSortedByPopularity(seed: Int): List<BoardDTO>
 }
 
