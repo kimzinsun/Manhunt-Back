@@ -27,21 +27,27 @@ class ProfileController(
 ) {
 
     @GetMapping
-    fun getProfile(): ResponseEntity<Response<ProfileNicknameAndBodyAndImageDto>> {
+    fun getProfile(@RequestParam userId: Int?): ResponseEntity<Response<ProfileNicknameAndBodyAndImageDto>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserId()!!
-
-        return ResponseEntity.ok().body(Response.success(profileService.getNicknameAndBodyAndImage(userId)));
+        return if (userId != null) {
+            ResponseEntity.ok().body(Response.success(profileService.getNicknameAndBodyAndImage(userId)));
+        } else {
+            ResponseEntity.ok().body(Response.success(profileService.getNicknameAndBodyAndImage(auth.getUserId())));
+        }
     }
 
     @PatchMapping
-    fun updateProfile(@RequestParam nickname:String?, @RequestParam body:String?, @RequestParam file: MultipartFile?): ResponseEntity<Response<String>> {
+    fun updateProfile(
+        @RequestParam nickname: String?,
+        @RequestParam body: String?,
+        @RequestParam file: MultipartFile?
+    ): ResponseEntity<Response<String>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserId()!!
+        val userId: Int = auth.getUserId()
 
-        if(nickname!=null)profileService.updateProfileNickname(userId, nickname)
-        if(body!=null)profileService.updateProfileBody(userId, body)
-        if(file!=null){
+        if (nickname != null) profileService.updateProfileNickname(userId, nickname)
+        if (body != null) profileService.updateProfileBody(userId, body)
+        if (file != null) {
             val imageUrl: String = awsS3Service.uploadFile(file)
             profileService.updateProfileImage(userId, imageUrl, file)
         }
@@ -51,11 +57,18 @@ class ProfileController(
     }
 
     @GetMapping("/comment")
-    fun getCommentList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<CommentExtDTO>>>{
-        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserId()
-
-        return return ResponseEntity.ok().body(Response.success(profileService.getCommentList(userId, pagingDto)));
+    fun getCommentList(
+        @ModelAttribute @Valid pagingDto: PagingDto,
+        @RequestParam userId: Int?
+    ): ResponseEntity<Response<PagingResponse<CommentExtDTO>>> {
+        return if (userId != null) {
+            ResponseEntity.ok().body(Response.success(profileService.getCommentList(userId, pagingDto)));
+        } else {
+            val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
+            ResponseEntity.ok().body(Response.success(profileService.getCommentList(auth.getUserId(), pagingDto)));
+        }
+//        val userId: Int = auth.getUserId()
+//        return return ResponseEntity.ok().body(Response.success(profileService.getCommentList(userId, pagingDto)));
     }
 
     @GetMapping("/board")
