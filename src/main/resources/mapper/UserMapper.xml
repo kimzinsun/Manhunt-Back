@@ -80,6 +80,34 @@
             lastmodified_at = NOW()
         WHERE email = #{email}
     </update>
+    <update id="updateUserCategoryByEmail">
+        update user_category_major
+        set category_id = #{newCategoryId}
+        where user_id = (select id from user where email = #{email})
+    </update>
+    <update id="updateUserMajorByEmail">
+        update user_category_major
+        set major_id = #{newMajorId}
+        where user_id = (select id from user where email = #{email})
+    </update>
+    <select id="findCategoryIdByEmail" resultType="Int">
+        select user_category_major.category_id
+        from user_category_major join user on #{email} = user.email and user_category_major.user_id = user.id
+    </select>
+    <select id="findCategoryIdByName" resultType="Int">
+        select id
+        from category
+        where name = #{name}
+    </select>
+    <select id="findMajorIdByEmail" resultType="Int">
+        select user_category_major.major_id
+        from user_category_major join user on #{email} = user.email and user_category_major.user_id = user.id
+    </select>
+    <select id="findMajorIdByName" resultType="Int">
+        select id
+        from major
+        where name = #{name}
+    </select>
     <select id="findPasswordByEmail" resultType="String">
         SELECT password
         FROM user

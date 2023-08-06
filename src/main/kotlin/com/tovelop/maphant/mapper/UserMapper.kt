@@ -22,6 +22,12 @@ interface UserMapper {
     fun updateUserPasswordByEmail(email: String, password: String)
     fun updateUserNicknameByEmail(email: String, nickname: String)
     fun updateUserPhoneNumByEmail(email: String, phNum: String)
+    fun updateUserCategoryByEmail(email: String, newCategoryId: Int)
+    fun updateUserMajorByEmail(email: String, newMajorId: Int)
+    fun findCategoryIdByEmail(email: String): Int
+    fun findCategoryIdByName(name: String): Int
+    fun findMajorIdByEmail(email: String): Int
+    fun findMajorIdByName(name: String): Int
     fun findPasswordByEmail(email: String): String
     fun findNicknameByEmail(email: String): String
     fun findStateByUserId(userId: Int): Int

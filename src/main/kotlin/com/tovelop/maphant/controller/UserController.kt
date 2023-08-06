@@ -3,6 +3,7 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.PasswordEncoderBcrypt
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
+import com.tovelop.maphant.mapper.UserMapper
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -231,6 +232,34 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         userService.updateUserPasswordByEmail(
             changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
         )
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/changeinfo/category")
+    fun changeCategory(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val oldCategoryId = userService.findCategoryIdByEmail(changeInfoDTO.email)
+        val newCategoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
+
+        if (oldCategoryId == newCategoryId){
+            return ResponseEntity.badRequest().body(Response.error("기존 계열과 동일합니다."))
+        }
+
+        userService.updateUserCategoryByEmail(changeInfoDTO.email, newCategoryId)
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/changeinfo/major")
+    fun changeMajor(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val oldMajorId = userService.findMajorIdByEmail(changeInfoDTO.email)
+        val newMajorId = userService.findMajorIdByName(changeInfoDTO.major!!)
+
+        if (oldMajorId == newMajorId){
+            return ResponseEntity.badRequest().body(Response.error("기존 전공과 동일합니다."))
+        }
+
+        userService.updateUserMajorByEmail(changeInfoDTO.email, newMajorId)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
