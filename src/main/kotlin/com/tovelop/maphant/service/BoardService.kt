@@ -128,20 +128,20 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         return boardMapper.getAllBoardType()
     }
 
-    fun findHotBoardList(userId: Int, category: Int, boardTypeId: Int?, sessionId:String, pagingDto: PagingDto): PagingResponse<HotBoardDto> {
+    fun findHotBoardList(userId: Int, category: Int, boardTypeId: Int?, pagingDto: PagingDto): PagingResponse<HotBoardDto> {
         //페이지가 1일떈 새로운 seed값 생성 10분 후 삭제
         if(pagingDto.page == 1) {
-            redisService.set("seed|$sessionId", Random().nextLong().toString())
-            redisService.expire("seed|$sessionId", 60 * 10)
+            redisService.set("seed|$userId", Random().nextLong().toString())
+            redisService.expire("seed|$userId", 60 * 10)
         }
 
-        var seed = redisService.get("seed|$sessionId")?.toLong();
+        var seed = redisService.get("seed|$userId")?.toLong();
 
         //사용자가 page가 1이아닌 2부터 요청할 경우 && redis에 seed값이 없을 경우 null일 수 있음
         if(seed == null) {
             seed = Random().nextLong()
-            redisService.set("seed|$sessionId", seed.toString())
-            redisService.expire("seed|$sessionId", 60 * 10)
+            redisService.set("seed|$userId", seed.toString())
+            redisService.expire("seed|$userId", 60 * 10)
         }
 
         val pagination:Pagination
