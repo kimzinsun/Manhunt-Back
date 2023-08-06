@@ -59,7 +59,7 @@
             images_url,
             IF(blike.user_id IS NOT NULL, 1, 0) as isLike
         FROM board b
-                 INNER JOIN board_type ON b.id = board_type.id
+                 INNER JOIN board_type ON b.type_id = board_type.id
                  LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
         WHERE b.user_id = #{userId} AND
               state = 0
@@ -70,7 +70,8 @@
     <select id="getBoardCount">
         SELECT COUNT(*)
         FROM board
-        WHERE user_id = #{userId}
+        WHERE user_id = #{userId} AND
+            state = 0
     </select>
 
 </mapper>
