@@ -38,20 +38,21 @@ class BoardController(@Autowired val boardService: BoardService, @Autowired val 
     }
 
     @GetMapping("/hot")
-    fun readHotBoard(request: HttpServletRequest,
-                     @RequestParam(required = false) boardTypeId:Int?,
-                     @ModelAttribute @Valid pagingDto: PagingDto,
-                     @RequestHeader("x-category") category: Int
+    fun readHotBoard(
+        request: HttpServletRequest,
+        @RequestParam(required = false) boardTypeId: Int?,
+        @ModelAttribute @Valid pagingDto: PagingDto,
+        @RequestHeader("x-category") category: Int
     ): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val userId = auth.getUserId()
-
-        val sessionId = request.session.id
         if (!boardService.isInCategory(category) || (boardTypeId != null && !(boardService.isInBoardTypeId(boardTypeId)) || boardTypeId == 0)) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 게시판 유형입니다."))
         }
-        return ResponseEntity.ok().body(Response.success(boardService.findHotBoardList(userId,category,boardTypeId,sessionId,pagingDto)))
+
+        return ResponseEntity.ok()
+            .body(Response.success(boardService.findHotBoardList(userId, category, boardTypeId, pagingDto)))
     }
     data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
 
