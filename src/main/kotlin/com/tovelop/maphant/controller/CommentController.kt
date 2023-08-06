@@ -50,7 +50,12 @@ class CommentController(
             return ResponseEntity.badRequest().body(Response.error("게시글을 찾을 수 없습니다."))
         }
 
+
         val commentTime = comment.list.map {
+            if (it.is_anonymous) {
+//                it.user_id = 0
+                it.nickname = "익명"
+            }
             if (it.modified_at == null) {
                 it.timeFormat(it, it.created_at.formatTime())
             } else {
