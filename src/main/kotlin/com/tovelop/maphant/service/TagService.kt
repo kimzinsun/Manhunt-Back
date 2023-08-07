@@ -1,29 +1,15 @@
 package com.tovelop.maphant.service
 
-class TagService {
+import com.tovelop.maphant.dto.TagDTO
+import com.tovelop.maphant.mapper.TagMapper
 
-}
+class TagService(private val tagMapper: TagMapper) {
 
-fun getTagList() {
+    fun getTagList() = tagMapper.getTagList()
 
-}
+    fun insertTag(tagDTO: TagDTO) = tagMapper.insertTag(tagDTO)
 
-fun insertTag() {
+    fun getTagByName(name: String) = tagMapper.getTagByName(name)
 
-}
-
-fun getTagByName() {
-
-}
-
-fun updateTag() {
-
-}
-
-fun updateTagCnt() {
-
-}
-
-fun deleteTagCnt() {
-
+    fun deleteTagCnt(id: Int, cnt: Int) = tagMapper.deleteTagCnt(id, cnt)
 }
