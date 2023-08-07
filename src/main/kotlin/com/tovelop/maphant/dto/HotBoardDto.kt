@@ -16,5 +16,6 @@ data class HotBoardDto(
     val isHide: Int,
     var isLike: Boolean,
     val createdAt: LocalDateTime,
-    val modifiedAt : LocalDateTime?
+    val modifiedAt : LocalDateTime?,
+    val imagesUrl: String?
 )
