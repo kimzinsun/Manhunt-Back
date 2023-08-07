@@ -31,7 +31,7 @@ class DmService(
     }
 
     @Transactional
-    fun sendDm(userNickname:String, sender_id: Int, receiver_id: Int, content: String) {
+    fun sendDm(userNickname:String, sender_id: Int, receiver_id: Int, content: String): DmDto {
 
         val receiverNickname = userMapper.findNicknameIdBy(receiver_id);
         if(receiverNickname == null) {
@@ -69,17 +69,17 @@ class DmService(
         var is_from_sender: Boolean = false
         if (is_sender) is_from_sender = true
 
-        dmMapper.createDm(
-            DmDto(
-                id = null,
-                is_from_sender = is_from_sender,
-                content = content,
-                is_read = false,
-                time = LocalDateTime.now(),
-                room_id = room.id,
-                visible = VisibleChoices.BOTH
-            )
+        val dmDto = DmDto(
+            id = null,
+            is_from_sender = is_from_sender,
+            content = content,
+            is_read = false,
+            time = LocalDateTime.now(),
+            room_id = room.id,
+            visible = VisibleChoices.BOTH
         )
+
+        dmMapper.createDm(dmDto)
 
         // is_from_sender == true이면 receiver_unread_count ++
         if(is_from_sender){
@@ -94,6 +94,8 @@ class DmService(
             userNickname,
             content
         ))
+
+        return dmDto
     }
 
     @Transactional
