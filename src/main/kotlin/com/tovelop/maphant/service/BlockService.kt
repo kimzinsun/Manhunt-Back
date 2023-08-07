@@ -5,7 +5,18 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class BlockService(private val blockMapper: BlockMapper) {
+
+class BlockService(
+    private val blockMapper: BlockMapper
+) {
+    fun block(blockedId: Int, blockerId:Int) {
+        val count = blockMapper.getBlockCount(blockerId, blockedId)
+
+        if(count>=1){
+            throw IllegalStateException("해당 유저를 이미 차단하였습니다.")
+        }
+        blockMapper.block(blockedId, blockerId)
+    }
 
     @Transactional
     fun releaseBlock(blockerId:Int, blockedId:Int) {
