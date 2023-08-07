@@ -6,6 +6,7 @@ import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
 import com.tovelop.maphant.utils.SendGrid
 import com.tovelop.maphant.utils.ValidationHelper
 import com.tovelop.maphant.utils.isSuccess
@@ -28,6 +29,19 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         }
 
         return ResponseEntity.unprocessableEntity().body(Response.error("Invalid credentials"))
+    }
+
+    @DeleteMapping("")
+    fun deleteUser(@RequestParam userId:Int):ResponseEntity<ResponseUnit>{
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        if(auth.isNotLogged()){
+            return ResponseEntity.unprocessableEntity().body(Response.error("로그인이 안됨"))
+        }
+        if(!(auth.getUserId()==userId || auth.getUserRole()=="admin")){
+            return ResponseEntity.unprocessableEntity().body(Response.error("권한이 없습니다."))
+        }
+        userService.updateUserStateByUserId(userId,0)
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     //이메일 검증 api

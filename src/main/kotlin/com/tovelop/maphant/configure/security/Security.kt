@@ -1,5 +1,6 @@
 package com.tovelop.maphant.configure.security
 
+import com.tovelop.maphant.configure.security.filter.CookieAuthFilter
 import com.tovelop.maphant.configure.security.filter.LoginAuthFilter
 import com.tovelop.maphant.configure.security.filter.TokenAuthFilter
 import com.tovelop.maphant.configure.security.provider.LoginAuthProvider
@@ -34,8 +35,11 @@ class Security {
             LoginAuthFilter(authenticationManager(http)),
             UsernamePasswordAuthenticationFilter::class.java
         ).addFilterAfter(
-            TokenAuthFilter(authenticationManager(http)),
+            CookieAuthFilter(authenticationManager(http)),
             LoginAuthFilter::class.java
+        ).addFilterAfter(
+            TokenAuthFilter(authenticationManager(http)),
+            CookieAuthFilter::class.java
         ).sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             it.disable()
