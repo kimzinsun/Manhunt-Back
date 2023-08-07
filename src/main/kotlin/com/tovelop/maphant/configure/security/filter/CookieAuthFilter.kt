@@ -40,31 +40,21 @@ class CookieAuthFilter(authenticationManager: AuthenticationManager?)
 
     override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication? {
         var auth: String? = null
-        var timestamp: String? = null
         var sign: String? = null
 
         val cookies = request?.cookies
         if(cookies != null) {
             for(cookie in cookies) {
                 if("auth".equals(cookie.name)) auth = cookie.value
-                if("timestamp".equals(cookie.name)) timestamp = cookie.value
                 if("sign".equals(cookie.name)) sign = cookie.value
             }
         }
 
 
         if(auth == null) throw BadCredentialsException("No auth cookie")
-        if(timestamp == null) throw BadCredentialsException("No timestamp cookie")
         if(sign == null) throw BadCredentialsException("No sign cookie")
 
-        if(auth!= "maphant@pubKey") {
-            val epoch = System.currentTimeMillis() / 1000
-            if(epoch - timestamp.toInt() > 60) {
-                throw BadCredentialsException("Timestamp expired")
-            }
-        }
-
-        val authReq = TokenAuthToken(auth, timestamp.toInt(), sign)
+        val authReq = TokenAuthToken(auth, -1, sign)
 
         return this.authenticationManager.authenticate(authReq)
     }
