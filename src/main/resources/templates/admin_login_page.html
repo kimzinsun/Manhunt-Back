@@ -47,11 +47,9 @@
               .then(res => {
                   const pubKey = res["pubKey"];
                   const privKey = res["privKey"];
-                  const timestamp = parseInt(Date.now() / 1000);
 
                   setCookie("auth", pubKey);
-                  setCookie("timestamp", timestamp);
-                  setCookie("sign", sha512(timestamp+privKey));
+                  setCookie("sign", privKey);
 
                   location.href = "/admin/";
               })
