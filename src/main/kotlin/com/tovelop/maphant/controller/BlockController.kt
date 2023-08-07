@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/block")
 class BlockController(
-    private val blockeService: BlockService
+    private val blockService: BlockService
 ){
 
-    @PostMapping("/blockedId")
-    fun creatBlock(blockedId:Int, blockerId:Int): ResponseEntity<Response<String>>{
+    @PostMapping("/{blockId}")
+    fun creatBlock(@PathVariable blockId:Int): ResponseEntity<Response<String>>{
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
         val userId: Int = auth.getUserId()
-        blockeService.block(blockedId, userId)
+
+        blockService.block(userId, blockId)
         return ResponseEntity.ok().body(Response.success("해당 유저를 차단하였습니다."))
     }
     @DeleteMapping("/{blockedId}")
@@ -29,7 +30,7 @@ class BlockController(
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
         val userId: Int = auth.getUserId()
 
-        blockeService.releaseBlock(userId, blockedId)
+        blockService.releaseBlock(userId, blockedId)
         return ResponseEntity.ok().body(Response.success("해당 유저를 차단 해제하였습니다."))
     }
 }
