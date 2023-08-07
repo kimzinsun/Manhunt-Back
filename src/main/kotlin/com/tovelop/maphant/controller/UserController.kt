@@ -1,6 +1,7 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.PasswordEncoderBcrypt
+import com.tovelop.maphant.configure.security.UserDataService
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.UserService
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
-class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid) {
+class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid, @Autowired val userDataService: UserDataService) {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
 
@@ -196,6 +197,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         //email로 nickname db저장
         userService.updateUserNicknameByEmail(changeInfoDTO.email, changeInfoDTO.nickname)
+        userDataService.updateUserData()
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
