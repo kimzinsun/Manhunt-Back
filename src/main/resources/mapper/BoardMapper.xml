@@ -19,6 +19,9 @@
         VALUES (#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete},
                 #{isAnonymous}, NOW(), null, #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
     </insert>
+    <select id="findLastInsertId" resultType="Int">
+        select last_insert_id()
+    </select>
     <select id="findBoard" resultType="BoardDTO">
         SELECT *
         FROM board
