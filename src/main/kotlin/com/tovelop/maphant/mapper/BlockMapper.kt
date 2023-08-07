@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 @Mapper
 @Repository
 interface BlockMapper {
+    fun block(blockedId: Int, blockerId: Int):Boolean
 }
