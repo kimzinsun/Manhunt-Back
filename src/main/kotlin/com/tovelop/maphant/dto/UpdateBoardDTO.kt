@@ -4,5 +4,6 @@ data class UpdateBoardDTO(
     val id: Int,
     var title: String,
     val body: String,
-    val isHide: Int
+    val isHide: Int,
+    val imagesUrl: String?
 )
