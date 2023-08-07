@@ -9,6 +9,6 @@ class SecurityHelper {
             this != null && this is TokenAuthToken && this.isAuthenticated
 
         fun Authentication.isNotLogged(): Boolean =
-            this == null || this is TokenAuthToken && !this.isAuthenticated
+            this == null || this !is TokenAuthToken || !this.isAuthenticated
     }
 }
