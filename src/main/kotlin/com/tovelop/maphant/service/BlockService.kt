@@ -11,6 +11,7 @@ class BlockService(
     private val blockMapper: BlockMapper,
     private val userMapper: UserMapper
 ) {
+    @Transactional
     fun block(blockerId: Int, blockId:Int) {
 
         if(userMapper.countById(blockId) == 0) {
