@@ -9,23 +9,14 @@
     </select>
     <insert id="insertTag">
         INSERT INTO tag (name, category_id, cnt)
-        VALUES (#{name}, #{categoryId}, #{cnt})
+        VALUES (#{name}, #{categoryId}, 1)
+        ON DUPLICATE KEY UPDATE cnt = cnt + 1
     </insert>
     <select id="getTagByName" resultType="TagDTO">
         SELECT name, category_id, cnt
         FROM tag
         WHERE name = #{name}
     </select>
-    <update id="updateTag">
-        UPDATE tag
-        SET name = #{name}
-        WHERE id = #{id}
-    </update>
-    <update id="updateTagCnt">
-        UPDATE tag
-        SET cnt = cnt + 1
-        WHERE id = #{id}
-    </update>
     <delete id="deleteTagCnt">
         UPDATE tag
         SET cnt = cnt - 1
