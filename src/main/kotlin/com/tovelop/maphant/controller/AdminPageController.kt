@@ -1,33 +1,27 @@
 package com.tovelop.maphant.controller
 
-<<<<<<< HEAD
+import org.springframework.http.ResponseEntity
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.UserMapper
+import com.tovelop.maphant.configure.security.PasswordEncoderSHA512
+
 import com.tovelop.maphant.service.AdminPageService
 import com.tovelop.maphant.service.BoardService
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
-=======
-import com.tovelop.maphant.configure.security.PasswordEncoderSHA512
-import com.tovelop.maphant.service.AdminPageService
->>>>>>> feat-admin-page
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
-<<<<<<< HEAD
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-=======
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
->>>>>>> feat-admin-page
 
 @Controller
 @RequestMapping("/admin")
