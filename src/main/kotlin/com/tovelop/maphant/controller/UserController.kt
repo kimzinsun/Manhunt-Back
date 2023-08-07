@@ -24,7 +24,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     @GetMapping("/")
     fun getUser(): ResponseEntity<Response<UserDataDTO>> {
         val auth = SecurityContextHolder.getContext().authentication
-        if(auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
+        if (auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
             return ResponseEntity.ok(Response.success(auth.getUserData()))
         }
 
@@ -32,15 +32,21 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     }
 
     @DeleteMapping("")
-    fun deleteUser(@RequestParam userId:Int):ResponseEntity<ResponseUnit>{
+    fun deleteUser(@RequestParam userId: Int?): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        if(auth.isNotLogged()){
+        if (auth.isNotLogged()) {
             return ResponseEntity.unprocessableEntity().body(Response.error("로그인이 안됨"))
         }
-        if(!(auth.getUserId()==userId || auth.getUserRole()=="admin")){
-            return ResponseEntity.unprocessableEntity().body(Response.error("권한이 없습니다."))
+
+        if (auth.getUserRole() != "admin") {
+            userService.updateUserStateByUserId(auth.getUserId(), 3)
+            return ResponseEntity.ok(Response.stateOnly(true))
         }
-        userService.updateUserStateByUserId(userId,0)
+
+        if (userId == null) {
+            return ResponseEntity.badRequest().body(Response.error("탈퇴 대상 유저 아이디가 없습니다."))
+        }
+        userService.updateUserStateByUserId(userId, 3)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -139,8 +145,9 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         }
 
         val passwordValidation = validationPassword(ValidationSignupDTO(password = signupDTO.password))
-        if (!passwordValidation.isSuccess()){
-            return ResponseEntity.badRequest().body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
+        if (!passwordValidation.isSuccess()) {
+            return ResponseEntity.badRequest()
+                .body(Response.error("비밀번호는 영문 소문자/대문자 1개 이상, 숫자와 특수문자를 포함하고, 최소 8자로 구성되어야 합니다."))
         }
 
         val passwordChkValidation = validationPasswordCheck(
@@ -243,7 +250,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         if (!userService.isDuplicateEmail(changePw.email)) {
             return ResponseEntity.badRequest().body(Response.error("유저 정보가 없습니다."))
-        } else{
+        } else {
             sendGrid.sendChangePW(changePw.email)
         }
 
