@@ -1,9 +1,7 @@
 package com.tovelop.maphant.service
 
-import com.tovelop.maphant.dto.BoardDTO
-import com.tovelop.maphant.dto.BoardResDto
-import com.tovelop.maphant.dto.ProfileImageDto
-import com.tovelop.maphant.dto.UploadLogDTO
+import com.tovelop.maphant.dto.*
+import com.tovelop.maphant.mapper.CommentMapper
 import com.tovelop.maphant.mapper.ProfileMapper
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
@@ -21,10 +19,25 @@ class ProfileService (
     private val uploadUtils: UploadUtils,
     private var profileMapper: ProfileMapper,
     private val uploadLogService: UploadLogService,
+    private val commentMapper: CommentMapper
 ){
     //프로필 이미지의 Dto 불러오기
-    fun getProfileImage(userId:Int): ProfileImageDto {
-        return profileMapper.findImageById(userId)
+    fun getNicknameAndBodyAndImage(userId:Int): ProfileNicknameAndBodyAndImageDto {
+        return profileMapper.findNicknameAndBodyAndImageById(userId)
+    }
+
+    //유저가 작성한 댓글 목록 불러오기
+    fun getCommentList(userId: Int, params: PagingDto):PagingResponse<CommentExtDTO>{
+        val count = commentMapper.getCommentCount(userId);
+
+        if(count < 1){
+            return PagingResponse(Collections.emptyList(), null)
+        }
+
+        val pagination = Pagination(count, params)
+        val comments = commentMapper.findAllCommentByUser(userId, params)
+
+        return PagingResponse(comments, pagination)
     }
 
     //유저가 작성한 글 목록 불러오기
@@ -42,6 +55,15 @@ class ProfileService (
 
         return PagingResponse(boards,pagination);
     }
+
+    fun updateProfileNickname(userId: Int, nickname: String){
+        profileMapper.updateProfileNickname(userId, nickname)
+    }
+
+    fun updateProfileBody(userId: Int, body: String){
+        profileMapper.updateProfileBody(userId, body)
+    }
+
 
     @Transactional
     fun updateProfileImage(userId: Int, imageUrl: String, file: MultipartFile): String {
