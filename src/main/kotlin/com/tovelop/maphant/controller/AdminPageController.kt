@@ -70,4 +70,19 @@ class AdminPageController(@Autowired val adminPageService: AdminPageService) {
         adminPageService.updateUserState(userReportDTO.userId, 2)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
+    @ResponseBody
+    fun listBoardReport() /*: ResponseEntity<Response<List<BoardReportDTO>>>*/ {
+        // 검색 후 비어있으면 비어있다고 에러처리
+        // 아니면 보드리포트DTO 리스트 반환
+    }
+
+    @GetMapping("/login")
+    fun loginPage(): String {
+        return "admin_login_page"
+    }
+
+    @GetMapping("/")
+    fun index(): String {
+        return "admin_index_page"
+    }
 }
