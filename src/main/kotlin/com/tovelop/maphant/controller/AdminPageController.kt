@@ -21,8 +21,7 @@ class AdminPageController(@Autowired val adminPageService: AdminPageService) {
     }
 
     @GetMapping("/login")
-    fun loginPage(model: Model): String {
-        model.addAttribute("hasher", PasswordEncoderSHA512())
+    fun loginPage(): String {
         return "admin_login_page"
     }
 
