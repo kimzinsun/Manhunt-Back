@@ -41,16 +41,15 @@ class UserService(val mapper: UserMapper) {
     fun updateUserPhoneNumByEmail(email: String, newPhoneNum: String) {
         mapper.updateUserPhoneNumByEmail(email, newPhoneNum)
     }
-
-    fun updateUserCategoryByEmail(email: String, newCategoryId: Int) {
-        mapper.updateUserCategoryByEmail(email, newCategoryId)
+    fun insertUserCategoryMajorByEmail(email: String, newCategoryId: Int, newMajorId: Int) {
+        val userId = mapper.findUserIdByUserEmail(email)
+        mapper.insertCategoryIdMajorIdByUserId(userId, newCategoryId, newMajorId)
     }
-
-    fun updateUserMajorByEmail(email: String, newMajorId: Int) {
-        mapper.updateUserMajorByEmail(email, newMajorId)
+    fun deleteCategoryIdMajorIdByUserId(email: String, categoryId: Int, majorId: Int){
+        val userId = mapper.findUserIdByUserEmail(email)
+        mapper.deleteCategoryIdMajorIdByUserId(userId, categoryId, majorId)
     }
-
-    fun findCategoryIdByEmail(email: String): Int{
+    fun findCategoryIdByEmail(email: String): List<Int>{
         return mapper.findCategoryIdByEmail(email)
     }
 
@@ -58,7 +57,7 @@ class UserService(val mapper: UserMapper) {
         return mapper.findCategoryIdByName(name)
     }
 
-    fun findMajorIdByEmail(email: String): Int{
+    fun findMajorIdByEmail(email: String): List<Int>{
         return mapper.findMajorIdByEmail(email)
     }
 

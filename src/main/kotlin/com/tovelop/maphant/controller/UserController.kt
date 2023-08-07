@@ -236,30 +236,32 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/changeinfo/category")
-    fun changeCategory(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        val oldCategoryId = userService.findCategoryIdByEmail(changeInfoDTO.email)
+    @PostMapping("/changeinfo/categorymajor")
+    fun addCategoryMajor(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val oldCategoryIdList = userService.findCategoryIdByEmail(changeInfoDTO.email)
         val newCategoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
 
-        if (oldCategoryId == newCategoryId){
-            return ResponseEntity.badRequest().body(Response.error("기존 계열과 동일합니다."))
+        if (newCategoryId in oldCategoryIdList){
+            return ResponseEntity.badRequest().body(Response.error("이미 등록된 계열입니다."))
         }
 
-        userService.updateUserCategoryByEmail(changeInfoDTO.email, newCategoryId)
+        val oldMajorIdList = userService.findMajorIdByEmail(changeInfoDTO.email)
+        val newMajorId = userService.findMajorIdByName(changeInfoDTO.major!!)
+
+        if (newMajorId in oldMajorIdList){
+            return ResponseEntity.badRequest().body(Response.error("이미 등록된 전공입니다."))
+        }
+
+        userService.insertUserCategoryMajorByEmail(changeInfoDTO.email, newCategoryId, newMajorId)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/changeinfo/major")
-    fun changeMajor(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        val oldMajorId = userService.findMajorIdByEmail(changeInfoDTO.email)
-        val newMajorId = userService.findMajorIdByName(changeInfoDTO.major!!)
-
-        if (oldMajorId == newMajorId){
-            return ResponseEntity.badRequest().body(Response.error("기존 전공과 동일합니다."))
-        }
-
-        userService.updateUserMajorByEmail(changeInfoDTO.email, newMajorId)
+    @DeleteMapping("/changeinfo/categorymajor")
+    fun deleteCategoryMajor(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val categoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
+        val majorId = userService.findMajorIdByName(changeInfoDTO.major!!)
+        userService.deleteCategoryIdMajorIdByUserId(changeInfoDTO.email, categoryId, majorId)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }

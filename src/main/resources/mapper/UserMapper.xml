@@ -80,16 +80,6 @@
             lastmodified_at = NOW()
         WHERE email = #{email}
     </update>
-    <update id="updateUserCategoryByEmail">
-        update user_category_major
-        set category_id = #{newCategoryId}
-        where user_id = (select id from user where email = #{email})
-    </update>
-    <update id="updateUserMajorByEmail">
-        update user_category_major
-        set major_id = #{newMajorId}
-        where user_id = (select id from user where email = #{email})
-    </update>
     <select id="findCategoryIdByEmail" resultType="Int">
         select user_category_major.category_id
         from user_category_major join user on #{email} = user.email and user_category_major.user_id = user.id
@@ -139,6 +129,12 @@
         INSERT INTO user_category_major(user_id, category_id, major_id)
         VALUES (#{userId}, #{categoryId}, #{majorId})
     </insert>
+    <delete id="deleteCategoryIdMajorIdByUserId">
+        DELETE FROM user_category_major
+        WHERE user_id = #{userId}   AND
+              category_id = #{categoryId} AND
+              major_id = #{majorId}
+    </delete>
     <select id="findUserIdByUserEmail" resultType="Int">
         SELECT id
         FROM user
