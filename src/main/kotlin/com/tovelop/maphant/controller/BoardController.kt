@@ -4,17 +4,25 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
+import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.SecurityHelper.Companion.isLogged
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.Valid
+import org.checkerframework.common.value.qual.EnumVal
+import com.tovelop.maphant.service.RateLimitingService
 import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/board")
-class BoardController(@Autowired val boardService: BoardService) {
+class BoardController(@Autowired val boardService: BoardService, @Autowired val rateLimitingService: RateLimitingService) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
     data class SortCriterionInfo(val id: Int, val name: String)
@@ -29,6 +37,23 @@ class BoardController(@Autowired val boardService: BoardService) {
         return ResponseEntity.ok().body(Response.success(sortCriterionMap.map { SortCriterionInfo(it.key, it.value) }))
     }
 
+    @GetMapping("/hot")
+    fun readHotBoard(
+        request: HttpServletRequest,
+        @RequestParam(required = false) boardTypeId: Int?,
+        @ModelAttribute @Valid pagingDto: PagingDto,
+        @RequestHeader("x-category") category: Int
+    ): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val userId = auth.getUserId()
+        if (!boardService.isInCategory(category) || (boardTypeId != null && !(boardService.isInBoardTypeId(boardTypeId)) || boardTypeId == 0)) {
+            // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
+            return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 게시판 유형입니다."))
+        }
+
+        return ResponseEntity.ok()
+            .body(Response.success(boardService.findHotBoardList(userId, category, boardTypeId, pagingDto)))
+    }
     data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
 
     @GetMapping("")
@@ -36,7 +61,8 @@ class BoardController(@Autowired val boardService: BoardService) {
         @RequestParam boardTypeId: Int,
         @RequestParam page: Int,
         @RequestParam pageSize: Int,
-        @RequestParam sortCriterionId: Int
+        @RequestParam sortCriterionId: Int,
+        @RequestHeader("x-category") category: Int
     ): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth.isNotLogged()) {
@@ -54,7 +80,7 @@ class BoardController(@Autowired val boardService: BoardService) {
             // sortStandard 값이 유효하지 않은 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("유효하지 않은 sortCriterion 값입니다."))
         }
-        if (!boardService.isInCategory(auth.getUserCategoryId()) || !(boardService.isInBoardTypeId(boardTypeId) || boardTypeId == 0)) {
+        if (!boardService.isInCategory(category) || !(boardService.isInBoardTypeId(boardTypeId) || boardTypeId == 0)) {
             // 클라이언트가 존재하지 않는 카테고리나 게시판 유형을 요청한 경우
             return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않는 게시판 유형입니다."))
         }
@@ -65,7 +91,7 @@ class BoardController(@Autowired val boardService: BoardService) {
                         it.name, boardService.findBoardList(
                             FindBoardDTO(it.id, page, pageSize, sortCriterionMap[sortCriterionId]!!),
                             auth.getUserId(),
-                            auth.getUserCategoryId()
+                            category
                         )
                     )
                 }
@@ -73,15 +99,11 @@ class BoardController(@Autowired val boardService: BoardService) {
                 boardService.findBoardList(
                     FindBoardDTO(boardTypeId, page, pageSize, sortCriterionMap[sortCriterionId]!!),
                     auth.getUserId(),
-                    auth.getUserCategoryId()
+                    category
                 )
             }
 
-        return if (boardList.isEmpty()) {
-            ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
-        } else {
-            ResponseEntity.ok().body(Response.success(boardList))
-        }
+        return ResponseEntity.ok().body(Response.success(boardList))
     }
 
     @PostMapping("/like/{boardId}")
@@ -165,9 +187,13 @@ class BoardController(@Autowired val boardService: BoardService) {
         if (auth.isNotLogged()) {
             return ResponseEntity.badRequest().body(Response.error("로그인 안됨"))
         }
+        if (rateLimitingService.isBanned(auth.getUserId())) {
+            return ResponseEntity.badRequest().body(Response.error("게시글 작성이 금지된 사용자입니다."))
+        }
         // 제목 내용 빈칸인지 확인
         return if (board.title.isNotBlank() && board.body.isNotBlank()) {
             boardService.insertBoard(board.toBoardDTO(auth.getUserId()))
+            rateLimitingService.requestCheck(auth.getUserId(),"WRITE_POST")
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
             ResponseEntity.ok(Response.stateOnly(false))
