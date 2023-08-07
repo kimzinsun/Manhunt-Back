@@ -7,7 +7,6 @@ import com.tovelop.maphant.mapper.CommentMapper
 import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class AdminPageService(
@@ -51,7 +50,6 @@ class AdminPageService(
     fun findCommentReportInfo(commentId: Int): List<CommentReportInfoDTO>{
         return adminPageMapper.findCommentReportInfo(commentId)
     }
-
     fun insertUserReport(userReportDTO: UserReportDTO){
         adminPageMapper.insertUserReport(userReportDTO)
     }
@@ -117,5 +115,11 @@ class AdminPageService(
             return
         }
         userIdList.map { fcmService.send(FcmMessageDTO(it, title, body)) }
+    }
+    fun findUserReportList(): List<UserDTO> {
+        return adminPageMapper.findUserReportList(adminPageMapper.findBoardCommentSanctionCount().map { it.userId })
+    }
+    fun findUserReportInfo(userId: Int): List<List<Any>> {
+        return adminPageMapper.findUserReportInfo()
     }
 }

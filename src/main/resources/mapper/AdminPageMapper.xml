@@ -116,4 +116,45 @@
         select user_id
         from user_device
     </select>
+    <select id="findUserReportList" resultType="UserDTO">
+        select id, nickname, name, email, state, role
+        from user
+        where id in #{userIdList} and state = 1
+    </select>
+    <select id="findBoardSanctionCountByUserId" resultType="Int">
+        select user_id, count(*)
+        from board
+        where board.state = 2
+        group by user_id
+        having count(*) >= 3
+    </select>
+    <select id="findCommentSanctionCountByUserId" resultType="Int">
+        select user_id, count(*)
+        from comment
+        where comment.state = 2
+        group by user_id
+        having count(*) >= 3
+    </select>
+    <select id="findBoardCommentSanctionCount" resultType="CountSanctionDTO">
+        select user_id, count(*)
+        from ((select user_id, id
+               from board
+               where board.state = 2)
+              union
+              (select user_id, id
+               from comment
+               where comment.state = 2))
+        group by user_id
+        having count(*) >= 5
+    </select>
+    <select id="findBoardReportInfoByUserId" resultType="BoardSanctionDTO">
+        select id, title, body, report_cnt reportCnt
+        from board
+        where user_id = #{userId} and state = 2
+    </select>
+    <select id="findCommentReportInfoByUserId" resultType="CommentSanctionDTO">
+        select id, board_id boardId, body, report_cnt reportCnt
+        from comment
+        where user_id = #{userId} and state = 2
+    </select>
 </mapper>
