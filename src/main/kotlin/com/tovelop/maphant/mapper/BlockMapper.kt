@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface BlockMapper {
 
-    fun block(blockedId: Int, blockerId: Int): Boolean
+    fun block(blockerId: Int, blockedId: Int): Boolean
 
     fun deleteBlock(blockerId:Int, blockedId:Int) : Boolean
 

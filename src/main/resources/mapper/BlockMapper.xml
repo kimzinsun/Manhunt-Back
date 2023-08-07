@@ -5,7 +5,7 @@
 <mapper namespace="com.tovelop.maphant.mapper.BlockMapper">
     <insert id="block">
         INSERT INTO block (blocker_id, blocked_id, created_at)
-        VALUES (#{blocker_id}, #{blocked_id}, now())
+        VALUES (#{blockerId}, #{blockedId}, now())
     </insert>
 
     <delete id="deleteBlock">

@@ -1,21 +1,28 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.mapper.BlockMapper
+import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 
 class BlockService(
-    private val blockMapper: BlockMapper
+    private val blockMapper: BlockMapper,
+    private val userMapper: UserMapper
 ) {
-    fun block(blockedId: Int, blockerId:Int) {
-        val count = blockMapper.getBlockCount(blockerId, blockedId)
+    fun block(blockerId: Int, blockId:Int) {
+
+        if(userMapper.countById(blockId) == 0) {
+            throw IllegalStateException("차단하려는 id의 유저가 존재하지 않습니다.")
+        }
+
+        val count = blockMapper.getBlockCount(blockerId, blockId)
 
         if(count>=1){
             throw IllegalStateException("해당 유저를 이미 차단하였습니다.")
         }
-        blockMapper.block(blockedId, blockerId)
+        blockMapper.block(blockerId, blockId)
     }
 
     @Transactional
