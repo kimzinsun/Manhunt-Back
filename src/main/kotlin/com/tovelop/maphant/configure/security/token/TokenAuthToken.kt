@@ -45,4 +45,8 @@ class TokenAuthToken(
     fun getUserCategoryId(): Int {
         return userData?.getUserCategoryId() ?: throw BadCredentialsException("No user")
     }
+
+    fun getUserRole(): String {
+        return userData?.getUserRole() ?: throw BadCredentialsException("No user")
+    }
 }

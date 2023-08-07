@@ -21,7 +21,27 @@
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
         WHERE board_id = #{boardId}
           AND comment.state = 0
+        ORDER BY comment.created_at DESC
         LIMIT #{params.recordSize} OFFSET #{params.offset}
+    </select>
+    <select id="findAllCommentByUser" resultType="CommentExtDTO">
+        SELECT comment.id,
+               comment.user_id,
+               user.nickname,
+               comment.board_id,
+               comment.body,
+               comment.is_anonymous,
+               comment.created_at,
+               comment.modified_at,
+               comment.like_cnt,
+               IFNULL(comment_like.comment_id, 0)
+        FROM comment INNER JOIN user ON user.id = comment.user_id
+                     LEFT OUTER JOIN comment_like
+                                     ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
+        WHERE comment.user_id = #{userId}
+        ORDER BY comment.created_at DESC
+
+            LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
     <insert id="insertComment">
         INSERT INTO comment(board_id, user_id, body, created_at, is_anonymous)
@@ -95,5 +115,11 @@
         SET state = #{state}
         WHERE id = #{id}
     </update>
+
+    <select id="cntComment">
+        SELECT COUNT(*)
+        FROM comment
+        WHERE user_id = #{userId}
+    </select>
 
 </mapper>

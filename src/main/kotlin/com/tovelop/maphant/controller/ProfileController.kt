@@ -1,10 +1,7 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
-import com.tovelop.maphant.dto.BoardDTO
-import com.tovelop.maphant.dto.BoardResDto
-import com.tovelop.maphant.dto.ProfileImageDto
-import com.tovelop.maphant.dto.UserDataDTO
+import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.AwsS3Service
 import com.tovelop.maphant.service.ProfileService
 import com.tovelop.maphant.type.paging.PagingDto
@@ -46,6 +43,14 @@ class ProfileController(
         profileService.updateProfileImage(userId, imageUrl, file)
 
         return ResponseEntity.ok().body(Response.success(imageUrl));
+    }
+
+    @GetMapping("/comment")
+    fun getCommentList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<CommentExtDTO>>>{
+        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
+        val userId: Int = auth.getUserId()
+
+        return return ResponseEntity.ok().body(Response.success(profileService.getCommentList(userId, pagingDto)));
     }
 
     @GetMapping("/board")
