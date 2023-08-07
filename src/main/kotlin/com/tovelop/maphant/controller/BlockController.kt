@@ -18,10 +18,11 @@ class BlockController(
 ){
 
     @PostMapping("/blockedId")
-    fun creatBlock(blockedId:Int, blockerId:Int){
+    fun creatBlock(blockedId:Int, blockerId:Int): ResponseEntity<Response<String>>{
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
         val userId: Int = auth.getUserId()
         blockeService.block(blockedId, userId)
+        return ResponseEntity.ok().body(Response.success("해당 유저를 차단하였습니다."))
     }
     @DeleteMapping("/{blockedId}")
     fun deleteBlock(@PathVariable blockedId:Int): ResponseEntity<Response<String>> {
@@ -29,6 +30,6 @@ class BlockController(
         val userId: Int = auth.getUserId()
 
         blockeService.releaseBlock(userId, blockedId)
-        return ResponseEntity.ok().body(Response.success("해당 유저를 차단하였습니다."))
+        return ResponseEntity.ok().body(Response.success("해당 유저를 차단 해제하였습니다."))
     }
 }

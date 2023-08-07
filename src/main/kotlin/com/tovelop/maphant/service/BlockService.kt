@@ -10,7 +10,11 @@ class BlockService(
     private val blockMapper: BlockMapper
 ) {
     fun block(blockedId: Int, blockerId:Int) {
+        val count = blockMapper.getBlockCount(blockerId, blockedId)
 
+        if(count>=1){
+            throw IllegalStateException("해당 유저를 이미 차단하였습니다.")
+        }
         blockMapper.block(blockedId, blockerId)
     }
 
