@@ -160,6 +160,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
 
         return PagingResponse(hotBoards,pagination)
     }
+    fun findLastInsertId(): Int {
+        return boardMapper.findLastInsertId()
+    }
 }
 
 
