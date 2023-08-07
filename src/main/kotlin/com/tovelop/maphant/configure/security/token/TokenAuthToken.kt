@@ -48,4 +48,8 @@ class TokenAuthToken(
     fun getUserRole(): String {
         return userData?.getUserRole() ?: throw BadCredentialsException("No user")
     }
+
+    fun getUserProfileImg(): String? {
+        return userData?.getUserData()?.profileImg
+    }
 }
