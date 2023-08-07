@@ -8,4 +8,17 @@
         VALUES (#{blocker_id}, #{blocked_id}, now())
     </insert>
 
+    <delete id="deleteBlock">
+        DELETE
+        FROM block
+        WHERE blocker_id = #{blockerId}
+          AND blocked_id = #{blockedId}
+    </delete>
+
+    <select id="getBlockCount">
+        SELECT COUNT(*)
+        FROM block
+        WHERE blocker_id = #{blockerId}
+          AND blocked_id = #{blockedId}
+    </select>
 </mapper>
