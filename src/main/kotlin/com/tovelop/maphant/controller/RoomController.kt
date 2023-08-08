@@ -46,7 +46,7 @@ class RoomController(private val dmService: DmService) {
         val userId: Int = auth.getUserId()
 
         val result =  dmService.getDmListWithCursorBasedPaging(userId, roomId, cursor).list
-        val nextCursor = if(result.size == 15)result[result.size-1].id?.plus(1) else null
+        val nextCursor = if(result.size == 10)result[0].id else null
 
         return SuccessResponse(CursorBasedPagingDTO(result, nextCursor))
     }
