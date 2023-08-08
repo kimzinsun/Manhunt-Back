@@ -29,5 +29,5 @@ interface ProfileMapper {
     fun cntComment(userId: Int): Int
     fun cntAnonymousComment(userId: Int): Int
     fun cntBoard(userId: Int): Int
-    fun cntAnonymousBoard(userId: Int): Int
+    fun cntAnonymousAndHideBoard(userId: Int): Int
 }

@@ -61,8 +61,8 @@
         FROM board b
                  INNER JOIN board_type ON b.type_id = board_type.id
                  LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
-        WHERE b.user_id = #{userId}
-          AND state = 0
+        WHERE ((#{userId} != #{targetUserId} AND b.is_anonymous = 0 AND b.is_hide = 0) OR b.user_id = #{userId})
+          AND b.user_id = #{targetUserId}
         ORDER BY created_at DESC
             LIMIT #{params.recordSize}
         OFFSET #{params.offset}
@@ -82,7 +82,7 @@
     </select>
 
     <select id="cntAnonymousComment">
-        SELECT comment_is_anonymous_cnt
+        SELECT comment_anonymous_cnt
         FROM user_count
         WHERE user_id = #{userId}
     </select>
@@ -93,12 +93,11 @@
         WHERE user_id = #{userId}
     </select>
 
-    <select id="cntAnonymousBoard">
-        SELECT board_is_anonymous_cnt
+    <select id="cntAnonymousAndHideBoard">
+        SELECT board_anonymous_hide_cnt
         FROM user_count
         WHERE user_id = #{userId}
     </select>
-
 
 </mapper>
 

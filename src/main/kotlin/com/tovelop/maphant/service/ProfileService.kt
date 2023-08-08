@@ -50,10 +50,11 @@ class ProfileService(
     //유저가 작성한 글 목록 불러오기
     fun getBoardsList(userId: Int, targetUserId: Int, params: PagingDto): PagingResponse<BoardResDto> {
         //getBoardCount xml 구현
-        var count = profileMapper.cntBoard(userId);
-
+        var count = profileMapper.cntBoard(targetUserId);
+        println(count)
         if (userId != targetUserId) {
-            count -= profileMapper.cntAnonymousBoard(userId);
+            count -= profileMapper.cntAnonymousAndHideBoard(targetUserId)
+            println(count)
         }
 
         if (count < 1) {
