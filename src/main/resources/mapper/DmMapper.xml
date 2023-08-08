@@ -99,4 +99,14 @@
         LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
 
+    <select id="findDmListWithCursorBasedPaging" resultType="ResultDmDto">
+        SELECT id, IF(is_from_sender = #{isSender}, 1, 0) as is_me, content, time, is_read,
+            room_id,
+            visible
+        FROM dm
+        WHERE room_id = #{room_id} AND
+            id >= #{pagingCursor}
+            LIMIT #{params.recordSize}
+    </select>
+
 </mapper>

@@ -27,6 +27,12 @@ interface DmMapper {
         cursor:Int
     ): List<ResultDmDto>
 
+    fun findDmListWithCursorBasedPaging(
+        isSender: Boolean,
+        room_id: Int,
+        pagingCursor:Int
+    ): List<ResultDmDto>
+
     fun updateNotReadDm(room_id: Int, is_from_sender: Boolean): Boolean
 
     fun updateSenderUnreadDmZero(room_id: Int)
