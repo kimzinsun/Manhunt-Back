@@ -10,6 +10,7 @@
         <result property="name" column="name"/>
         <result property="nickname" column="nickname"/>
         <result property="role" column="role"/>
+        <result property="state" column="state"/>
         <result property="profileImg" column="profile_img"/>
         <collection property="category" ofType="UserDataCategoryDTO">
             <result property="categoryId" column="category_id"/>
@@ -31,6 +32,7 @@
                c.name as category_name,
                ucm.major_id,
                m.name as major_name,
+               state,
                p.profile_img
         from user u
                  left join user_category_major ucm on u.id = ucm.user_id
@@ -47,6 +49,7 @@
         <result property="name" column="name"/>
         <result property="nickname" column="nickname"/>
         <result property="role" column="role"/>
+        <result property="state" column="state"/>
         <result property="profileImg" column="profile_img"/>
         <collection property="category" ofType="UserDataCategoryDTO">
             <result property="categoryId" column="category_id"/>
@@ -68,6 +71,7 @@
                c.name as category_name,
                ucm.major_id,
                m.name as major_name,
+               state,
                p.profile_img
         from user u
                  left join user_category_major ucm on u.id = ucm.user_id
