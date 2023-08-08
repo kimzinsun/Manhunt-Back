@@ -4,25 +4,24 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
+import com.tovelop.maphant.service.RateLimitingService
 import com.tovelop.maphant.type.paging.PagingDto
-import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
-import com.tovelop.maphant.utils.SecurityHelper.Companion.isLogged
+import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
-import org.checkerframework.common.value.qual.EnumVal
-import com.tovelop.maphant.service.RateLimitingService
-import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/board")
-class BoardController(@Autowired val boardService: BoardService, @Autowired val rateLimitingService: RateLimitingService) {
+class BoardController(
+    @Autowired val boardService: BoardService,
+    @Autowired val rateLimitingService: RateLimitingService
+) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
     data class SortCriterionInfo(val id: Int, val name: String)
@@ -54,6 +53,7 @@ class BoardController(@Autowired val boardService: BoardService, @Autowired val 
         return ResponseEntity.ok()
             .body(Response.success(boardService.findHotBoardList(userId, category, boardTypeId, pagingDto)))
     }
+
     data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
 
     @GetMapping("")
@@ -193,7 +193,7 @@ class BoardController(@Autowired val boardService: BoardService, @Autowired val 
         // 제목 내용 빈칸인지 확인
         return if (board.title.isNotBlank() && board.body.isNotBlank()) {
             boardService.insertBoard(board.toBoardDTO(auth.getUserId()))
-            rateLimitingService.requestCheck(auth.getUserId(),"WRITE_POST")
+            rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
             ResponseEntity.ok(Response.stateOnly(false))
