@@ -45,6 +45,11 @@
           })
               .then(res => res.json())
               .then(res => {
+                  if(res["success"] == false) {
+                      alert(res["message"]);
+                      return;
+                  }
+
                   const pubKey = res["pubKey"];
                   const privKey = res["privKey"];
 
@@ -52,7 +57,7 @@
                   setCookie("sign", privKey);
 
                   location.href = "/admin/";
-              })
+              });
       }
   </script>
 </body>

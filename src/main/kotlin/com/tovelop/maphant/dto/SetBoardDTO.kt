@@ -2,18 +2,17 @@ package com.tovelop.maphant.dto
 
 data class SetBoardDTO(
     val parentId: Int?,
-    val categoryId: Int,
     val typeId: Int,
     val title: String,
     val body: String,
     val isHide: Int,
     val isComplete: Int,
     val isAnonymous: Int,
-    val imagesUrl:String?
+    val imagesUrl: String?
 ) {
-    fun toBoardDTO(userId:Int): BoardDTO {
+    fun toBoardDTO(userId: Int, categoryId: Int): BoardDTO {
         return BoardDTO(
-            id=null,
+            id = null,
             parentId = parentId,
             categoryId = categoryId,
             userId = userId,
@@ -28,8 +27,8 @@ data class SetBoardDTO(
             likeCnt = 0,
             reportCnt = 0,
             imagesUrl = imagesUrl, // 이미지는 s3? 물어보고 수정
-            createdAt= null,
-            modifiedAt= null,
+            createdAt = null,
+            modifiedAt = null,
         )
     }
 }

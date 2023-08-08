@@ -182,7 +182,10 @@ class BoardController(
     }
 
     @PostMapping("/create")
-    fun createBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
+    fun createBoard(
+        @RequestBody board: SetBoardDTO,
+        @RequestHeader("x-category") category: Int
+    ): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
             return ResponseEntity.badRequest().body(Response.error("로그인 안됨"))
@@ -190,15 +193,14 @@ class BoardController(
         if (rateLimitingService.isBanned(auth.getUserId())) {
             return ResponseEntity.badRequest().body(Response.error("게시글 작성이 금지된 사용자입니다."))
         }
-        // 제목 내용 빈칸인지 확인
-        return if (board.title.isNotBlank() && board.body.isNotBlank()) {
-            boardService.insertBoard(board.toBoardDTO(auth.getUserId()))
-            rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
-            ResponseEntity.ok(Response.stateOnly(true))
-        } else {
-            ResponseEntity.ok(Response.stateOnly(false))
-            // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
+        if (board.title.isBlank() || board.body.isBlank()){
+            return ResponseEntity.badRequest().body(Response.error("제목이나 본문이 비어있습니다."))
         }
+        boardService.insertBoard(board.toBoardDTO(auth.getUserId(), category))
+        rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
+
+        // 제목 내용 빈칸인지 확인
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PutMapping("/update")
@@ -228,8 +230,12 @@ class BoardController(
     }
 
     @GetMapping("/search")
-    fun searchBoard(@RequestParam content: String): Any {
-        val searchBoard = boardService.findBoardByKeyword(content)
+    fun searchBoard(
+        @RequestParam content: String,
+        @RequestParam boardTypeId: Int,
+        @RequestHeader("x-category") category: Int
+    ): Any {
+        val searchBoard = boardService.findBoardByKeyword(content, boardTypeId, category)
         return ResponseEntity.ok(Response.success(searchBoard))
     }
 
