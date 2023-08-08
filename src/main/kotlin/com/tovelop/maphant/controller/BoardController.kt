@@ -193,7 +193,7 @@ class BoardController(
         if (rateLimitingService.isBanned(auth.getUserId())) {
             return ResponseEntity.badRequest().body(Response.error("게시글 작성이 금지된 사용자입니다."))
         }
-        if (board.title.isNotBlank() || board.body.isNotBlank()){
+        if (board.title.isBlank() || board.body.isBlank()){
             return ResponseEntity.badRequest().body(Response.error("제목이나 본문이 비어있습니다."))
         }
         boardService.insertBoard(board.toBoardDTO(auth.getUserId(), category))
