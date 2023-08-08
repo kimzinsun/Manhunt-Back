@@ -25,4 +25,7 @@ interface RoomMapper {
     fun updateReceiverIsDeleted(room_id: Int):Boolean
 
     fun updateRoomTime(time:LocalDateTime,room_id: Int):Boolean
+
+    fun updateSenderDmCursor(room_id: Int): Boolean
+    fun updateReceiverDmCursor(room_id: Int):Boolean
 }
