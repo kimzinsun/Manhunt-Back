@@ -17,7 +17,7 @@
         VALUES (#{boardId}, #{tagId})
     </insert>
     <select id="getTagByName" resultType="TagDTO">
-        SELECT name, category_id, cnt
+        SELECT id, name, category_id, cnt
         FROM tag
         WHERE name = #{name}
     </select>
