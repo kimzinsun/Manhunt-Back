@@ -1,0 +1,66 @@
+/* 모든 요소의 기본 스타일 재설정 */
+* {
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+/* 본문 스타일 */
+body {
+    font-size: 14px;
+    font-family: "Roboto", sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* 헤더 스타일 */
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1em 0;
+}
+
+h1 {
+    margin: 0;
+}
+
+/* 섹션 스타일 */
+section {
+    padding: 1em;
+}
+
+h2 {
+    margin-bottom: 0.5em;
+}
+
+/* 테이블 스타일 */
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* 버튼 스타일 */
+button {
+    margin-bottom: 1em;
+}
+
+/* 푸터 스타일 */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1em 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
