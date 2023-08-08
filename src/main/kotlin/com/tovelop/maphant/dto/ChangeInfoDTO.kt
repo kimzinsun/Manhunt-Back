@@ -6,5 +6,7 @@ data class ChangeInfoDTO(
     val oldPassword: String?,
     val newPassword: String?,
     val newPasswordCheck: String?,
-    val phNum: String?
+    val phNum: String?,
+    val category: String?,
+    val major: String?
 )

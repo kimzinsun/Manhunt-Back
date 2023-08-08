@@ -35,4 +35,5 @@ interface BoardMapper {
     fun findHotBoards(userId: Int, categoryId: Int, seed: Long, pagingDto: PagingDto): List<HotBoardDto>
     fun getHotBoardCount(categoryId: Int): Int
     fun getAllBoardType(): MutableList<BoardTypeDTO>
+    fun findLastInsertId(): Int
 }
