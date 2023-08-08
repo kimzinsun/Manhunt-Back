@@ -32,6 +32,7 @@
         set title      = #{title},
             body=#{body},
             is_hide=#{isHide},
+            images_url=#{imagesUrl},
             modified_at=NOW()
         where id = #{id}
     </update>
