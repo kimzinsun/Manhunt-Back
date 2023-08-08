@@ -196,7 +196,7 @@ class DmService(
 
         val list = dmMapper.findDmListWithCursorBasedPaging(isSender, roomId, cursor, dmCursor,limit)
         val otherName = userMapper.findNicknameIdBy(otherId) as String
-        val nextCursor = if(list.size == 10) list[0].id else null
+        val nextCursor = if(list.size == limit) list[0].id else null
 
         return DmCursorPagingResponse(otherId, otherName, list, nextCursor)
     }
