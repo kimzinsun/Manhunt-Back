@@ -82,6 +82,24 @@
             lastmodified_at = NOW()
         WHERE email = #{email}
     </update>
+    <select id="findCategoryIdByEmail" resultType="Int">
+        select user_category_major.category_id
+        from user_category_major join user on #{email} = user.email and user_category_major.user_id = user.id
+    </select>
+    <select id="findCategoryIdByName" resultType="Int">
+        select id
+        from category
+        where name = #{name}
+    </select>
+    <select id="findMajorIdByEmail" resultType="Int">
+        select user_category_major.major_id
+        from user_category_major join user on #{email} = user.email and user_category_major.user_id = user.id
+    </select>
+    <select id="findMajorIdByName" resultType="Int">
+        select id
+        from major
+        where name = #{name}
+    </select>
     <select id="findPasswordByEmail" resultType="String">
         SELECT password
         FROM user
@@ -113,6 +131,12 @@
         INSERT INTO user_category_major(user_id, category_id, major_id)
         VALUES (#{userId}, #{categoryId}, #{majorId})
     </insert>
+    <delete id="deleteCategoryIdMajorIdByUserId">
+        DELETE FROM user_category_major
+        WHERE user_id = #{userId}   AND
+              category_id = #{categoryId} AND
+              major_id = #{majorId}
+    </delete>
     <select id="findUserIdByUserEmail" resultType="Int">
         SELECT id
         FROM user

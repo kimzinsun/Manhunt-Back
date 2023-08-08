@@ -5,6 +5,7 @@ import com.tovelop.maphant.dto.RoomDto
 import com.tovelop.maphant.dto.RoomListResultDto
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Mapper
 @Repository
@@ -20,4 +21,8 @@ interface RoomMapper {
     fun updateReceiverIsDeletedAndReceiverUnreadCountZero(room_id: Int): Boolean
 
     fun findUnReadDmCount(user_id: Int): Int
+    fun updateSenderIsDelete(room_id: Int):Boolean
+    fun updateReceiverIsDeleted(room_id: Int):Boolean
+
+    fun updateRoomTime(time:LocalDateTime,room_id: Int):Boolean
 }
