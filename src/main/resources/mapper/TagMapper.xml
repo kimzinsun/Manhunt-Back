@@ -10,9 +10,11 @@
     <insert id="insertTag">
         INSERT INTO tag (name, category_id, cnt)
         VALUES (#{tagName}, #{categoryId}, 1)
-        ON DUPLICATE KEY UPDATE cnt = cnt + 1;
+        ON DUPLICATE KEY UPDATE cnt = cnt + 1
+    </insert>
+    <insert id="insertBoardTag">
         INSERT INTO board_tag (board_id, tag_id)
-        VALUES (#{boardId}, (SELECT id FROM tag WHERE name = #{tagName}));
+        VALUES (#{boardId}, #{tagId})
     </insert>
     <select id="getTagByName" resultType="TagDTO">
         SELECT name, category_id, cnt

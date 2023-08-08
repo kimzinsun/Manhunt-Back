@@ -14,6 +14,8 @@ class TagService(private val tagMapper: TagMapper) {
         }
     }
 
+    fun insertBoardTag(boardId: Int, tagId: Int) = tagMapper.insertBoardTag(boardId, tagId)
+
     fun getTagByName(name: String) = tagMapper.getTagByName(name)
 
     fun deleteTagCnt(id: Int, cnt: Int) = tagMapper.deleteTagCnt(id, cnt)
