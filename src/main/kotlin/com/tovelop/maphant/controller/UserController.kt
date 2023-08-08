@@ -34,21 +34,15 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     }
 
     @DeleteMapping("")
-    fun deleteUser(@RequestParam userId: Int?): ResponseEntity<ResponseUnit> {
+    fun deleteUser(): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
             return ResponseEntity.unprocessableEntity().body(Response.error("로그인이 안됨"))
         }
-
         if (auth.getUserRole() != "admin") {
             userService.updateUserStateByUserId(auth.getUserId(), 3)
             return ResponseEntity.ok(Response.stateOnly(true))
         }
-
-        if (userId == null) {
-            return ResponseEntity.badRequest().body(Response.error("탈퇴 대상 유저 아이디가 없습니다."))
-        }
-        userService.updateUserStateByUserId(userId, 3)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
