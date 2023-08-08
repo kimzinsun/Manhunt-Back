@@ -5,6 +5,7 @@ import com.tovelop.maphant.dto.ResultDmDto
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.dto.RoomListResultDto
 import com.tovelop.maphant.service.DmService
+import com.tovelop.maphant.type.paging.CursorDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.paging.dm.DmCursorPagingResponse
 import com.tovelop.maphant.type.response.SuccessResponse
@@ -40,13 +41,12 @@ class RoomController(private val dmService: DmService) {
     @GetMapping("/{roomId}")
     fun getDmListWithCursorBasedPagination(
         @PathVariable("roomId") roomId: Int,
-        @RequestParam("cursor") cursor: Int,
-        @RequestParam("limit") limit:Int
+        @ModelAttribute @Valid cursorDto: CursorDto
     ): SuccessResponse<DmCursorPagingResponse<ResultDmDto>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
         val userId: Int = auth.getUserId()
 
-        return SuccessResponse(dmService.getDmListWithCursorBasedPaging(userId, roomId, cursor,limit))
+        return SuccessResponse(dmService.getDmListWithCursorBasedPaging(userId, roomId, cursorDto.cursor,cursorDto.limit))
     }
 
     @DeleteMapping("/{roomId}")

@@ -108,7 +108,7 @@
                 from dm
                 where room_id = #{room_id} AND #{pagingCursor} > id AND id >= #{dmCursor}
                 order by id desc
-                LIMIT 10
+                LIMIT #{limit}
             ) as sub
             order by id
     </select>
