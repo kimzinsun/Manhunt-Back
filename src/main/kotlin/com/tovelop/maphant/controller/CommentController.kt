@@ -6,7 +6,6 @@ import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.service.FcmService
 import com.tovelop.maphant.service.RateLimitingService
 import com.tovelop.maphant.type.paging.PagingDto
-import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import com.tovelop.maphant.utils.FormatterHelper.Companion.formatTime
