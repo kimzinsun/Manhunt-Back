@@ -2,8 +2,8 @@ package com.tovelop.maphant.type.paging
 
 import com.tovelop.maphant.dto.ResultDmDto
 
-class CursorResponseDTO(
-    val list: List<ResultDmDto>,
-    val otherName: String
+open class CursorResponse<T>(
+    val list: List<T>,
+    val nextCursor: Int?
 ) {
 }

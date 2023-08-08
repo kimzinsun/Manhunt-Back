@@ -5,12 +5,12 @@ import com.tovelop.maphant.mapper.BlockMapper
 import com.tovelop.maphant.mapper.DmMapper
 import com.tovelop.maphant.mapper.RoomMapper
 import com.tovelop.maphant.mapper.UserMapper
-import com.tovelop.maphant.type.paging.CursorResponseDTO
+import com.tovelop.maphant.type.paging.CursorResponse
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
+import com.tovelop.maphant.type.paging.dm.DmCursorPagingResponse
 import com.tovelop.maphant.type.paging.dm.DmPagingResponse
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -164,7 +164,7 @@ class DmService(
     }
 
     @Transactional
-    fun getDmListWithCursorBasedPaging(meId: Int, roomId: Int, cursor: Int): CursorResponseDTO {
+    fun getDmListWithCursorBasedPaging(meId: Int, roomId: Int, cursor: Int, limit:Int): DmCursorPagingResponse<ResultDmDto> {
         var isSender: Boolean? = null;
         var room: RoomDto = roomMapper.findRoomById(roomId)
 
@@ -185,28 +185,20 @@ class DmService(
         }
         else dmMapper.updateReceiverUnreadDmZero(roomId)
 
+        var cursor = cursor
+        //프론트에서 처음으로 요청한 경우
+        if(cursor == 0)  cursor = dmMapper.findLastDmId(roomId);
 
-        if (isSender) {
-//            val count = dmMapper.findDmCount(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER);
-            val count = dmMapper.findDmCount(roomId,room.sender_dm_cursor)
-            if (count < 1)
-                throw Exception("메시지가 없음")
 
-//            val list = dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
 
-            val list = dmMapper.findDmListWithCursorBasedPaging(isSender,roomId,cursor)
-            val otherName = userMapper.findNicknameIdBy(room.receiver_id) as String;
-            return CursorResponseDTO(list, otherName)
-        }
+        val dmCursor = if (isSender) room.sender_dm_cursor else room.receiver_dm_cursor
+        val otherId = if (isSender) room.receiver_id else room.sender_id
 
-//        val count = dmMapper.findDmCount(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER);
-        val count = dmMapper.findDmCount(roomId,room.receiver_dm_cursor)
-        if (count < 1)
-            throw Exception("메시지가 없음")
-//        val list = dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
-        val list = dmMapper.findDmListWithCursorBasedPaging(isSender,roomId,cursor)
-        val otherName = userMapper.findNicknameIdBy(room.sender_id) as String
-        return CursorResponseDTO(list, otherName)
+        val list = dmMapper.findDmListWithCursorBasedPaging(isSender, roomId, cursor, dmCursor,limit)
+        val otherName = userMapper.findNicknameIdBy(otherId) as String
+        val nextCursor = if(list.size == 10) list[0].id else null
+
+        return DmCursorPagingResponse(otherId, otherName, list, nextCursor)
     }
 
     @Transactional

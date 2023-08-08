@@ -30,7 +30,9 @@ interface DmMapper {
     fun findDmListWithCursorBasedPaging(
         isSender: Boolean,
         room_id: Int,
-        pagingCursor:Int
+        pagingCursor:Int,
+        dmCursor:Int,
+        limit:Int
     ): List<ResultDmDto>
 
     fun updateNotReadDm(room_id: Int, is_from_sender: Boolean): Boolean
@@ -44,4 +46,6 @@ interface DmMapper {
 
     fun findDmCount(room_id: Int, vararg visible: VisibleChoices): Int
     fun findDmCount(room_id: Int, cursor: Int): Int
+
+    fun findLastDmId(room_id: Int):Int
 }
