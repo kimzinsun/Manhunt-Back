@@ -114,7 +114,7 @@
     <update id="changeState">
         UPDATE comment
         SET state = #{state}
-        WHERE id = #{id}
+        WHERE id = #{commentId}
     </update>
     <select id="cntComment">
         SELECT COUNT(*)
