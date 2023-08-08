@@ -33,7 +33,7 @@
 
           if(email == "" || password == "") alert("이메일 또는 패스워드를 올바르게 입력해주세요");
 
-          fetch("http://localhost:8080/user/login", {
+          fetch("https://dev.api.tovelop.esm.kr/user/login", {
               method: "POST",
               headers: {
                   "Content-type": "application/json"
