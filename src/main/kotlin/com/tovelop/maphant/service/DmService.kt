@@ -48,6 +48,7 @@ class DmService(
             throw IllegalStateException("쪽지를 보낼 수 없는 상대입니다.")
         }
 
+
         if (room == null) { // 로그인한 사용자가 sender_id로 만든 대화방이 없는경우
             room = roomMapper.findRoom(receiver_id, sender_id);
             is_sender = false
@@ -75,6 +76,14 @@ class DmService(
         var is_from_sender: Boolean = false
         if (is_sender) is_from_sender = true
 
+        if(is_from_sender && room.sender_is_deleted) {
+            roomMapper.updateSenderIsDelete(room.id)
+        }
+
+        if(!is_from_sender && room.receiver_is_deleted) {
+            roomMapper.updateReceiverIsDeleted(room.id)
+        }
+
         val dmDto = DmDto(
             id = null,
             is_from_sender = is_from_sender,
@@ -85,6 +94,7 @@ class DmService(
             visible = VisibleChoices.BOTH
         )
 
+        roomMapper.updateRoomTime(dmDto.time, room.id)
         dmMapper.createDm(dmDto)
 
         // is_from_sender == true이면 receiver_unread_count ++

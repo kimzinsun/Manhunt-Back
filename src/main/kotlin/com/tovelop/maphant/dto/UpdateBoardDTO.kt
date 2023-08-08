@@ -5,5 +5,5 @@ data class UpdateBoardDTO(
     var title: String,
     val body: String,
     val isHide: Int,
-    val imagesUrl: String?
+    val imagesUrl: String?=null
 )
