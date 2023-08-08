@@ -1,6 +1,7 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.BoardNoticeDTO
+import com.tovelop.maphant.dto.BoardNoticeListDTO
 import com.tovelop.maphant.dto.UpdateBoardNoticeDTO
 import com.tovelop.maphant.mapper.BoardNoticeMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,5 +22,7 @@ class BoardNoticeService(@Autowired val boardNoticeMapper: BoardNoticeMapper) {
     fun deleteNotice(noticeId: Id) {
         boardNoticeMapper.deleteNotice(noticeId)
     }
-    fun findNoticeList() {}
+    fun findNoticeList(): List<BoardNoticeListDTO> {
+        return boardNoticeMapper.findNoticeList()
+    }
 }
