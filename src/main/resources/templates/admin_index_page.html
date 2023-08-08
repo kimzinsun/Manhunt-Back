@@ -1,10 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/admin_index_page.css}">
 <head>
-  <meta charset="UTF-8">
-  <title>과끼리 관리자 페이지</title>
+  <title>관리자 대시보드</title>
 </head>
-<body>
-  <h1>과끼리 관리자 페이지</h1>
+<header>
+  <h1>관리자 대시보드에 오신 것을 환영합니다</h1>
+</header>
+
+<section>
+  <h2>게시판 신고 목록</h2>
+  <button>
+    <a href="?sortType=mostReportedRanking">신고 목록</a>
+  </button>
+  <table>
+    <thead>
+    <tr>
+      <th>게시판 ID</th>
+      <th>유저 ID</th>
+      <th>제목</th>
+      <th>내용</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="report : ${boardReport}">
+      <td th:text="${report.boardId}"></td>
+      <td th:text="${report.boardUserId}"></td>
+      <td th:text="${report.boardTitle}"></td>
+      <td th:text="${report.boardBody}"></td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>댓글 신고 목록</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>댓글 ID</th>
+      <th>유저 ID</th>
+      <th>댓글내용</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="report : ${commentReport}">
+      <td th:text="${report.commentId}"></td>
+      <td th:text="${report.commentUserId}"></td>
+      <td th:text="${report.commentBody}"></td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+<footer>
+  <p>&copy; 2023 관리자 대시보드</p>
+</footer>
+
 </body>
+
 </html>
