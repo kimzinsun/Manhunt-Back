@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface TagMapper {
     fun getTagList(): List<TagDTO>
-    fun insertTag(tag: TagDTO, boardId: Int)
+    fun insertTag(categoryId: Int, boardId: Int, tagName: String)
     fun getTagByName(name: String)
     fun deleteTagCnt(id: Int, cnt: Int)
 }

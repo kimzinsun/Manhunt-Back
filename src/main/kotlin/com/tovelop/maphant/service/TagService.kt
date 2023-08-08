@@ -1,7 +1,5 @@
 package com.tovelop.maphant.service
 
-import com.tovelop.maphant.dto.TagDTO
-import com.tovelop.maphant.dto.TagInsertDto
 import com.tovelop.maphant.mapper.TagMapper
 import org.springframework.stereotype.Service
 
@@ -10,9 +8,9 @@ class TagService(private val tagMapper: TagMapper) {
 
     fun getTagList() = tagMapper.getTagList()
 
-    fun insertTag(tagInsertDto: TagInsertDto) {
-        tagInsertDto.tagNames.forEach {
-            tagMapper.insertTag(TagDTO(0, it, tagInsertDto.categoryId, 1), tagInsertDto.boardId)
+    fun insertTag(categoryId: Int, boardId: Int, tagNames: List<String>) {
+        tagNames.forEach {
+            tagMapper.insertTag(categoryId, boardId, it.replace("[^\\p{L}\\p{N}_]".toRegex(), ""))
         }
     }
 
