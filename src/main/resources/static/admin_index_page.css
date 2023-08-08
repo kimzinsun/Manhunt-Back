@@ -45,13 +45,21 @@ td {
     text-align: left;
 }
 
-th {
+th{
     background-color: #f2f2f2;
 }
 
 /* 버튼 스타일 */
 button {
-    margin-bottom: 1em;
+    background-color: #333;
+    color: white;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+button a{
+    color: white;
 }
 
 /* 푸터 스타일 */

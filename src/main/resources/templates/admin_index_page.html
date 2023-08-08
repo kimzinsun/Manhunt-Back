@@ -28,6 +28,10 @@
       <td th:text="${report.boardUserId}"></td>
       <td th:text="${report.boardTitle}"></td>
       <td th:text="${report.boardBody}"></td>
+      <td>
+        <button th:onclick="'getInfo(\'' + ${report.boardId} + '\')'">자세히보기</button>
+        <button th:data-board-id="${report.boardId}" class="sanction-button-board">제재</button>
+      </td>
     </tr>
     </tbody>
   </table>
@@ -48,6 +52,10 @@
       <td th:text="${report.commentId}"></td>
       <td th:text="${report.commentUserId}"></td>
       <td th:text="${report.commentBody}"></td>
+      <td>
+        <button th:onclick="'getInfo(\'' + ${report.commentId} + '\')'">자세히보기</button>
+        <button th:data-comment-id="${report.commentId}" class="sanction-button-comment">제재</button>
+      </td>
     </tr>
     </tbody>
   </table>
@@ -55,7 +63,45 @@
 <footer>
   <p>&copy; 2023 관리자 대시보드</p>
 </footer>
-
-</body>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $(".sanction-button-board").click(function() {
+      const boardId = $(this).data("board-id");
+      if (confirm('이 게시글을 정지시키겠습니까?')) {
+        $.post({
+          url: '/admin/sanction/board',
+          data: `boardId=${boardId}`,
+          success: function(response) {
+            // 서버로부터 받은 응답을 처리합니다.
+            console.log(response);
+            // 예시: 페이지를 새로고침하여 변경사항을 반영합니다.
+            location.reload();
+          },
+          error: function(error) {
+            console.error('요청 중 에러 발생:', error);
+          }
+        });
+      }
+    });
+    $(".sanction-button-comment").click(function() {
+      const commentId = $(this).data("comment-id");
+      if (confirm('이 댓글을 정지시키겠습니까?')) {
+        $.post({
+          url: '/admin/sanction/comment',
+          data: { commentId: commentId },
+          success: function(response) {
+            // 서버로부터 받은 응답을 처리합니다.
+            console.log(response);
+            // 예시: 페이지를 새로고침하여 변경사항을 반영합니다.
+            location.reload();
+          },
+          error: function(error) {
+            console.error('요청 중 에러 발생:', error);
+          }
+        });
+      }
+    });
+  });
+</script>
 </html>
