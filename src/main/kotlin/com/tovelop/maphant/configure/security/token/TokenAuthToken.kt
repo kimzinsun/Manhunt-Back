@@ -38,6 +38,10 @@ class TokenAuthToken(
         return userData?.getUserData() ?: throw BadCredentialsException("No user")
     }
 
+    fun setUserData(userData: UserDataDTO) {
+        this.userData?.setUserData(userData)
+    }
+
     fun getUserId(): Int {
         return userData?.getUserID() ?: throw BadCredentialsException("No user")
     }
