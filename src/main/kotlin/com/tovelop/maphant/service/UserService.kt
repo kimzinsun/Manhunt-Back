@@ -74,7 +74,7 @@ class UserService(val mapper: UserMapper) {
 
     fun login(email: String, password: String): String? {
         // 로그인 로직
-        val user = getUser(listOf(email))
+        val user = getUser(email)
         if (user != null && user.password == password) {
             return user.id.toString()
         }
@@ -86,9 +86,9 @@ class UserService(val mapper: UserMapper) {
         return universityName == mapper.findUniversityUrlBy(univId)
     }
 
-    fun getUser(emails: List<String>): UserDTO? {
+    fun getUser(email: String): UserDTO? {
         // 사용자 조회 로직
-        return mapper.findUserByEmail(emails).firstOrNull()
+        return mapper.findUserByEmail(listOf(email)).firstOrNull()
     }
 
     fun insertUser(user: UserDTO) {

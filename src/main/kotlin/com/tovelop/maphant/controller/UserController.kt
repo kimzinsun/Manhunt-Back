@@ -178,17 +178,22 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     //개인정보 수정 페이지 접근 전, 본인 확인 절차: 비밀번호 확인
     @PostMapping("/changeinfo/identification")
-    fun identification(@RequestBody identificationDTO: IdentificationDTO): ResponseEntity<ResponseUnit> {
-        val oldPassword = userService.findPasswordByEmail(identificationDTO.email)
-        if (!passwordEncoder.matches(identificationDTO.password, oldPassword)) {
+    fun identification(@RequestBody password: String): ResponseEntity<ResponseUnit> {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+
+        val oldPassword = auth.getUserData().password
+        if (!passwordEncoder.matches(password, oldPassword)) {
             return ResponseEntity.badRequest().body(Response.error("비밀번호를 확인해주세요."))
         }
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/changeinfo/olddata")
-    fun changeInfo(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<Response<UserDTO>> {
-        val userData = userService.getUser(listOf(changeInfoDTO.email))!!
+    fun changeInfo(): ResponseEntity<Response<UserDTO>> {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+
+        val userData = userService.getUser(auth.getUserData().email)!!
 
         return ResponseEntity.ok().body(Response.success(userData))
     }
@@ -203,8 +208,11 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("이미 사용중인 별명입니다."))
         }
 
+
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+
         //email로 nickname db저장
-        userService.updateUserNicknameByEmail(changeInfoDTO.email, changeInfoDTO.nickname)
+        userService.updateUserNicknameByEmail(auth.getUserData().email, changeInfoDTO.nickname)
         userDataService.updateUserData()
 
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -216,14 +224,20 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             return ResponseEntity.badRequest().body(Response.error("핸드폰 번호를 형식에 맞춰주세요. ex) 010-1234-5678"))
         }
 
-        userService.updateUserPhoneNumByEmail(changeInfoDTO.email, changeInfoDTO.phNum)
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
 
+        userService.updateUserPhoneNumByEmail(auth.getUserData().email, changeInfoDTO.phNum)
+
+        userDataService.updateUserData()
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/changeinfo/password")
     fun changeInfoPwd(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        val oldPassword = userService.findPasswordByEmail(changeInfoDTO.email)
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val user = auth.getUserData()
+
+        val oldPassword = user.password
 
         if (!ValidationHelper.isValidPassword(changeInfoDTO.newPassword!!)) {
             return ResponseEntity.badRequest()
@@ -239,39 +253,48 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         }
 
         userService.updateUserPasswordByEmail(
-            changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
+            user.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
         )
 
+        userDataService.updateUserData()
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/changeinfo/categorymajor")
     fun addCategoryMajor(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
-        val oldCategoryIdList = userService.findCategoryIdByEmail(changeInfoDTO.email)
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val user = auth.getUserData()
+
+        val oldCategoryIdList = userService.findCategoryIdByEmail(user.email)
         val newCategoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
 
         if (newCategoryId in oldCategoryIdList){
             return ResponseEntity.badRequest().body(Response.error("이미 등록된 계열입니다."))
         }
 
-        val oldMajorIdList = userService.findMajorIdByEmail(changeInfoDTO.email)
+        val oldMajorIdList = userService.findMajorIdByEmail(user.email)
         val newMajorId = userService.findMajorIdByName(changeInfoDTO.major!!)
 
         if (newMajorId in oldMajorIdList){
             return ResponseEntity.badRequest().body(Response.error("이미 등록된 전공입니다."))
         }
 
-        userService.insertUserCategoryMajorByEmail(changeInfoDTO.email, newCategoryId, newMajorId)
+        userService.insertUserCategoryMajorByEmail(user.email, newCategoryId, newMajorId)
 
+        userDataService.updateUserData()
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @DeleteMapping("/changeinfo/categorymajor")
     fun deleteCategoryMajor(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val user = auth.getUserData()
+
         val categoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
         val majorId = userService.findMajorIdByName(changeInfoDTO.major!!)
-        userService.deleteCategoryIdMajorIdByUserId(changeInfoDTO.email, categoryId, majorId)
+        userService.deleteCategoryIdMajorIdByUserId(user.email, categoryId, majorId)
 
+        userDataService.updateUserData()
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -316,6 +339,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         userService.updateUserPasswordByEmail(newPasswordDTO.email, passwordEncoder.encode(newPasswordDTO.passwordChk))
 
+        userDataService.updateUserData()
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }
