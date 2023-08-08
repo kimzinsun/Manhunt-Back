@@ -88,6 +88,44 @@
         WHERE id = #{room_id}
     </update>
 
+    <update id="updateSenderIsDelete">
+        UPDATE room
+        SET sender_is_deleted = false
+        WHERE id = #{room_id}
+    </update>
+
+    <update id="updateReceiverIsDeleted">
+        UPDATE room
+        SET receiver_is_deleted = false
+        WHERE id = #{room_id}
+    </update>
+
+    <update id="updateRoomTime">
+        UPDATE room
+        SET time = #{time}
+        WHERE id = #{room_id}
+    </update>
+
+    <update id="updateSenderDmCursor">
+        UPDATE room
+        SET sender_dm_cursor = (
+            SELECT MAX(id) + 1
+            FROM dm
+            WHERE room_id = #{room_id}
+        )
+        WHERE id = #{room_id}
+    </update>
+
+    <update id="updateReceiverDmCursor">
+        UPDATE room
+        SET receiver_dm_cursor = (
+            SELECT MAX(id) + 1
+            FROM dm
+            WHERE room_id = #{room_id}
+            )
+        WHERE id = #{room_id}
+    </update>
+
     <select id="findUnReadDmCount">
         select SUM(
                        CASE
