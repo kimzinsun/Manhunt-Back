@@ -231,8 +231,12 @@ class BoardController(
     }
 
     @GetMapping("/search")
-    fun searchBoard(@RequestParam content: String): Any {
-        val searchBoard = boardService.findBoardByKeyword(content)
+    fun searchBoard(
+        @RequestParam content: String,
+        @RequestParam boardTypeId: Int,
+        @RequestHeader("x-category") category: Int
+    ): Any {
+        val searchBoard = boardService.findBoardByKeyword(content, boardTypeId, category)
         return ResponseEntity.ok(Response.success(searchBoard))
     }
 
