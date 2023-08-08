@@ -6,3 +6,9 @@ data class TagDTO(
     val category_id: Int,
     val cnt: Int,
 )
+
+data class TagInsertDto(
+    val categoryId: Int,
+    val boardId: Int,
+    val tagNames: List<String>,
+)
