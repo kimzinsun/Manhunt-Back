@@ -13,7 +13,7 @@ class BoardNoticeService(@Autowired val boardNoticeMapper: BoardNoticeMapper) {
         boardNoticeMapper.insertNotice(boardNoticeDTO)
     }
 
-    fun findNotice(noticeId: Int): BoardNoticeDTO {
+    fun findNotice(noticeId: Int): BoardNoticeDTO? {
         return boardNoticeMapper.findBoard(noticeId)
     }
 
