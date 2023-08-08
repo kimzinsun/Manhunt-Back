@@ -59,16 +59,11 @@ class ProfileController(
     @GetMapping("/comment")
     fun getCommentList(
         @ModelAttribute @Valid pagingDto: PagingDto,
-        @RequestParam userId: Int?
+        @RequestParam targetUserId: Int
     ): ResponseEntity<Response<PagingResponse<CommentExtDTO>>> {
-        return if (userId != null) {
-            ResponseEntity.ok().body(Response.success(profileService.getCommentList(userId, pagingDto)));
-        } else {
-            val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-            ResponseEntity.ok().body(Response.success(profileService.getCommentList(auth.getUserId(), pagingDto)));
-        }
-//        val userId: Int = auth.getUserId()
-//        return return ResponseEntity.ok().body(Response.success(profileService.getCommentList(userId, pagingDto)));
+        val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
+        return ResponseEntity.ok()
+            .body(Response.success(profileService.getCommentList(userId, targetUserId, pagingDto)));
     }
 
     @GetMapping("/board")
