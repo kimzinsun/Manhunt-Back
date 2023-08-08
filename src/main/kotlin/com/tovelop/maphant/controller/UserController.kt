@@ -1,9 +1,9 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.PasswordEncoderBcrypt
+import com.tovelop.maphant.configure.security.UserDataService
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
-import com.tovelop.maphant.mapper.UserMapper
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
-class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid) {
+class SignupController(@Autowired val userService: UserService,
+                       @Autowired val sendGrid: SendGrid,
+                       @Autowired val userDataService: UserDataService) {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
 
