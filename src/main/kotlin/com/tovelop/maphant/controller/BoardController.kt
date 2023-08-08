@@ -182,7 +182,10 @@ class BoardController(
     }
 
     @PostMapping("/create")
-    fun createBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
+    fun createBoard(
+        @RequestBody board: SetBoardDTO,
+        @RequestHeader("x-category") category: Int
+    ): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
             return ResponseEntity.badRequest().body(Response.error("로그인 안됨"))
@@ -192,7 +195,7 @@ class BoardController(
         }
         // 제목 내용 빈칸인지 확인
         return if (board.title.isNotBlank() && board.body.isNotBlank()) {
-            boardService.insertBoard(board.toBoardDTO(auth.getUserId()))
+            boardService.insertBoard(board.toBoardDTO(auth.getUserId(), category))
             rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
             ResponseEntity.ok(Response.stateOnly(true))
         } else {
