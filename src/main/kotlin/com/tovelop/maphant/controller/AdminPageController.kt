@@ -39,12 +39,6 @@ class AdminPageController(@Autowired val adminPageService: AdminPageService) {
         val findBoardReportInfo = adminPageService.findBoardReportInfo(boardId)
         return ResponseEntity.ok().body(Response.success(findBoardReportInfo))
     }
-    @GetMapping("/reportlist/comment")
-    fun listCommentReport(@RequestParam sortType: String, model: Model): String {
-        val findCommentReport = adminPageService.findCommentReport(sortType, 10)
-        model.addAttribute("commentReport", findCommentReport)
-        return "admin_index_page"
-    }
     @GetMapping("/reportinfo/comment")
     fun commentReportInfo(@RequestParam commentId: Int): ResponseEntity<Response<List<CommentReportInfoDTO>>> {
         val findBoardReportInfo = adminPageService.findCommentReportInfo(commentId)
