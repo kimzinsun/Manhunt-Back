@@ -138,23 +138,26 @@ class DmService(
 
 
         if (isSender) {
-            val count = dmMapper.findDmCount(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER);
+//            val count = dmMapper.findDmCount(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER);
+            val count = dmMapper.findDmCount(roomId,room.sender_dm_cursor)
             val pagination = Pagination(count, params)
             if (count < 1)
                 return PagingResponse(Collections.emptyList(), null)
-            val list =
-                dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
 
+//            val list = dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
+
+            val list = dmMapper.findDmListWithPaging(isSender,roomId,params,room.sender_dm_cursor)
             val otherName = userMapper.findNicknameIdBy(room.receiver_id) as String;
             return DmPagingResponse(room.receiver_id, otherName, list, pagination)
         }
 
-        val count = dmMapper.findDmCount(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER);
+//        val count = dmMapper.findDmCount(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER);
+        val count = dmMapper.findDmCount(roomId,room.receiver_dm_cursor)
         val pagination = Pagination(count, params)
         if (count < 1)
             return PagingResponse(Collections.emptyList(), null)
-        val list =
-            dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
+//        val list = dmMapper.findDmListWithPaging(isSender, roomId, params, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
+        val list = dmMapper.findDmListWithPaging(isSender,roomId,params,room.receiver_dm_cursor)
         val otherName = userMapper.findNicknameIdBy(room.sender_id) as String
         return DmPagingResponse(room.sender_id, otherName, list, pagination)
     }
@@ -175,16 +178,20 @@ class DmService(
 
         if (isSender == true) {
             //상대방이 삭제 안한 경우
-            dmMapper.updateDmVisible(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
+//            dmMapper.updateDmVisible(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_RECEIVER)
             //상대방이 이미 삭제한 경우
-            dmMapper.updateDmVisible(roomId, VisibleChoices.ONLY_SENDER, VisibleChoices.NOBODY)
+//            dmMapper.updateDmVisible(roomId, VisibleChoices.ONLY_SENDER, VisibleChoices.NOBODY)
+
+            roomMapper.updateSenderDmCursor(roomId)
             //isSenderDeleted = true
             roomMapper.updateSenderIsDeletedAndSenderUnreadCountZero(roomId)
         } else {
             //상대방이 삭제 안한 경우
-            dmMapper.updateDmVisible(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
+//            dmMapper.updateDmVisible(roomId, VisibleChoices.BOTH, VisibleChoices.ONLY_SENDER)
             //상대방이 이미 삭제한 경우
-            dmMapper.updateDmVisible(roomId, VisibleChoices.ONLY_RECEIVER, VisibleChoices.NOBODY)
+//            dmMapper.updateDmVisible(roomId, VisibleChoices.ONLY_RECEIVER, VisibleChoices.NOBODY)
+
+            roomMapper.updateReceiverDmCursor(roomId)
             //isReceiverDeleted = true
             roomMapper.updateReceiverIsDeletedAndReceiverUnreadCountZero(roomId)
         }
