@@ -4,6 +4,7 @@ import com.tovelop.maphant.configure.security.PasswordEncoderBcrypt
 import com.tovelop.maphant.configure.security.UserDataService
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
+import com.tovelop.maphant.mapper.UserMapper
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -240,6 +241,36 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         userService.updateUserPasswordByEmail(
             changeInfoDTO.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
         )
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/changeinfo/categorymajor")
+    fun addCategoryMajor(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val oldCategoryIdList = userService.findCategoryIdByEmail(changeInfoDTO.email)
+        val newCategoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
+
+        if (newCategoryId in oldCategoryIdList){
+            return ResponseEntity.badRequest().body(Response.error("이미 등록된 계열입니다."))
+        }
+
+        val oldMajorIdList = userService.findMajorIdByEmail(changeInfoDTO.email)
+        val newMajorId = userService.findMajorIdByName(changeInfoDTO.major!!)
+
+        if (newMajorId in oldMajorIdList){
+            return ResponseEntity.badRequest().body(Response.error("이미 등록된 전공입니다."))
+        }
+
+        userService.insertUserCategoryMajorByEmail(changeInfoDTO.email, newCategoryId, newMajorId)
+
+        return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @DeleteMapping("/changeinfo/categorymajor")
+    fun deleteCategoryMajor(@RequestBody changeInfoDTO: ChangeInfoDTO): ResponseEntity<ResponseUnit> {
+        val categoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
+        val majorId = userService.findMajorIdByName(changeInfoDTO.major!!)
+        userService.deleteCategoryIdMajorIdByUserId(changeInfoDTO.email, categoryId, majorId)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
