@@ -61,7 +61,7 @@ class CookieAuthFilter(authenticationManager: AuthenticationManager?)
 
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val httpRequest = request as HttpServletRequest
-        if(httpRequest.cookies.size >= 2) {
+        if(httpRequest.cookies != null) {
             super.doFilter(request, response, chain)
         } else {
             chain.doFilter(request, response)
