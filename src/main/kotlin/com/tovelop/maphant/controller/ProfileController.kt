@@ -27,13 +27,10 @@ class ProfileController(
 ) {
 
     @GetMapping
-    fun getProfile(@RequestParam userId: Int?): ResponseEntity<Response<ProfileNicknameAndBodyAndImageDto>> {
-        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        return if (userId != null) {
-            ResponseEntity.ok().body(Response.success(profileService.getNicknameAndBodyAndImage(userId)));
-        } else {
-            ResponseEntity.ok().body(Response.success(profileService.getNicknameAndBodyAndImage(auth.getUserId())));
-        }
+    fun getProfile(@RequestParam targetUserId: Int): ResponseEntity<Response<ProfileNicknameAndBodyAndImageDto>> {
+        val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
+        return ResponseEntity.ok()
+            .body(Response.success(profileService.getNicknameAndBodyAndImage(userId, targetUserId)));
     }
 
     @PatchMapping
@@ -67,10 +64,12 @@ class ProfileController(
     }
 
     @GetMapping("/board")
-    fun getBoardList(@ModelAttribute @Valid pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<BoardResDto>>> {
-        val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
-        val userId: Int = auth.getUserId()
-
-        return ResponseEntity.ok().body(Response.success(profileService.getBoardsList(userId, pagingDto)));
+    fun getBoardList(
+        @ModelAttribute @Valid pagingDto: PagingDto,
+        @RequestParam targetUserId: Int
+    ): ResponseEntity<Response<PagingResponse<BoardResDto>>> {
+        val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
+        return ResponseEntity.ok()
+            .body(Response.success(profileService.getBoardsList(userId, targetUserId, pagingDto)));
     }
 }

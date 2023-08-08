@@ -21,11 +21,13 @@ interface ProfileMapper {
 
     fun updateProfileBody(userId: Int, body: String): Boolean
 
-    fun findAllBoardByIdWithPaging(userId: Int, params: PagingDto): List<BoardResDto>
+    fun findAllBoardByIdWithPaging(userId: Int, targetUserId: Int, params: PagingDto): List<BoardResDto>
 
     fun insertProfile(userId: Int, imageUrl: String): Boolean
 
     fun getBoardCount(userId: Int): Int
     fun cntComment(userId: Int): Int
     fun cntAnonymousComment(userId: Int): Int
+    fun cntBoard(userId: Int): Int
+    fun cntAnonymousBoard(userId: Int): Int
 }

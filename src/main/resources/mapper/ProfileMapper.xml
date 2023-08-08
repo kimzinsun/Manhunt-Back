@@ -87,6 +87,18 @@
         WHERE user_id = #{userId}
     </select>
 
+    <select id="cntBoard">
+        SELECT board_cnt
+        FROM user_count
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="cntAnonymousBoard">
+        SELECT board_is_anonymous_cnt
+        FROM user_count
+        WHERE user_id = #{userId}
+    </select>
+
 
 </mapper>
 

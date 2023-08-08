@@ -24,8 +24,8 @@ class ProfileService(
     private val commentMapper: CommentMapper
 ) {
     //프로필 이미지의 Dto 불러오기
-    fun getNicknameAndBodyAndImage(userId: Int): ProfileNicknameAndBodyAndImageDto {
-        return profileMapper.findNicknameAndBodyAndImageById(userId)
+    fun getNicknameAndBodyAndImage(userId: Int, targetUserId: Int): ProfileNicknameAndBodyAndImageDto {
+        return profileMapper.findNicknameAndBodyAndImageById(targetUserId)
     }
 
     //유저가 작성한 댓글 목록 불러오기
@@ -48,9 +48,13 @@ class ProfileService(
     }
 
     //유저가 작성한 글 목록 불러오기
-    fun getBoardsList(userId: Int, params: PagingDto): PagingResponse<BoardResDto> {
+    fun getBoardsList(userId: Int, targetUserId: Int, params: PagingDto): PagingResponse<BoardResDto> {
         //getBoardCount xml 구현
-        val count = profileMapper.getBoardCount(userId);
+        var count = profileMapper.cntBoard(userId);
+
+        if (userId != targetUserId) {
+            count -= profileMapper.cntAnonymousBoard(userId);
+        }
 
         if (count < 1) {
             return PagingResponse(Collections.emptyList(), null);
@@ -58,7 +62,7 @@ class ProfileService(
 
         //findAllBoardByIdwithPaging xml 구현
         val pagination = Pagination(count, params);
-        val boards = profileMapper.findAllBoardByIdWithPaging(userId, params);
+        val boards = profileMapper.findAllBoardByIdWithPaging(userId, targetUserId, params);
 
         return PagingResponse(boards, pagination);
     }
