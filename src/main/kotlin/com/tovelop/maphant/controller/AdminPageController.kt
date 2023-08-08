@@ -34,12 +34,12 @@ class AdminPageController(@Autowired val adminPageService: AdminPageService) {
         model.addAttribute("commentReport", findCommentReport)
         return "admin_index_page"
     }
-    @GetMapping("/reportinfo/board")
+    @GetMapping("/reportInfo/board")
     fun boardReportInfo(@RequestParam boardId: Int): ResponseEntity<Response<List<BoardReportInfoDTO>>> {
         val findBoardReportInfo = adminPageService.findBoardReportInfo(boardId)
         return ResponseEntity.ok().body(Response.success(findBoardReportInfo))
     }
-    @GetMapping("/reportinfo/comment")
+    @GetMapping("/reportInfo/comment")
     fun commentReportInfo(@RequestParam commentId: Int): ResponseEntity<Response<List<CommentReportInfoDTO>>> {
         val findBoardReportInfo = adminPageService.findCommentReportInfo(commentId)
         return ResponseEntity.ok().body(Response.success(findBoardReportInfo))
