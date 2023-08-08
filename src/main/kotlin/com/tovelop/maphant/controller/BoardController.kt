@@ -5,6 +5,7 @@ import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
 import com.tovelop.maphant.service.RateLimitingService
+import com.tovelop.maphant.service.TagService
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/board")
 class BoardController(
     @Autowired val boardService: BoardService,
-    @Autowired val rateLimitingService: RateLimitingService
+    @Autowired val rateLimitingService: RateLimitingService,
+    @Autowired val tagService: TagService
 ) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
@@ -193,11 +195,22 @@ class BoardController(
         if (rateLimitingService.isBanned(auth.getUserId())) {
             return ResponseEntity.badRequest().body(Response.error("게시글 작성이 금지된 사용자입니다."))
         }
-        if (board.title.isBlank() || board.body.isBlank()){
+        if (board.title.isBlank() || board.body.isBlank()) {
             return ResponseEntity.badRequest().body(Response.error("제목이나 본문이 비어있습니다."))
         }
         boardService.insertBoard(board.toBoardDTO(auth.getUserId(), category))
         rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
+        // tagNames가 비어있지 않은 경우 tagService.insertTag
+        if (board.tagNames.isNullOrEmpty().not()) board.tagNames?.let {
+            val boardId = boardService.findLastInsertId()
+            tagService.insertTag(category, boardId, it)
+            it.forEach { tagName ->
+                tagService.insertBoardTag(
+                    boardId,
+                    tagService.getTagByName(tagName)?.id ?: throw Exception("태그가 존재하지 않습니다.")
+                )
+            }
+        }
 
         // 제목 내용 빈칸인지 확인
         return ResponseEntity.ok(Response.stateOnly(true))
