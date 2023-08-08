@@ -16,7 +16,7 @@
               order by reported_at
                   limit #{reportSize} offset 0) as reports
                  join board on reports.board_id = board.id
-                 join user board_user on reports.user_id = board_user.id
+                 join user board_user on board.user_id = board_user.id
     </select>
     <select id="findBoardReportByMostReportedRanking" resultType="AdminBoardReportDTO">
         select board_ids.board_id boardId, board.title boardTitle, board.body boardBody,
@@ -48,7 +48,7 @@
               order by reported_at
                   limit #{reportSize} offset 0) as reports
                  join comment on reports.comment_id = comment.id
-                 join user on reports.user_id = user.id
+                 join user on comment.user_id = user.id
     </select>
     <select id="findCommentReportByMostReportedRanking" resultType="AdminCommentReportDTO">
         select comment_ids.comment_id commentId, comment.body commentBody,
