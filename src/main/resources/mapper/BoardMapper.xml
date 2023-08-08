@@ -186,7 +186,8 @@
                is_hide AS isHide,
                IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
                b.created_at AS createdAt,
-               b.modified_at AS modifiedAt
+               b.modified_at AS modifiedAt,
+               b.images_url as imagesUrl
         FROM board b
             INNER JOIN user u ON b.user_id = u.id
             INNER JOIN board_type t ON b.type_id = t.id
@@ -196,7 +197,7 @@
             b.state = 0 AND
             category_id = #{categoryId} AND
             type_id = #{boardType} AND
-            like_cnt >= 10
+            like_cnt >= 0
         ORDER BY hot(like_cnt, b.created_at) + RAND(#{seed}) DESC
         LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
     </select>
@@ -209,7 +210,7 @@
             state = 0 AND
             category_id = #{categoryId} AND
             type_id = #{boardType} AND
-            like_cnt >= 10
+            like_cnt >= 0
     </select>
 
     <select id="findHotBoards" resultType="HotBoardDto">
@@ -226,7 +227,8 @@
                is_hide AS isHide,
                IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
                b.created_at AS createdAt,
-               b.modified_at AS modifiedAt
+               b.modified_at AS modifiedAt,
+               b.images_url as imagesUrl
         FROM board b
                  INNER JOIN user u ON b.user_id = u.id
                  INNER JOIN board_type t ON b.type_id = t.id
@@ -235,7 +237,7 @@
             is_hide = 0 AND
             b.state = 0 AND
             category_id = #{categoryId} AND
-            like_cnt >= 10
+            like_cnt >= 0
         ORDER BY hot(like_cnt, b.created_at) + RAND(#{seed}) DESC
         LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
     </select>
@@ -247,6 +249,6 @@
             is_hide = 0 AND
             state = 0 AND
             category_id = #{categoryId} AND
-            like_cnt >= 10
+            like_cnt >= 0
     </select>
 </mapper>
