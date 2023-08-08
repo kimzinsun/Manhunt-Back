@@ -28,9 +28,16 @@
     <select id="findAllCommentByUser" resultType="CommentExtDTO">
         SELECT comment.id,
                comment.user_id,
-               user.nickname,
+               CASE
+                   WHEN comment.user_id = #{targetUserId} THEN user.nickname
+                   ELSE 'Anonymous'
+                   END as nickname,
                comment.board_id,
-               comment.body,
+               CASE
+                   WHEN ((#{userId} != #{targetUserId} AND comment.is_anonymous = 0) OR comment.user_id = #{userId})
+                       THEN comment.body
+                   ELSE NULL
+                   END as body,
                comment.is_anonymous,
                comment.created_at,
                comment.modified_at,
@@ -39,8 +46,9 @@
         FROM comment
                  INNER JOIN user ON user.id = comment.user_id
                  LEFT OUTER JOIN comment_like
-                                 ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
-        WHERE comment.user_id = #{userId}
+                                 ON comment.id = comment_like.comment_id and comment_like.user_id = #{targetUserId}
+        WHERE ((#{userId} != #{targetUserId} AND comment.is_anonymous = 0) OR comment.user_id = #{userId})
+          AND comment.user_id = #{targetUserId}
         ORDER BY comment.created_at DESC
             LIMIT #{params.recordSize}
         OFFSET #{params.offset}
@@ -116,14 +124,11 @@
         SET state = #{state}
         WHERE id = #{commentId}
     </update>
-    <select id="cntComment">
-        SELECT COUNT(*)
-        FROM comment
-        WHERE user_id = #{userId}
-    </select>
     <select id="getBoardUserId">
         SELECT user_id
         FROM board
         WHERE id = #{boardId}
     </select>
+
+
 </mapper>

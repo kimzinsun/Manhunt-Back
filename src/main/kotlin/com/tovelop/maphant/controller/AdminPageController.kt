@@ -75,8 +75,4 @@ class AdminPageController(@Autowired val adminPageService: AdminPageService) {
     fun loginPage(): String {
         return "admin_login_page"
     }
-    @PostMapping("/login")
-    fun goToLoginPage(): String {
-        return "redirect:/login/"
-    }
 }

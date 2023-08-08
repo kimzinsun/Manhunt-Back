@@ -45,18 +45,17 @@
           })
               .then(res => res.json())
               .then(res => {
-                  if(res["success"] == false) {
+                  if(res["success"]) {
+                      const pubKey = res["pubKey"];
+                      const privKey = res["privKey"];
+
+                      setCookie("auth", pubKey);
+                      setCookie("sign", privKey);
+
+                      location.href = "/admin/";
+                  } else if(!res["success"]) {
                       alert(res["message"]);
-                      return;
                   }
-
-                  const pubKey = res["pubKey"];
-                  const privKey = res["privKey"];
-
-                  setCookie("auth", pubKey);
-                  setCookie("sign", privKey);
-
-                  location.href = "/admin/";
               });
       }
   </script>
