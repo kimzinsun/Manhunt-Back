@@ -61,8 +61,8 @@
         from board
         where type_id = #{boardTypeId}
             AND category_id = #{categoryId}
-            AND lower(title) like lower(CONCAT('%', #{keyword}, '%'))
-           or lower(body) like lower(CONCAT('%', #{keyword}, '%'))
+            AND (lower(title) like lower(CONCAT('%', #{keyword}, '%'))
+           or lower(body) like lower(CONCAT('%', #{keyword}, '%')))
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
         select pageBoards.board_id,
