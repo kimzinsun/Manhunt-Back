@@ -99,4 +99,18 @@
         LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
 
+    <select id="findDmListWithCursorBasedPaging" resultType="ResultDmDto">
+        SELECT id, IF(is_from_sender = #{isSender}, 1, 0) as is_me, content, time, is_read,
+            room_id,
+            visible
+        FROM (
+                select *
+                from dm
+                where room_id = #{room_id} AND #{pagingCursor} > id
+                order by id desc
+                LIMIT 10
+            ) as sub
+            order by id
+    </select>
+
 </mapper>

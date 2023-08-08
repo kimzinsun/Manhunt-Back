@@ -1,13 +1,16 @@
 package com.tovelop.maphant.mapper
 
+<<<<<<< HEAD
 import com.tovelop.maphant.dto.*
+=======
+import com.tovelop.maphant.dto.AdminBoardReportDTO
+>>>>>>> 4fcd8ead5ed2d1c751466290896e47b0f4278b9c
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
 @Mapper
 @Repository
 interface AdminPageMapper {
-    fun updateUserState(userId: Int, state: Int)
     fun findBoardReportByReportedAt(reportSize: Int): List<AdminBoardReportDTO>
     fun findBoardReportByMostReportedRanking(reportSize: Int): List<AdminBoardReportDTO>
     fun findBoardReportBySortType(reportSize: Int, sortType: String): List<AdminBoardReportDTO>
@@ -24,12 +27,4 @@ interface AdminPageMapper {
     fun updateBoardStateByUserId(userId: Int, beforeState: Int, afterState: Int)
     fun updateCommentSanction(commentId: Int)
     fun updateCommentStateByUserId(userId: Int, beforeState: Int, afterState: Int)
-    fun findAllAppUserId(): List<Int>
-    fun findUserReportList(userIdList: List<Int>): List<UserDTO>
-    fun findBoardSanctionCountByUserId(): CountSanctionDTO
-    fun findCommentSanctionCountByUserId(): CountSanctionDTO
-    fun findBoardCommentSanctionCount(): List<CountSanctionDTO>
-    fun findUserReportInfo(): List<List<Any>>
-    fun findBoardReportInfoByUserId(userId: Int): List<BoardSanctionDTO>
-    fun findCommentReportInfoByUserId(userId: Int): List<CommentSanctionDTO>
 }
