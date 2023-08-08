@@ -88,6 +88,24 @@
         WHERE id = #{room_id}
     </update>
 
+    <update id="updateSenderIsDelete">
+        UPDATE room
+        SET sender_is_deleted = false
+        WHERE id = #{room_id}
+    </update>
+
+    <update id="updateReceiverIsDeleted">
+        UPDATE room
+        SET receiver_is_deleted = false
+        WHERE id = #{room_id}
+    </update>
+
+    <update id="updateRoomTime">
+        UPDATE room
+        SET time = #{time}
+        WHERE id = #{room_id}
+    </update>
+
     <select id="findUnReadDmCount">
         select SUM(
                        CASE
