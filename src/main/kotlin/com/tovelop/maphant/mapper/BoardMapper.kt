@@ -19,7 +19,7 @@ interface BoardMapper {
     fun insertBoardLike(boardId: Int, userId: Int)
     fun deleteBoardLike(boardId: Int, userId: Int)
     fun insertBoardReport(boardId: Int, userId: Int, reportId: Int)
-    fun findBoardByKeyword(keyword: String): List<BoardDTO>
+    fun findBoardByKeyword(keyword: String, boardTypeId: Int, categoryId: Int): List<BoardDTO>
     fun isInCategory(categoryId: Int): String?
     fun isInBoardTypeId(boardTypeId: Int): Int?
     fun findBoardLike(boardId: Int, userId: Int): BoardLikeDTO?
@@ -30,8 +30,15 @@ interface BoardMapper {
     fun updateIsCompleteOfBoard(boardId: Int, isComplete: Int)
     fun updateStateOfBoard(boardId: Int, state: Int)
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO>
-    fun findHotBoardsWithBoardType(userId: Int, categoryId: Int, boardType:Int, seed: Long, pagingDto: PagingDto): List<HotBoardDto>
-    fun getHotBoardCountWithBoardType(categoryId: Int, boardType:Int): Int
+    fun findHotBoardsWithBoardType(
+        userId: Int,
+        categoryId: Int,
+        boardType: Int,
+        seed: Long,
+        pagingDto: PagingDto
+    ): List<HotBoardDto>
+
+    fun getHotBoardCountWithBoardType(categoryId: Int, boardType: Int): Int
     fun findHotBoards(userId: Int, categoryId: Int, seed: Long, pagingDto: PagingDto): List<HotBoardDto>
     fun getHotBoardCount(categoryId: Int): Int
     fun getAllBoardType(): MutableList<BoardTypeDTO>
