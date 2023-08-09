@@ -100,17 +100,19 @@
     </select>
 
     <select id="findDmListWithCursorBasedPaging" resultType="ResultDmDto">
-        SELECT id, IF(is_from_sender = #{isSender}, 1, 0) as is_me, content, time, is_read,
-            room_id,
-            visible
-        FROM (
-                select *
-                from dm
-                where room_id = #{room_id} AND #{pagingCursor} > id AND id >= #{dmCursor}
-                order by id desc
-                LIMIT #{limit}
-            ) as sub
-            order by id
+        select id,
+               IF(is_from_sender = #{isSender}, 1, 0) as is_me,
+               content,
+               time,
+               is_read,
+               room_id,
+               visible
+        from dm
+        where room_id = #{room_id} AND
+              #{pagingCursor} > id AND
+              id >= #{dmCursor}
+        order by id desc
+        LIMIT #{limit}
     </select>
 
     <select id="findLastDmId">
