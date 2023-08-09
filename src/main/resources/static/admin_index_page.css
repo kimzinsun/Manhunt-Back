@@ -1,4 +1,4 @@
-/* 모든 요소의 기본 스타일 재설정 */
+/* 전체 페이지 스타일 */
 * {
     padding: 0;
     margin: 0;
@@ -20,17 +20,29 @@ header {
     padding: 1em 0;
 }
 
-h1 {
-    margin: 0;
+/* 컨테이너 스타일 */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+/* 왼쪽 및 오른쪽 섹션 스타일 */
+.left-section,
+.right-section {
+    flex: 1;
+    margin: 0 20px;
+}
+
+/* 댓글 스타일 */
+.comment-section {
+    margin-left: 40px;
+    flex: 1;
 }
 
 /* 섹션 스타일 */
 section {
-    padding: 1em;
-}
-
-h2 {
-    margin-bottom: 0.5em;
+    margin: 20px 0;
 }
 
 /* 테이블 스타일 */
@@ -45,10 +57,6 @@ td {
     text-align: left;
 }
 
-th{
-    background-color: #f2f2f2;
-}
-
 /* 버튼 스타일 */
 button {
     background-color: #333;
@@ -58,8 +66,21 @@ button {
     border: none;
     cursor: pointer;
 }
-button a{
+
+button a {
     color: white;
+}
+
+/* 폼 스타일 */
+form {
+    margin-top: 10px;
+}
+
+label,
+input,
+textarea {
+    display: block;
+    margin-bottom: 10px;
 }
 
 /* 푸터 스타일 */
