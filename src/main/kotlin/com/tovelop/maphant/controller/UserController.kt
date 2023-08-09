@@ -172,11 +172,11 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
     //개인정보 수정 페이지 접근 전, 본인 확인 절차: 비밀번호 확인
     @PostMapping("/changeinfo/identification")
-    fun identification(@RequestBody password: String): ResponseEntity<ResponseUnit> {
+    fun identification(@RequestBody req: Map<String, String>): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
 
-        val oldPassword = auth.getUserData().password
-        if (!passwordEncoder.matches(password, oldPassword)) {
+        val oldPassword = userService.findPasswordByEmail(auth.getUserData().email)
+        if (!passwordEncoder.matches(req["password"], oldPassword)) {
             return ResponseEntity.badRequest().body(Response.error("비밀번호를 확인해주세요."))
         }
 
@@ -231,7 +231,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val user = auth.getUserData()
 
-        val oldPassword = user.password
+        val oldPassword = userService.findPasswordByEmail(user.email)
 
         if (!ValidationHelper.isValidPassword(changeInfoDTO.newPassword!!)) {
             return ResponseEntity.badRequest()
