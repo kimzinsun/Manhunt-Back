@@ -44,11 +44,14 @@ class PollService(val pollMapper: PollMapper) {
     }
 
     fun getPollByBoardId(boardId: Int, userId: Int): Result<PollInfoDTO> {
-        val pollId = getPollIdByBoardId(boardId)
-        return Result.runCatching { pollMapper.selectPollInfoById(pollId, userId) }
+        return Result.runCatching { pollMapper.selectPollInfoByBoardId(boardId, userId) }
     }
 
     fun getPollByPollId(pollId: Int, userId: Int): Result<PollInfoDTO> {
         return Result.runCatching { pollMapper.selectPollInfoById(pollId, userId) }
+    }
+
+    fun isPollOption(pollId: Int, pollOptionId: Int): Boolean {
+        return Result.runCatching { pollMapper.isPollOption(pollId, pollOptionId) }.isSuccess
     }
 }
