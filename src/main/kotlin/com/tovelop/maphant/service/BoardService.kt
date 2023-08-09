@@ -22,7 +22,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private v
 
     fun findBoardList(findBoardDTO: FindBoardDTO, userId: Int, categoryId: Int): List<PageBoardDTO> {
         val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
-        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId)
+        return boardMapper.findBoardList(userId,findBoardDTO, startRow, categoryId)
     }
 
     fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int {

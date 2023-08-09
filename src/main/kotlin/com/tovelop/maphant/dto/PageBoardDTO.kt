@@ -12,6 +12,10 @@ data class PageBoardDTO(
     val likeCnt: Int,
     val isAnonymous: Int,
     val isHide: Int,
-    var isLike: Int?,
-    val imagesUrl: String? = null
-)
+    var isLike: Boolean,
+    val imagesUrl: String? = null,
+    private val tagStrings: String?
+) {
+    val tags: List<String>
+        get() = tagStrings?.split(",") ?: listOf()
+}
