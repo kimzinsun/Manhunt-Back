@@ -86,9 +86,9 @@ class UserService(val mapper: UserMapper) {
         return universityName == mapper.findUniversityUrlBy(univId)
     }
 
-    fun getUser(email: String): UserDTO? {
+    fun getUser(email: String): UserDTO {
         // 사용자 조회 로직
-        return mapper.findUserByEmail(listOf(email)).firstOrNull()
+        return mapper.findUserByEmail(listOf(email))[0]
     }
 
     fun insertUser(user: UserDTO) {

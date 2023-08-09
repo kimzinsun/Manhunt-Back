@@ -122,7 +122,7 @@
     <update id="changeState">
         UPDATE comment
         SET state = #{state}
-        WHERE id = #{id}
+        WHERE id = #{commentId}
     </update>
     <select id="getBoardUserId">
         SELECT user_id
