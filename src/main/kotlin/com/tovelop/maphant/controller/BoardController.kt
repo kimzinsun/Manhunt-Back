@@ -4,25 +4,26 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
+import com.tovelop.maphant.service.RateLimitingService
+import com.tovelop.maphant.service.TagService
 import com.tovelop.maphant.type.paging.PagingDto
-import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
-import com.tovelop.maphant.utils.SecurityHelper.Companion.isLogged
+import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
-import org.checkerframework.common.value.qual.EnumVal
-import com.tovelop.maphant.service.RateLimitingService
-import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/board")
-class BoardController(@Autowired val boardService: BoardService, @Autowired val rateLimitingService: RateLimitingService) {
+class BoardController(
+    @Autowired val boardService: BoardService,
+    @Autowired val rateLimitingService: RateLimitingService,
+    @Autowired val tagService: TagService
+) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
     data class SortCriterionInfo(val id: Int, val name: String)
@@ -54,6 +55,7 @@ class BoardController(@Autowired val boardService: BoardService, @Autowired val 
         return ResponseEntity.ok()
             .body(Response.success(boardService.findHotBoardList(userId, category, boardTypeId, pagingDto)))
     }
+
     data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
 
     @GetMapping("")
@@ -131,7 +133,7 @@ class BoardController(@Autowired val boardService: BoardService, @Autowired val 
         }
         val board = boardService.findBoard(boardId, auth.getUserId())
             ?: return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
-        boardService.deleteBoardLike(boardId, board.userId)
+        boardService.deleteBoardLike(boardId, auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -182,7 +184,10 @@ class BoardController(@Autowired val boardService: BoardService, @Autowired val 
     }
 
     @PostMapping("/create")
-    fun createBoard(@RequestBody board: SetBoardDTO): ResponseEntity<ResponseUnit> {
+    fun createBoard(
+        @RequestBody board: SetBoardDTO,
+        @RequestHeader("x-category") category: Int
+    ): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
             return ResponseEntity.badRequest().body(Response.error("로그인 안됨"))
@@ -190,15 +195,25 @@ class BoardController(@Autowired val boardService: BoardService, @Autowired val 
         if (rateLimitingService.isBanned(auth.getUserId())) {
             return ResponseEntity.badRequest().body(Response.error("게시글 작성이 금지된 사용자입니다."))
         }
-        // 제목 내용 빈칸인지 확인
-        return if (board.title.isNotBlank() && board.body.isNotBlank()) {
-            boardService.insertBoard(board.toBoardDTO(auth.getUserId()))
-            rateLimitingService.requestCheck(auth.getUserId(),"WRITE_POST")
-            ResponseEntity.ok(Response.stateOnly(true))
-        } else {
-            ResponseEntity.ok(Response.stateOnly(false))
-            // 제목 또는 내용이 빈칸인 경우 실패 응답을 반환합니다.
+        if (board.title.isBlank() || board.body.isBlank()) {
+            return ResponseEntity.badRequest().body(Response.error("제목이나 본문이 비어있습니다."))
         }
+        boardService.insertBoard(board.toBoardDTO(auth.getUserId(), category))
+        rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
+        // tagNames가 비어있지 않은 경우 tagService.insertTag
+        if (board.tagNames.isNullOrEmpty().not()) board.tagNames?.let {
+            val boardId = boardService.findLastInsertId()
+            tagService.insertTag(category, boardId, it)
+            it.forEach { tagName ->
+                tagService.insertBoardTag(
+                    boardId,
+                    tagService.getTagByName(tagName)?.id ?: throw Exception("태그가 존재하지 않습니다.")
+                )
+            }
+        }
+
+        // 제목 내용 빈칸인지 확인
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PutMapping("/update")
@@ -228,8 +243,12 @@ class BoardController(@Autowired val boardService: BoardService, @Autowired val 
     }
 
     @GetMapping("/search")
-    fun searchBoard(@RequestParam content: String): Any {
-        val searchBoard = boardService.findBoardByKeyword(content)
+    fun searchBoard(
+        @RequestParam content: String,
+        @RequestParam boardTypeId: Int,
+        @RequestHeader("x-category") category: Int
+    ): Any {
+        val searchBoard = boardService.findBoardByKeyword(content, boardTypeId, category)
         return ResponseEntity.ok(Response.success(searchBoard))
     }
 

@@ -3,19 +3,23 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.TagMapper">
+    <insert id="insertTag">
+        INSERT INTO tag (name, category_id, cnt)
+        VALUES (#{tagName}, #{categoryId}, 1)
+        ON DUPLICATE KEY UPDATE cnt = cnt + 1
+    </insert>
+    <insert id="insertBoardTag">
+        INSERT INTO board_tag (board_id, tag_id)
+        VALUES (#{boardId}, #{tagId})
+    </insert>
+    <select id="getTagByName" resultType="TagDTO">
+        SELECT *
+        FROM tag
+        WHERE name = #{name}
+    </select>
     <select id="getTagList" resultType="TagDTO">
         SELECT *
         FROM tag
-    </select>
-    <insert id="insertTag">
-        INSERT INTO tag (name, category_id, cnt)
-        VALUES (#{name}, #{categoryId}, 1)
-        ON DUPLICATE KEY UPDATE cnt = cnt + 1
-    </insert>
-    <select id="getTagByName" resultType="TagDTO">
-        SELECT name, category_id, cnt
-        FROM tag
-        WHERE name = #{name}
     </select>
     <delete id="deleteTagCnt">
         UPDATE tag
