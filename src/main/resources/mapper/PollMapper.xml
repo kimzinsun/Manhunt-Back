@@ -110,4 +110,8 @@
         WHERE poll.board_id = #{boardId}
           and pu.user_id = #{userId}
     </select>
+
+    <select id="isPollOption" resultType="int">
+        select * from poll_option where poll_id = #{pollId} and id = #{pollOptionId}
+    </select>
 </mapper>
