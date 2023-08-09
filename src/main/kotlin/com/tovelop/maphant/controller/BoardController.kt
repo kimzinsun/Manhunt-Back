@@ -133,7 +133,7 @@ class BoardController(
         }
         val board = boardService.findBoard(boardId, auth.getUserId())
             ?: return ResponseEntity.badRequest().body(Response.error<Any>("게시글이 존재하지 않습니다."))
-        boardService.deleteBoardLike(boardId, board.userId)
+        boardService.deleteBoardLike(boardId, auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
