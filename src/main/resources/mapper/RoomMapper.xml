@@ -21,6 +21,17 @@
                 #{receiver_is_deleted})
     </insert>
 
+    <update id="updateRoomWhenSendDm">
+        UPDATE room
+        SET time = #{time},
+            last_content = #{content},
+            sender_is_deleted = 0,
+            receiver_is_deleted = 0,
+            sender_unread_count = IF(#{isSender},sender_unread_count,sender_unread_count+1),
+            receiver_unread_count = IF(#{isSender},receiver_unread_count+1,receiver_unread_count)
+        WHERE id = #{room_id}
+    </update>
+
     <update id="updateSenderUnreadCountAndLastContent">
         UPDATE room
         SET last_content = #{content}, receiver_unread_count = receiver_unread_count+1
