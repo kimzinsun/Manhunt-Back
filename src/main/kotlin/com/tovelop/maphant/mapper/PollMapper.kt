@@ -27,5 +27,6 @@ interface PollMapper {
     fun getPollIdByBoardId(boardId: Int): Int
 
     fun selectPollInfoById(pollId: Int, userId: Int): PollInfoDTO
+    fun selectPollInfoByBoardId(boardId: Int, userId: Int): PollInfoDTO
 
 }
