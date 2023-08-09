@@ -63,6 +63,7 @@
             AND category_id = #{categoryId}
             AND (lower(title) like lower(CONCAT('%', #{keyword}, '%'))
            or lower(body) like lower(CONCAT('%', #{keyword}, '%')))
+        order by created_at DESC
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
         select pageBoards.board_id,
