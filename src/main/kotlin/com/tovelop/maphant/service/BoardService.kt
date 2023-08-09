@@ -11,7 +11,7 @@ import java.util.Random
 
 
 @Service
-class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private val redisService: RedisService) {
+class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private val redisService: RedisService) {
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
         return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
     }
@@ -20,9 +20,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         return boardMapper.getCategoryIdByCategoryName(categoryName)
     }
 
-    fun findBoardList(findBoardDTO: FindBoardDTO, userId: Int, categoryId: Int): List<PageBoardDTO> {
+    fun findBoardList(findBoardDTO: FindBoardDTO, userId: Int, categoryId: Int): List<UpgradePageBoardDTO> {
         val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
-        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId)
+        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId).map { it.toUpgradePageBoardDTO() }
     }
 
     fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int {
@@ -33,8 +33,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         boardMapper.insertBoard(boardDTO)
     }
 
-    fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
-        return boardMapper.findBoard(boardId)?.toExtBoardDTO(findBoardLike(boardId, userId))
+    fun findBoard(boardId: Int, userId: Int): UpgradeExtBoardDTO? {
+        return boardMapper.findBoard(boardId)?.toExtBoardDTO(findBoardLike(boardId, userId))?.toUpgradeExtBoardDTO()
     }
 
     fun updateBoard(updateBoardDTO: UpdateBoardDTO) {
@@ -72,8 +72,8 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         boardMapper.insertBoardReport(boardId, userId, reportId)
     }
 
-    fun findBoardByKeyword(keyword: String): List<BoardDTO> {
-        return boardMapper.findBoardByKeyword(keyword)
+    fun findBoardByKeyword(keyword: String, boardTypeId: Int, categoryId: Int): List<BoardDTO> {
+        return boardMapper.findBoardByKeyword(keyword, boardTypeId, categoryId)
     }
 
     fun isInCategory(categoryId: Int): Boolean {
@@ -118,19 +118,27 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         val childBoard = boardMapper.findBoard(childBoardId)
         return childBoard?.parentId == parentBoardId
     }
+
     fun updateStateOfBoard(boardId: Int, state: Int) {
         boardMapper.updateStateOfBoard(boardId, state)
     }
+
     fun findAnswerBoardListByParentBoardId(parentBoardId: Int): List<BoardDTO> {
         return boardMapper.findAnswerBoardListByParentBoardId(parentBoardId)
     }
+
     fun getAllBoardType(): MutableList<BoardTypeDTO> {
         return boardMapper.getAllBoardType()
     }
 
-    fun findHotBoardList(userId: Int, category: Int, boardTypeId: Int?, pagingDto: PagingDto): PagingResponse<HotBoardDto> {
+    fun findHotBoardList(
+        userId: Int,
+        category: Int,
+        boardTypeId: Int?,
+        pagingDto: PagingDto
+    ): PagingResponse<HotBoardDto> {
         //페이지가 1일떈 새로운 seed값 생성 10분 후 삭제
-        if(pagingDto.page == 1) {
+        if (pagingDto.page == 1) {
             redisService.set("seed|$userId", Random().nextLong().toString())
             redisService.expire("seed|$userId", 60 * 10)
         }
@@ -138,27 +146,31 @@ class BoardService(@Autowired val boardMapper: BoardMapper,@Autowired private va
         var seed = redisService.get("seed|$userId")?.toLong();
 
         //사용자가 page가 1이아닌 2부터 요청할 경우 && redis에 seed값이 없을 경우 null일 수 있음
-        if(seed == null) {
+        if (seed == null) {
             seed = Random().nextLong()
             redisService.set("seed|$userId", seed.toString())
             redisService.expire("seed|$userId", 60 * 10)
         }
 
-        val pagination:Pagination
-        val hotBoards:List<HotBoardDto>
+        val pagination: Pagination
+        val hotBoards: List<HotBoardDto>
 
 
-        if(boardTypeId != null) {
-            val count = boardMapper.getHotBoardCountWithBoardType(category,boardTypeId);
-            pagination = Pagination(count,pagingDto)
-            hotBoards = boardMapper.findHotBoardsWithBoardType(userId,category,boardTypeId, seed, pagingDto)
-        }else {
+        if (boardTypeId != null) {
+            val count = boardMapper.getHotBoardCountWithBoardType(category, boardTypeId);
+            pagination = Pagination(count, pagingDto)
+            hotBoards = boardMapper.findHotBoardsWithBoardType(userId, category, boardTypeId, seed, pagingDto)
+        } else {
             val count = boardMapper.getHotBoardCount(category);
-            pagination = Pagination(count,pagingDto)
-            hotBoards = boardMapper.findHotBoards(userId,category, seed, pagingDto)
+            pagination = Pagination(count, pagingDto)
+            hotBoards = boardMapper.findHotBoards(userId, category, seed, pagingDto)
         }
 
-        return PagingResponse(hotBoards,pagination)
+        return PagingResponse(hotBoards, pagination)
+    }
+
+    fun findLastInsertId(): Int {
+        return boardMapper.findLastInsertId()
     }
 }
 
