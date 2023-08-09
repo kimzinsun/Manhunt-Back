@@ -1,6 +1,7 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.dto.BoardNoticeDTO
+import com.tovelop.maphant.dto.UpdateBoardNoticeDTO
 import com.tovelop.maphant.service.BoardNoticeService
 import com.tovelop.maphant.type.response.Response
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +23,16 @@ class BoardNoticeController(@Autowired val boardNoticeService: BoardNoticeServic
     @PostMapping("/create")
     fun insertNotice(@RequestBody boardNoticeDTO: BoardNoticeDTO): ResponseEntity<Any> {
         boardNoticeService.insertNotice(boardNoticeDTO)
+        return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
+
+    @PutMapping("/update")
+    fun updateNotice(@RequestBody updateBoardNoticeDTO: UpdateBoardNoticeDTO): ResponseEntity<Any> {
+        try {
+            boardNoticeService.updateNotice(updateBoardNoticeDTO)
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("수정을 실패했습니다."))
+        }
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 }

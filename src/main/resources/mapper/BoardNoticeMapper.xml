@@ -12,12 +12,13 @@
         from board_notice
         where id = #{noticeId}
     </select>
-    <update id="updateNotice">
+    <update id="updateNotice" parameterType="com.tovelop.maphant.dto.UpdateBoardNoticeDTO">
         update board_notice
         set title       = #{title},
             body        = #{body},
             images_url  = #{imagesUrl},
             modified_at = NOW()
+        where id = #{noticeId}
     </update>
     <delete id="deleteNotice">
         delete
