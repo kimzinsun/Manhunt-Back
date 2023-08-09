@@ -26,25 +26,20 @@ import org.springframework.web.bind.annotation.RestController
 @Controller
 @RequestMapping("/admin")
 class AdminPageController(@Autowired val adminPageService: AdminPageService) {
-
-    @GetMapping("/reportlist/board")
-    fun listBoardReport(@RequestParam sortType: String): ResponseEntity<Response<List<AdminBoardReportDTO>>> {
-        val findBoardReport = adminPageService.findBoardReport(sortType, 10)
-        return if (findBoardReport == null) ResponseEntity.badRequest().body(Response.error("유효하지 않은 정렬 타입입니다."))
-            else ResponseEntity.ok().body(Response.success(findBoardReport))
+    @GetMapping("/")
+    fun listBoardReport(model: Model, @RequestParam sortType: String?): String {
+        val findBoardReport = adminPageService.findBoardReport(sortType?:"reportedAt", 10)
+        val findCommentReport = adminPageService.findCommentReport(sortType?:"reportedAt", 10)
+        model.addAttribute("boardReport", findBoardReport)
+        model.addAttribute("commentReport", findCommentReport)
+        return "admin_index_page"
     }
-    @GetMapping("/reportinfo/board")
+    @GetMapping("/reportInfo/board")
     fun boardReportInfo(@RequestParam boardId: Int): ResponseEntity<Response<List<BoardReportInfoDTO>>> {
         val findBoardReportInfo = adminPageService.findBoardReportInfo(boardId)
         return ResponseEntity.ok().body(Response.success(findBoardReportInfo))
     }
-    @GetMapping("/reportlist/comment")
-    fun listCommentReport(@RequestParam sortType: String): ResponseEntity<Response<List<AdminCommentReportDTO>>> {
-        val findCommentReport = adminPageService.findCommentReport(sortType, 10)
-        return if (findCommentReport == null) ResponseEntity.badRequest().body(Response.error("유효하지 않은 정렬 타입입니다."))
-        else ResponseEntity.ok().body(Response.success(findCommentReport))
-    }
-    @GetMapping("/reportinfo/comment")
+    @GetMapping("/reportInfo/comment")
     fun commentReportInfo(@RequestParam commentId: Int): ResponseEntity<Response<List<CommentReportInfoDTO>>> {
         val findBoardReportInfo = adminPageService.findCommentReportInfo(commentId)
         return ResponseEntity.ok().body(Response.success(findBoardReportInfo))
@@ -79,13 +74,5 @@ class AdminPageController(@Autowired val adminPageService: AdminPageService) {
     @GetMapping("/login")
     fun loginPage(): String {
         return "admin_login_page"
-    }
-    @PostMapping("/login")
-    fun goToLoginPage(): String {
-        return "redirect:/login/"
-    }
-    @GetMapping("/")
-    fun index(): String {
-        return "admin_index_page"
     }
 }

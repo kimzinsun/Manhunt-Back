@@ -59,8 +59,11 @@
     <select id="findBoardByKeyword" resultType="BoardDTO">
         select *
         from board
-        where lower(title) like lower(CONCAT('%', #{keyword}, '%'))
-           or lower(body) like lower(CONCAT('%', #{keyword}, '%'))
+        where type_id = #{boardTypeId}
+            AND category_id = #{categoryId}
+            AND (lower(title) like lower(CONCAT('%', #{keyword}, '%'))
+           or lower(body) like lower(CONCAT('%', #{keyword}, '%')))
+        order by created_at DESC
     </select>
     <select id="findBoardList" resultType="PageBoardDTO">
         select pageBoards.board_id,

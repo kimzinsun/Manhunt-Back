@@ -4,6 +4,7 @@ import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.CommentService
 import com.tovelop.maphant.service.FcmService
+import com.tovelop.maphant.service.RateLimitingService
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/comment")
 class CommentController(
     @Autowired val commentService: CommentService,
-    @Autowired private val fcmService: FcmService
+    @Autowired private val fcmService: FcmService,
+    @Autowired val rateLimitingService: RateLimitingService,
 ) {
 
 
@@ -67,12 +69,18 @@ class CommentController(
 
     @PostMapping("/insert")
     fun insertComment(@RequestBody commentDTO: CommentDTO): ResponseEntity<ResponseUnit> {
-        SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val userId = auth.getUserId()
         if (commentDTO.body.isBlank()) {
             return ResponseEntity.badRequest().body(Response.error("댓글 내용을 입력해주세요."))
         }
         if (commentDTO.body.length > 255) {
             return ResponseEntity.badRequest().body(Response.error("댓글은 255자 이내로 작성해주세요."))
+        }
+        if (rateLimitingService.isBanned(userId)) {
+            return ResponseEntity.badRequest().body(Response.error("차단된 사용자입니다."))
+        } else {
+            rateLimitingService.requestCheck(userId, "WRITE_COMMENT")
         }
         commentService.insertComment(commentDTO)
         fcmService.send(
