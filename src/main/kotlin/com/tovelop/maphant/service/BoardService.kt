@@ -2,6 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
+import com.tovelop.maphant.mapper.TagMapper
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
@@ -11,7 +12,7 @@ import java.util.Random
 
 
 @Service
-class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private val redisService: RedisService) {
+class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private val redisService: RedisService, @Autowired private val tagMapper: TagMapper) {
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
         return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
     }
@@ -34,7 +35,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private v
     }
 
     fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
-        return boardMapper.findBoard(boardId)?.toExtBoardDTO(findBoardLike(boardId, userId))
+        val board = boardMapper.findBoardById(userId,boardId)
+        board?.tags = tagMapper.findBoardTags(boardId)
+        return board
     }
 
     fun updateBoard(updateBoardDTO: UpdateBoardDTO) {

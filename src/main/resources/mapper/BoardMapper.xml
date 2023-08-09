@@ -65,7 +65,33 @@
            or lower(body) like lower(CONCAT('%', #{keyword}, '%')))
         order by created_at DESC
     </select>
-
+    <select id="findBoardById" resultType="ExtBoardDTO">
+        SELECT
+            b.id as id,
+            b.user_id as userId,
+            parent_id as parentId,
+            category_id as categoryId,
+            IF(is_anonymous, '익명',u.nickname) AS userNickname,
+            type_id as typeId,
+            title,
+            body,
+            b.state as state,
+            b.is_hide as isHide,
+            b.is_complete as isComplete,
+            b.is_anonymous as isAnonymous,
+            b.created_at as createdAt,
+            b.modified_at as modifiedAt,
+            b.comment_cnt as commentCnt,
+            b.like_cnt as likeCnt,
+            b.report_cnt as reportCnt,
+            b.images_url as imagesUrl,
+            IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
+            IF(u.id = b.user_id, 1, 0) as isMyBoard
+        FROM board b
+                 INNER JOIN user u ON b.user_id = u.id
+                 LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
+        WHERE b.id = #{boardId}
+    </select>
     <select id="findBoardList" resultType="PageBoardDTO">
         select
                 b.id as boardId,

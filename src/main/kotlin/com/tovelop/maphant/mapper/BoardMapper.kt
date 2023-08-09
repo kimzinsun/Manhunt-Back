@@ -14,6 +14,7 @@ interface BoardMapper {
     fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int
     fun insertBoard(boardDTO: BoardDTO)
     fun findBoard(boardId: Int): BoardDTO?
+    fun findBoardById(userId: Int,boardId: Int): ExtBoardDTO?
     fun updateBoard(updateBoardDTO: UpdateBoardDTO)
     fun deleteBoard(boardId: Int)
     fun insertBoardLike(boardId: Int, userId: Int)
