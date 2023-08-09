@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 data class PageBoardDTO(
     val boardId : Int,
     val title: String,
+    val body: String,
     val createdAt: LocalDateTime,
     val modifiedAt : LocalDateTime?,
     val userNickname: String,

@@ -70,6 +70,7 @@
         select
                 b.id as boardId,
                 b.title as title,
+                SUBSTRING(b.body, 1, 30) as body,
                 b.created_at as createdAt,
                 b.modified_at as modifiedAt,
                 IF(is_anonymous, '익명',u.nickname) AS userNickname,
@@ -156,32 +157,33 @@
         from board_type
     </select>
 
-    <select id="findHotBoardsWithBoardType" resultType="HotBoardDto">
-        SELECT b.id AS boardId,
+    <select id="findHotBoardsWithBoardType" resultType="PageBoardDto">
+        select
+               b.id AS boardId,
                title,
-               body,
-               b.user_id AS userId,
+               SUBSTRING(b.body, 1, 30) as body,
+               b.created_at AS createdAt,
+               b.modified_at AS modifiedAt,
                IF(is_anonymous, '익명',u.nickname) AS userNickname,
-               type_id AS typeId,
-               t.name AS type,
                comment_cnt AS commentCnt,
                like_cnt AS likeCnt,
                is_anonymous AS isAnonymous,
                is_hide AS isHide,
                IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
-               b.created_at AS createdAt,
-               b.modified_at AS modifiedAt,
-               b.images_url as imagesUrl
+               b.images_url as imagesUrl,
+               GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings
         FROM board b
             INNER JOIN user u ON b.user_id = u.id
-            INNER JOIN board_type t ON b.type_id = t.id
             LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
+            LEFT OUTER JOIN board_tag ON b.id = board_tag.board_id
+            LEFT OUTER JOIN tag t ON board_tag.tag_id = t.id
         WHERE
             is_hide = 0 AND
             b.state = 0 AND
-            category_id = #{categoryId} AND
+            b.category_id = #{categoryId} AND
             type_id = #{boardType} AND
             like_cnt >= 0
+        GROUP BY b.id
         ORDER BY hot(like_cnt, b.created_at) + RAND(#{seed}) DESC
         LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
     </select>
@@ -198,30 +200,34 @@
     </select>
 
     <select id="findHotBoards" resultType="HotBoardDto">
-        SELECT b.id AS boardId,
-               title,
-               body,
-               b.user_id AS userId,
-               IF(is_anonymous, '익명',u.nickname) AS userNickname,
-               type_id AS typeId,
-               t.name AS type,
-               comment_cnt AS commentCnt,
-               like_cnt AS likeCnt,
-               is_anonymous AS isAnonymous,
-               is_hide AS isHide,
-               IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
-               b.created_at AS createdAt,
-               b.modified_at AS modifiedAt,
-               b.images_url as imagesUrl
+        SELECT
+            b.id AS boardId,
+            title,
+            SUBSTRING(b.body, 1, 30) as body,
+            b.created_at AS createdAt,
+            b.modified_at AS modifiedAt,
+            IF(is_anonymous, '익명',u.nickname) AS userNickname,
+            comment_cnt AS commentCnt,
+            like_cnt AS likeCnt,
+            is_anonymous AS isAnonymous,
+            is_hide AS isHide,
+            IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
+            b.images_url as imagesUrl,
+            GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings,
+            type_id AS typeId,
+            bt.name AS type
         FROM board b
                  INNER JOIN user u ON b.user_id = u.id
-                 INNER JOIN board_type t ON b.type_id = t.id
+                 INNER JOIN board_type bt ON b.type_id = bt.id
                  LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
+                 LEFT OUTER JOIN board_tag ON b.id = board_tag.board_id
+                 LEFT OUTER JOIN tag t ON board_tag.tag_id = t.id
         WHERE
             is_hide = 0 AND
             b.state = 0 AND
-            category_id = #{categoryId} AND
+            b.category_id = #{categoryId} AND
             like_cnt >= 0
+        GROUP BY b.id
         ORDER BY hot(like_cnt, b.created_at) + RAND(#{seed}) DESC
         LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
     </select>
