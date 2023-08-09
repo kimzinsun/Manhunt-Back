@@ -49,7 +49,7 @@ class BookmarkController(@Autowired val bookmarkService: BookmarkService) {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val deleteResult = bookmarkService.deleteBookmark(auth.getUserId(), boardId)
         if (!deleteResult) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("북마크 삭제를 실패했습니다."))
+            return ResponseEntity.badRequest().body(Response.error<Any>("북마크 삭제에 실패했습니다."))
         }
 
         return ResponseEntity.ok().body(Response.stateOnly(true))
