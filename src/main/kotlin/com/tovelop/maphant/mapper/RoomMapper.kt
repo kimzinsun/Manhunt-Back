@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 @Mapper
 @Repository
 interface RoomMapper {
-    fun findRoom(sender_id: Int, receiver_id: Int): RoomDto
+    fun findRoom(sender_id: Int, receiver_id: Int): RoomDto?
     fun createRoom(createHeaderDto: CreateRoomDto): Boolean
     fun updateSenderUnreadCountAndLastContent(room_id: Int, content: String): Boolean
     fun updateReceiverUnreadCountAndLastContent(room_id: Int, content: String): Boolean
@@ -28,4 +28,6 @@ interface RoomMapper {
 
     fun updateSenderDmCursor(room_id: Int): Boolean
     fun updateReceiverDmCursor(room_id: Int):Boolean
+
+    fun updateRoomWhenSendDm(time:LocalDateTime, content: String, isSender:Boolean, room_id: Int):Boolean
 }
