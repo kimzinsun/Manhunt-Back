@@ -126,4 +126,12 @@
         where board_id = #{boardId}
           and (state = 0 or state = 1);
     </select>
+
+    <update id="deletePollByBoardId">
+        update poll set state = 2 where board_id = #{boardId} and (state = 0 or state = 1);
+    </update>
+
+    <update id="deletePollByPollId">
+        update poll set state = 2 where id = #{pollId} and (state = 0 or state = 1);
+    </update>
 </mapper>

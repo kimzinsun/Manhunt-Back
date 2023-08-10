@@ -22,7 +22,12 @@ class PollController(val pollService: PollService) {
         return pollService.createPoll(poll)
     }
 
-    @DeleteMapping("/{board_id}")
+    @DeleteMapping("/{poll_id}")
+    fun deletePollByPollId(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
+        return pollService.deletePollByPollId(pollId)
+    }
+
+    @DeleteMapping("/board/{board_id}")
     fun deletePollByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
         return pollService.deletePollByBoardId(boardId)
     }
