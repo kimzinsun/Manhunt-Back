@@ -56,7 +56,7 @@ class BoardController(
             .body(Response.success(boardService.findHotBoardList(userId, category, boardTypeId, pagingDto)))
     }
 
-    data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
+    data class BoardListInfo(val name: String, val list: List<UpgradePageBoardDTO>)
 
     @GetMapping("")
     fun readBoardList(
@@ -137,7 +137,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    data class BoardInfo(val board: ExtBoardDTO, val answerList: List<BoardDTO>?)
+    data class BoardInfo(val board: UpgradeExtBoardDTO, val answerList: List<BoardDTO>?)
 
     @GetMapping("/{boardId}")
     fun readBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
@@ -217,7 +217,7 @@ class BoardController(
     }
 
     @PutMapping("/update")
-    fun updateBoard(@RequestBody board: UpdateBoardDTO): ResponseEntity<ResponseUnit> {
+    fun updateBoard(@RequestBody board: UpgradeUpdateBoardDTO): ResponseEntity<ResponseUnit> {
         // 현재 로그인한 사용자 정보 가져오기
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
@@ -238,7 +238,7 @@ class BoardController(
             return ResponseEntity.badRequest().body(Response.error("권한이 없습니다."))
         }
         // 게시글 읽어오기
-        boardService.updateBoard(board)
+        boardService.updateBoard(board.toUpdateBoardDTO())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 

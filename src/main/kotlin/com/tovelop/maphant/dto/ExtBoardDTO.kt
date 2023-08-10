@@ -51,4 +51,50 @@ data class ExtBoardDTO(
     ): this(
         id, userId, parentId, categoryId, userNickname, typeId, title, body, state, isHide, isComplete, isAnonymous, createdAt, modifiedAt, commentCnt, likeCnt, reportCnt, imagesUrl, isLike, isMyBoard, listOf()
     )
+    fun toUpgradeExtBoardDTO(): UpgradeExtBoardDTO {
+        return UpgradeExtBoardDTO(
+            id = id,
+            parentId = parentId,
+            categoryId = categoryId,
+            userId = userId,
+            typeId = typeId,
+            title = title,
+            body = body,
+            state = state,
+            isHide = isHide,
+            isComplete = isComplete,
+            isAnonymous = isAnonymous,
+            createdAt = createdAt,
+            modifiedAt = modifiedAt,
+            commentCnt = commentCnt,
+            likeCnt = likeCnt,
+            reportCnt = reportCnt,
+            imagesUrl = imagesUrl?.split(","),
+            isLike = isLike,
+            tags = tags
+        )
+    }
 }
+
+data class UpgradeExtBoardDTO(
+    val id: Int?,
+    val parentId: Int?,
+    val categoryId: Int,
+    val userId: Int,
+    val typeId: Int,
+    val title: String,
+    val body: String,
+    val state: Int,
+    val isHide: Int,
+    val isComplete: Int,
+    val isAnonymous: Int,
+    val createdAt: LocalDateTime?,
+    val modifiedAt: LocalDateTime?,
+    val commentCnt: Int,
+    val likeCnt: Int,
+    val reportCnt: Int,
+    val imagesUrl: List<String>?,
+    val isLike: Boolean,
+    var tags: List<ReqTagDTO>
+)
+

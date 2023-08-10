@@ -24,7 +24,7 @@
     <delete id="deleteTagCnt">
         UPDATE tag
         SET cnt = cnt - 1
-        WHERE id = #{id}T
+        WHERE id = #{id}
     </delete>
 
     <select id="findBoardTags" resultType="ReqTagDTO">
