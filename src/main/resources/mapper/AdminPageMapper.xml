@@ -94,14 +94,16 @@
         where user_id = #{userId}
     </select>
     <delete id="deleteRecentUserReportByUserId">
-        delete from user_report
-        where user_id = #{userId}
-          and deadline_at =
-              (select max(deadline_at)
-               from user_report
-               where user_id = #{userId});
-    </delete>
-    <update id="updateBoardStateByUserId">
+        delete ur
+        from user_report ur
+                 join (
+            select user_id, max(deadline_at) as max_deadline_at
+            from user_report
+            where user_id = #{userId}
+        ) max_report
+                      on ur.user_id = max_report.user_id and ur.deadline_at = max_report.max_deadline_at
+        where ur.user_id = #{userId};
+    </delete>    <update id="updateBoardStateByUserId">
         update board
         set state = #{afterState}
         where user_id = #{userId} and state = #{beforeState}
