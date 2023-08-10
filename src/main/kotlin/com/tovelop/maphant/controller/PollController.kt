@@ -19,8 +19,17 @@ class PollController(val pollService: PollService) {
 
     @PostMapping("/") // 투표 생성
     fun createPoll(@RequestBody poll: PollDTO): ResponseEntity<Any> {
-        pollService.createPoll(poll)
-        return ResponseEntity.ok().body(Response.stateOnly(true))
+        return pollService.createPoll(poll)
+    }
+
+    @DeleteMapping("/{poll_id}")
+    fun deletePollByPollId(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
+        return pollService.deletePollByPollId(pollId)
+    }
+
+    @DeleteMapping("/board/{board_id}")
+    fun deletePollByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
+        return pollService.deletePollByBoardId(boardId)
     }
 
     @PostMapping("/{poll_id}")

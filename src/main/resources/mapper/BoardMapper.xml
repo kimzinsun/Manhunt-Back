@@ -68,6 +68,7 @@
     <select id="findBoardList" resultType="PageBoardDTO">
         select pageBoards.board_id,
                pageBoards.title,
+               pageBoards.user_id,
                pageBoards.created_at,
                pageBoards.modified_at,
                pageBoards.nickname,
