@@ -29,7 +29,8 @@ interface AdminPageMapper {
     fun findBoardSanctionCountByUserId(): CountSanctionDTO
     fun findCommentSanctionCountByUserId(): CountSanctionDTO
     fun findBoardCommentSanctionCount(): List<CountSanctionDTO>
-    fun findUserReportInfo(): List<List<Any>>
     fun findBoardReportInfoByUserId(userId: Int): List<BoardSanctionDTO>
     fun findCommentReportInfoByUserId(userId: Int): List<CommentSanctionDTO>
+    fun findReportByUserId(userId: Int): Boolean
+    fun findReportInfoByUserId(boardId: Int): List<UserReportDTO>
 }
