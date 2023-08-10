@@ -1,12 +1,15 @@
 package com.tovelop.maphant.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDateTime
 
 data class ExtBoardDTO(
     val id: Int?,
+    @JsonIgnore
+    val userId: Int,
     val parentId: Int?,
     val categoryId: Int,
-    val userId: Int,
+    val userNickname: String,
     val typeId: Int,
     val title: String,
     val body: String,
@@ -21,4 +24,31 @@ data class ExtBoardDTO(
     val reportCnt: Int,
     val imagesUrl: String?,
     val isLike: Boolean,
-)
+    val isMyBoard: Boolean,
+    var tags: List<ReqTagDTO>
+) {
+    constructor(
+        id: Int?,
+        userId: Int,
+        parentId: Int?,
+        categoryId: Int,
+        userNickname: String,
+        typeId: Int,
+        title: String,
+        body: String,
+        state: Int,
+        isHide: Int,
+        isComplete: Int,
+        isAnonymous: Int,
+        createdAt: LocalDateTime?,
+        modifiedAt: LocalDateTime?,
+        commentCnt: Int,
+        likeCnt: Int,
+        reportCnt: Int,
+        imagesUrl: String?,
+        isLike: Boolean,
+        isMyBoard: Boolean,
+    ): this(
+        id, userId, parentId, categoryId, userNickname, typeId, title, body, state, isHide, isComplete, isAnonymous, createdAt, modifiedAt, commentCnt, likeCnt, reportCnt, imagesUrl, isLike, isMyBoard, listOf()
+    )
+}
