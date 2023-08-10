@@ -1,12 +1,7 @@
 package com.tovelop.maphant.utils
 
 import java.lang.StringBuilder
-
-fun main() {
-    val badword = BadWordFiltering()
-    var str = "테스트 입니다 안녕"
-    println(badword.filter(str))
-}
+import java.util.*
 
 class BadWordFiltering {
     var badWords = listOf<String>(
@@ -620,9 +615,6 @@ class BadWordFiltering {
 
     fun filter(text: String): String {
         var result = text
-        var sb = StringBuilder()
-        sb.append(text)
-        var temp: String
         badWords.forEach { badWord ->
             result = result.replace(badWord, "*".repeat(badWord.length))
         }
@@ -630,19 +622,7 @@ class BadWordFiltering {
     }
 
     fun addBadWord(badWord: String) {
-        badWords += badWord
-    }
-
-    fun removeBadWord(badWord: String) {
-        badWords -= badWord
-    }
-
-    fun clearBadWords() {
-        badWords = listOf()
-    }
-
-    fun getBadWordsCount(): Int {
-        return badWords.size
+        badWords += badWord.lowercase(Locale.getDefault())
     }
 
     fun isBadWord(text: String): Boolean {
