@@ -84,7 +84,7 @@
             b.comment_cnt as commentCnt,
             b.like_cnt as likeCnt,
             b.report_cnt as reportCnt,
-            b.images_url as imagesUrl,
+            b.images_url as imagesUrlString,
             IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
             IF(u.id = b.user_id, 1, 0) as isMyBoard
         FROM board b
@@ -105,7 +105,7 @@
                 b.is_anonymous as isAnonymous,
                 b.is_hide as isHide,
                 IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
-                b.images_url as imagesUrl,
+                b.images_url as imagesUrlString,
                 GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings
             from board b
                      INNER JOIN user u ON b.user_id = u.id
@@ -196,7 +196,7 @@
                is_anonymous AS isAnonymous,
                is_hide AS isHide,
                IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
-               b.images_url as imagesUrl,
+               b.images_url as imagesUrlString,
                GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings
         FROM board b
             INNER JOIN user u ON b.user_id = u.id
@@ -238,7 +238,7 @@
             is_anonymous AS isAnonymous,
             is_hide AS isHide,
             IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
-            b.images_url as imagesUrl,
+            b.images_url as imagesUrlString,
             GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings,
             type_id AS typeId,
             bt.name AS type

@@ -22,11 +22,13 @@ data class ExtBoardDTO(
     val commentCnt: Int,
     val likeCnt: Int,
     val reportCnt: Int,
-    val imagesUrl: String?,
+    private val imagesUrlString: String?,
     val isLike: Boolean,
     val isMyBoard: Boolean,
     var tags: List<ReqTagDTO>
 ) {
+    val imagesUrl: List<String>
+        get() = imagesUrlString?.split(",") ?: listOf()
     constructor(
         id: Int?,
         userId: Int,
@@ -52,3 +54,26 @@ data class ExtBoardDTO(
         id, userId, parentId, categoryId, userNickname, typeId, title, body, state, isHide, isComplete, isAnonymous, createdAt, modifiedAt, commentCnt, likeCnt, reportCnt, imagesUrl, isLike, isMyBoard, listOf()
     )
 }
+
+data class UpgradeExtBoardDTO(
+    val id: Int?,
+    val parentId: Int?,
+    val categoryId: Int,
+    val userId: Int,
+    val typeId: Int,
+    val title: String,
+    val body: String,
+    val state: Int,
+    val isHide: Int,
+    val isComplete: Int,
+    val isAnonymous: Int,
+    val createdAt: LocalDateTime?,
+    val modifiedAt: LocalDateTime?,
+    val commentCnt: Int,
+    val likeCnt: Int,
+    val reportCnt: Int,
+    val imagesUrl: List<String>?,
+    val isLike: Boolean,
+    var tags: List<ReqTagDTO>
+)
+

@@ -14,11 +14,14 @@ data class HotBoardDto(
     val isAnonymous: Int,
     val isHide: Int,
     var isLike: Boolean,
-    val imagesUrl: String? = null,
+    private val imagesUrlString: String?,
     private val tagStrings: String?,
     val typeId: Int,
     val type: String,
 ) {
+    val imagesUrl: List<String>
+        get() = imagesUrlString?.split(",") ?: listOf()
+
     val tags: List<String>
         get() = tagStrings?.split(",") ?: listOf()
 }

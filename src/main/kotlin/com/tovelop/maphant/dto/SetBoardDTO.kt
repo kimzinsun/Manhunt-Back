@@ -8,7 +8,7 @@ data class SetBoardDTO(
     val isHide: Int,
     val isComplete: Int,
     val isAnonymous: Int,
-    val imagesUrl: String?,
+    val imagesUrl: List<String>?,
     val tagNames: List<String>?
 ) {
     fun toBoardDTO(userId: Int, categoryId: Int): BoardDTO {
@@ -27,7 +27,7 @@ data class SetBoardDTO(
             commentCnt = 0,
             likeCnt = 0,
             reportCnt = 0,
-            imagesUrl = imagesUrl, // 이미지는 s3? 물어보고 수정
+            imagesUrl = imagesUrl?.joinToString(","), // 이미지는 s3? 물어보고 수정
             createdAt = null,
             modifiedAt = null,
         )
