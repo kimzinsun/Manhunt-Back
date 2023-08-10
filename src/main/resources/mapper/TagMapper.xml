@@ -8,6 +8,15 @@
         VALUES (#{tagName}, #{categoryId}, 1)
         ON DUPLICATE KEY UPDATE cnt = cnt + 1
     </insert>
+    <delete id="deleteTag">
+        DELETE FROM board_tag
+        WHERE board_id = #{boardId} AND tag_id = #{tagId}
+    </delete>
+    <select id="getTagExistenceInBoard">
+        SELECT COUNT(*)
+        FROM board_tag
+        WHERE board_id = #{boardId} AND tag_id = #{tagId}
+    </select>
     <insert id="insertBoardTag">
         INSERT INTO board_tag (board_id, tag_id)
         VALUES (#{boardId}, #{tagId})
