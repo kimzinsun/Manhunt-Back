@@ -16,6 +16,9 @@ interface TagMapper {
     fun insertBoardTag(boardId: Int, tagId: Int)
     fun getTagByName(name: String): TagDTO?
     fun getTagList(): List<TagDTO>
-    fun deleteTagCnt(id: Int, cnt: Int)
+    
+    //게시물에 포함된 태그 목록 불러오는 함수
+    fun getTagListByBoardId(boardId: Int):List<TagDTO>
+    fun deleteTagCnt(id: Int)
     fun findBoardTags(boardId: Int): List<ReqTagDTO>
 }

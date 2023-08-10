@@ -180,6 +180,10 @@ class BoardController(
             return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
         }
         boardService.deleteBoard(boardId)
+
+        //게시물에 있었던 각 태그들의 갯수를 1씩 감소시킴
+        tagService.deleteTagCnt(boardId)
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 

@@ -11,7 +11,9 @@ class TagService(private val tagMapper: TagMapper) {
         }
     }
 
-    fun deleteTag(boardId: Int, tagId: Int):Boolean = tagMapper.deleteTag(boardId, tagId)
+    fun deleteTag(boardId: Int, tagId: Int):Boolean{
+        return tagMapper.deleteTag(boardId, tagId)
+    }
 
     fun modifyTag(categoryId: Int, boardId: Int, tagId: Int, tagName: String){
         if(tagMapper.getTagExistenceInBoard(boardId, tagId)==0){
@@ -25,5 +27,9 @@ class TagService(private val tagMapper: TagMapper) {
 
     fun getTagList() = tagMapper.getTagList()
     
-    fun deleteTagCnt(id: Int, cnt: Int) = tagMapper.deleteTagCnt(id, cnt)
+    fun deleteTagCnt(boardId: Int){
+        val tags = tagMapper.getTagListByBoardId(boardId)
+
+        tags.forEach{tag -> tagMapper.deleteTagCnt(tag.id)}
+    }
 }
