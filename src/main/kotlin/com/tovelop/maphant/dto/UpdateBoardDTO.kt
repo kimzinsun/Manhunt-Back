@@ -5,7 +5,8 @@ data class UpdateBoardDTO(
     var title: String,
     val body: String,
     val isHide: Int,
-    val imagesUrl: String? = null
+    val imagesUrl: String? = null,
+    val tags: List<String>
 )
 
 data class UpgradeUpdateBoardDTO(
@@ -13,7 +14,8 @@ data class UpgradeUpdateBoardDTO(
     var title: String,
     val body: String,
     val isHide: Int,
-    val imagesUrl: List<String>? = null
+    val imagesUrl: List<String>? = null,
+    val tags: List<String>
 ){
     fun toUpdateBoardDTO(): UpdateBoardDTO {
         return UpdateBoardDTO(
@@ -21,7 +23,8 @@ data class UpgradeUpdateBoardDTO(
             title = title,
             body=body,
             isHide=isHide,
-            imagesUrl = imagesUrl?.joinToString(",")
+            imagesUrl = imagesUrl?.joinToString(","),
+            tags = tags
         )
     }
 }

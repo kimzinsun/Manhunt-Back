@@ -221,7 +221,9 @@ class BoardController(
     }
 
     @PutMapping("/update")
-    fun updateBoard(@RequestBody board: UpgradeUpdateBoardDTO): ResponseEntity<ResponseUnit> {
+    fun updateBoard(@RequestBody board: UpgradeUpdateBoardDTO,
+                    @RequestHeader("x-category") category: Int
+    ): ResponseEntity<ResponseUnit> {
         // 현재 로그인한 사용자 정보 가져오기
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
@@ -243,6 +245,9 @@ class BoardController(
         }
         // 게시글 읽어오기
         boardService.updateBoard(board.toUpdateBoardDTO())
+        // 태그 수정하기
+        tagService.modifyTag(category, board.id, board.tags)
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 

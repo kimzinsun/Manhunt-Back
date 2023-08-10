@@ -1,7 +1,9 @@
 package com.tovelop.maphant.service
 
+import com.tovelop.maphant.dto.TagDTO
 import com.tovelop.maphant.mapper.TagMapper
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TagService(private val tagMapper: TagMapper) {
@@ -11,13 +13,24 @@ class TagService(private val tagMapper: TagMapper) {
         }
     }
 
-    fun deleteTag(boardId: Int, tagId: Int):Boolean{
-        return tagMapper.deleteTag(boardId, tagId)
+    fun deleteTag(boardId: Int, tagId: Int){
+        if(tagMapper.getTagExistenceInBoard(boardId, tagId)>0){
+            return tagMapper.deleteTag(boardId, tagId)
+        }
     }
 
-    fun modifyTag(categoryId: Int, boardId: Int, tagId: Int, tagName: String){
-        if(tagMapper.getTagExistenceInBoard(boardId, tagId)==0){
-            tagMapper.insertTag(categoryId, boardId, tagName.replace("[^\\p{L}\\p{N}_]".toRegex(), ""))
+    @Transactional
+    fun modifyTag(categoryId: Int, boardId: Int, newTags:List<String>){
+        val tags = tagMapper.getTagListByBoardId(boardId)
+
+        tags.forEach{tag -> tagMapper.minusTagCnt(tag.id)}
+        tagMapper.deleteBoardTag(boardId)
+
+        newTags.forEach{
+            newTag ->
+                tagMapper.insertTag(categoryId, boardId, newTag)
+                val tagId = tagMapper.getTagId(newTag)
+                tagMapper.insertBoardTag(boardId,tagId)
         }
     }
 
@@ -26,10 +39,12 @@ class TagService(private val tagMapper: TagMapper) {
     fun getTagByName(name: String) = tagMapper.getTagByName(name.replace("[^\\p{L}\\p{N}_]".toRegex(), ""))
 
     fun getTagList() = tagMapper.getTagList()
-    
+
+    @Transactional
     fun deleteTagCnt(boardId: Int){
         val tags = tagMapper.getTagListByBoardId(boardId)
 
-        tags.forEach{tag -> tagMapper.deleteTagCnt(tag.id)}
+        tagMapper.deleteBoardTag(boardId)
+        tags.forEach{tag -> tagMapper.minusTagCnt(tag.id)}
     }
 }
