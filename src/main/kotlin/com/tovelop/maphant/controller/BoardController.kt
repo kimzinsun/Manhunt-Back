@@ -56,7 +56,7 @@ class BoardController(
             .body(Response.success(boardService.findHotBoardList(userId, category, boardTypeId, pagingDto)))
     }
 
-    data class BoardListInfo(val name: String, val list: List<UpgradePageBoardDTO>)
+    data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
 
     @GetMapping("")
     fun readBoardList(
@@ -137,7 +137,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    data class BoardInfo(val board: UpgradeExtBoardDTO, val answerList: List<BoardDTO>?)
+    data class BoardInfo(val board: ExtBoardDTO, val answerList: List<BoardDTO>?)
 
     @GetMapping("/{boardId}")
     fun readBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {

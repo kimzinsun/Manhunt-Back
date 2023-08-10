@@ -14,28 +14,15 @@ data class PageBoardDTO(
     val isAnonymous: Int,
     val isHide: Int,
     var isLike: Boolean,
-    val imagesUrl: String? = null,
+    private val imagesUrlString: String? = null,
     private val tagStrings: String?
 ) {
+    val imagesUrl: List<String>
+        get() = imagesUrlString?.split(",") ?: listOf()
+
     val tags: List<String>
         get() = tagStrings?.split(",") ?: listOf()
 
-    fun toUpgradePageBoardDTO(): UpgradePageBoardDTO {
-        return UpgradePageBoardDTO(
-            boardId = boardId,
-            title = title,
-            createdAt = createdAt,
-            modifiedAt = modifiedAt,
-            userNickname = userNickname,
-            commentCnt = commentCnt,
-            likeCnt = likeCnt,
-            isAnonymous = isAnonymous,
-            isHide = isHide,
-            isLike = isLike,
-            imagesUrl = imagesUrl?.split(","),
-            tags = tags
-        )
-    }
 }
 
 data class UpgradePageBoardDTO(
