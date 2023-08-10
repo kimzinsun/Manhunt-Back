@@ -22,6 +22,16 @@ class PollController(val pollService: PollService) {
         return pollService.createPoll(poll)
     }
 
+    @PostMapping("/close/{poll_id}")
+    fun closePollByPollId(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
+        return pollService.closePollByPollId(pollId)
+    }
+
+    @PostMapping("/close/board/{board_id}")
+    fun closePollByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
+        return pollService.closePollByBoardId(boardId)
+    }
+
     @DeleteMapping("/{poll_id}")
     fun deletePollByPollId(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
         return pollService.deletePollByPollId(pollId)
@@ -36,7 +46,7 @@ class PollController(val pollService: PollService) {
     fun selectOption(@PathVariable("poll_id") pollId: Int, @RequestBody pollOption: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
 
-        val optionResult = pollService.increaseOptionCount(auth.getUserId()!!, pollId, pollOption)
+        val optionResult = pollService.increaseOptionCount(auth.getUserId(), pollId, pollOption)
 
         if (!optionResult) {
             return ResponseEntity.badRequest().body(
@@ -52,12 +62,8 @@ class PollController(val pollService: PollService) {
     fun pollInfo(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val optionList = pollService.getPollByPollId(pollId, auth.getUserId())
-
-        if (optionList.isFailure) {
-            return ResponseEntity.badRequest().body(
-                Response.error<Any>(optionList.exceptionOrNull()!!)
-            )
-        }
+        if (optionList.getOrNull() == null)
+            return ResponseEntity.badRequest().body(Response.error<Any>("삭제 됐거나 없는 투표입니다."))
         return ResponseEntity.ok().body(Response.success(optionList.getOrNull()))
     }
 
@@ -66,12 +72,8 @@ class PollController(val pollService: PollService) {
     fun pollInfoByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val optionList = pollService.getPollByBoardId(boardId, auth.getUserId())
-
-        if(optionList.isFailure) {
-            return ResponseEntity.badRequest().body(
-                Response.error<Any>(optionList.exceptionOrNull()!!)
-            )
-        }
+        if (optionList.getOrNull() == null)
+            return ResponseEntity.badRequest().body(Response.error<Any>("삭제 됐거나 없는 투표입니다."))
         return ResponseEntity.ok().body(Response.success(optionList.getOrNull()))
     }
 }

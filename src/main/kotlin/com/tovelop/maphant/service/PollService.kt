@@ -75,4 +75,20 @@ class PollService(val pollMapper: PollMapper) {
         }
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
+
+    fun closePollByBoardId(boardId: Int): ResponseEntity<Any> {
+        val closedPollCount = pollMapper.closePollByBoardId(boardId)
+        if(closedPollCount == 0) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않거나 마감된 투표입니다."))
+        }
+        return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
+
+    fun closePollByPollId(pollId: Int): ResponseEntity<Any> {
+        val closedPollCount = pollMapper.closePollByPollId(pollId)
+        if(closedPollCount == 0) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("존재하지 않거나 마감된 투표입니다."))
+        }
+        return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
 }
