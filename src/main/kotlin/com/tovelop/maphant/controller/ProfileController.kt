@@ -27,10 +27,10 @@ class ProfileController(
 ) {
 
     @GetMapping
-    fun getProfile(@RequestParam targetUserId: Int): ResponseEntity<Response<ProfileNicknameAndBodyAndImageDto>> {
+    fun getProfile(@RequestParam targetUserId: Int?): ResponseEntity<Response<ProfileNicknameAndBodyAndImageDto>> {
         val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
         return ResponseEntity.ok()
-            .body(Response.success(profileService.getNicknameAndBodyAndImage(userId, targetUserId)));
+            .body(Response.success(profileService.getNicknameAndBodyAndImage(targetUserId ?: userId)));
     }
 
     @PatchMapping
@@ -56,20 +56,20 @@ class ProfileController(
     @GetMapping("/comment")
     fun getCommentList(
         @ModelAttribute @Valid pagingDto: PagingDto,
-        @RequestParam targetUserId: Int
+        @RequestParam targetUserId: Int?
     ): ResponseEntity<Response<PagingResponse<CommentExtDTO>>> {
         val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
         return ResponseEntity.ok()
-            .body(Response.success(profileService.getCommentList(userId, targetUserId, pagingDto)));
+            .body(Response.success(profileService.getCommentList(userId, targetUserId ?: userId, pagingDto)));
     }
 
     @GetMapping("/board")
     fun getBoardList(
         @ModelAttribute @Valid pagingDto: PagingDto,
-        @RequestParam targetUserId: Int
+        @RequestParam targetUserId: Int?
     ): ResponseEntity<Response<PagingResponse<BoardResDto>>> {
         val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
         return ResponseEntity.ok()
-            .body(Response.success(profileService.getBoardsList(userId, targetUserId, pagingDto)));
+            .body(Response.success(profileService.getBoardsList(userId, targetUserId ?: userId, pagingDto)));
     }
 }
