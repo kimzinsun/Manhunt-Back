@@ -11,7 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
 
 @Service
-class PollService(val pollMapper: PollMapper, @Autowired val sqlSession: SqlSession) {
+class PollService(val pollMapper: PollMapper) {
 
     fun increaseOptionCount(userId: Int, pollId: Int, pollOption: Int): Boolean {
         try {
@@ -61,6 +61,18 @@ class PollService(val pollMapper: PollMapper, @Autowired val sqlSession: SqlSess
     }
 
     fun deletePollByBoardId(boardId: Int): ResponseEntity<Any> {
+        val deletedPollCount = pollMapper.deletePollByBoardId(boardId)
+        if(deletedPollCount == 0) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("투표가 존재하지 않습니다."))
+        }
+        return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
+
+    fun deletePollByPollId(pollId: Int): ResponseEntity<Any> {
+        val deletedPollCount = pollMapper.deletePollByPollId(pollId)
+        if(deletedPollCount == 0) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("투표가 존재하지 않습니다."))
+        }
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 }
