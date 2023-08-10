@@ -25,7 +25,8 @@ data class ExtBoardDTO(
     private val imagesUrlString: String?,
     val isLike: Boolean,
     val isMyBoard: Boolean,
-    var tags: List<ReqTagDTO>
+    var tags: List<ReqTagDTO>,
+    var pollInfo: PollInfoDTO?
 ) {
     val imagesUrl: List<String>
         get() = imagesUrlString?.split(",") ?: listOf()
@@ -51,7 +52,7 @@ data class ExtBoardDTO(
         isLike: Boolean,
         isMyBoard: Boolean,
     ): this(
-        id, userId, parentId, categoryId, userNickname, typeId, title, body, state, isHide, isComplete, isAnonymous, createdAt, modifiedAt, commentCnt, likeCnt, reportCnt, imagesUrl, isLike, isMyBoard, listOf()
+        id, userId, parentId, categoryId, userNickname, typeId, title, body, state, isHide, isComplete, isAnonymous, createdAt, modifiedAt, commentCnt, likeCnt, reportCnt, imagesUrl, isLike, isMyBoard, listOf(),null
     )
 }
 
