@@ -35,4 +35,10 @@ class BoardNoticeController(@Autowired val boardNoticeService: BoardNoticeServic
         }
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
+
+    @DeleteMapping("/{noticeId}")
+    fun deleteNotice(@PathVariable("noticeId") noticeId: Int): ResponseEntity<Any> {
+        boardNoticeService.deleteNotice(noticeId)
+        return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
 }
