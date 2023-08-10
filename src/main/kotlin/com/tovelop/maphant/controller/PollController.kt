@@ -22,6 +22,16 @@ class PollController(val pollService: PollService) {
         return pollService.createPoll(poll)
     }
 
+    @PostMapping("/close/{poll_id}")
+    fun closePollByPollId(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
+        return pollService.closePollByPollId(pollId)
+    }
+
+    @PostMapping("/close/board/{board_id}")
+    fun closePollByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
+        return pollService.closePollByBoardId(boardId)
+    }
+
     @DeleteMapping("/{poll_id}")
     fun deletePollByPollId(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
         return pollService.deletePollByPollId(pollId)

@@ -134,4 +134,12 @@
     <update id="deletePollByPollId">
         update poll set state = 2 where id = #{pollId} and (state = 0 or state = 1);
     </update>
+
+    <update id="closePollByBoardId">
+        update poll set state = 1 where board_id = #{boardId} and state = 0;
+    </update>
+
+    <update id="closePollByPollId">
+        update poll set state = 1 where id = #{boardId} and state = 0;
+    </update>
 </mapper>
