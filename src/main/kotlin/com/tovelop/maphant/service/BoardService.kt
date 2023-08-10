@@ -12,7 +12,10 @@ import java.util.Random
 
 
 @Service
-class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private val redisService: RedisService, @Autowired private val tagMapper: TagMapper) {
+class BoardService(@Autowired val boardMapper: BoardMapper,
+                   @Autowired private val redisService: RedisService,
+                   @Autowired private val tagMapper: TagMapper,
+                   @Autowired private val pollService: PollService) {
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
         return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
     }
@@ -37,6 +40,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private v
     fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
         val board = boardMapper.findBoardById(userId,boardId)
         board?.tags = tagMapper.findBoardTags(boardId)
+        board?.pollInfo = pollService.getPollByBoardId(boardId,userId).getOrNull()
         return board
     }
 
