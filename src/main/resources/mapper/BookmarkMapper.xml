@@ -14,4 +14,11 @@
                  JOIN board on board.id = ub.board_id
         WHERE ub.user_id = #{userId}
     </select>
+
+    <delete id="deleteBoardById">
+        DELETE
+        FROM user_bookmark as ub
+        WHERE ub.user_id = #{userId}
+          and ub.board_id = #{boardId}
+    </delete>
 </mapper>

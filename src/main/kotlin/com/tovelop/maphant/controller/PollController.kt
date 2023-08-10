@@ -42,9 +42,23 @@ class PollController(val pollService: PollService) {
     @ResponseBody
     fun pollInfo(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        val optionList = pollService.getPoll(pollId, auth.getUserId())
+        val optionList = pollService.getPollByPollId(pollId, auth.getUserId())
 
         if (optionList.isFailure) {
+            return ResponseEntity.badRequest().body(
+                Response.error<Any>(optionList.exceptionOrNull()!!)
+            )
+        }
+        return ResponseEntity.ok().body(Response.success(optionList.getOrNull()))
+    }
+
+    @GetMapping("/board/{board_id}")
+    @ResponseBody
+    fun pollInfoByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val optionList = pollService.getPollByBoardId(boardId, auth.getUserId())
+
+        if(optionList.isFailure) {
             return ResponseEntity.badRequest().body(
                 Response.error<Any>(optionList.exceptionOrNull()!!)
             )
