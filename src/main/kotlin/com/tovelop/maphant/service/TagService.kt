@@ -28,8 +28,8 @@ class TagService(private val tagMapper: TagMapper) {
 
         newTags.forEach{
             newTag ->
-                tagMapper.insertTag(categoryId, boardId, newTag)
-                val tagId = tagMapper.getTagId(newTag)
+                tagMapper.insertTag(categoryId, boardId, newTag.replace("[^\\p{L}\\p{N}_]".toRegex(), ""))
+                val tagId = tagMapper.getTagId(newTag.replace("[^\\p{L}\\p{N}_]".toRegex(), ""))
                 tagMapper.insertBoardTag(boardId,tagId)
         }
     }
