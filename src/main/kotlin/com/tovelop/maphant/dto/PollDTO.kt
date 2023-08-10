@@ -7,6 +7,6 @@ data class PollDTO(
     val boardId: Int,
     val title: String,
     val options: List<String>,
-    val expireDateTime: LocalDateTime?,
-    var state: Char = 't'
+    val expireDateTime: LocalDateTime? = LocalDateTime.now(),
+    var state: Int = 0
 )

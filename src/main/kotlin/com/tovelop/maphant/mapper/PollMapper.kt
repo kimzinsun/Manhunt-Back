@@ -32,4 +32,5 @@ interface PollMapper {
 
     fun isPollOption(pollId: Int, pollOptionId: Int): Int
 
+    fun isExistencePollByBoardId(boardId: Int): Int
 }

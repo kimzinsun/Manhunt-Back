@@ -3,11 +3,15 @@ package com.tovelop.maphant.service
 import com.tovelop.maphant.dto.PollDTO
 import com.tovelop.maphant.dto.PollInfoDTO
 import com.tovelop.maphant.mapper.PollMapper
+import com.tovelop.maphant.type.response.Response
+import org.apache.ibatis.session.SqlSession
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
 
 @Service
-class PollService(val pollMapper: PollMapper) {
+class PollService(val pollMapper: PollMapper, @Autowired val sqlSession: SqlSession) {
 
     fun increaseOptionCount(userId: Int, pollId: Int, pollOption: Int): Boolean {
         try {
@@ -26,16 +30,13 @@ class PollService(val pollMapper: PollMapper) {
         return true
     }
 
-    fun createPoll(poll: PollDTO) {
-        try {
+    fun createPoll(poll: PollDTO): ResponseEntity<Any> {
+        if(!isExistencePollByBoardId(poll.boardId)) {
             pollMapper.insertPoll(poll)
-            poll.options.forEach { pollMapper.insertPollOption(poll.id!!, it) }
-        } catch (e: Exception) {
-            if (e.cause is java.sql.SQLIntegrityConstraintViolationException) {
-                throw BadCredentialsException("이미 투표가 생성되어 있습니다.")
-            } else {
-                e.printStackTrace()
-            }
+            poll.options.forEach { pollMapper.insertPollOption(poll.id!!, it)}
+            return ResponseEntity.ok().body(Response.stateOnly(true))
+        } else {
+            return ResponseEntity.badRequest().body(Response.error<Any>("투표가 이미 존재합니다."))
         }
     }
 
@@ -53,5 +54,13 @@ class PollService(val pollMapper: PollMapper) {
 
     fun isPollOption(pollId: Int, pollOptionId: Int): Boolean {
         return Result.runCatching { pollMapper.isPollOption(pollId, pollOptionId) }.isSuccess
+    }
+
+    fun isExistencePollByBoardId(boardId: Int): Boolean {
+        return Result.runCatching { pollMapper.isExistencePollByBoardId(boardId) }.isSuccess
+    }
+
+    fun deletePollByBoardId(boardId: Int): ResponseEntity<Any> {
+        return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 }
