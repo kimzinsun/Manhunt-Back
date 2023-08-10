@@ -23,12 +23,17 @@ class TagService(private val tagMapper: TagMapper) {
     fun modifyTag(categoryId: Int, boardId: Int, newTags:List<String>){
         val tags = tagMapper.getTagListByBoardId(boardId)
 
-        tags.forEach{tag -> tagMapper.minusTagCnt(tag.id)}
+        tags.forEach{tag ->
+            if(tagMapper.getTagCnt(tag.id)>0) {
+                tagMapper.minusTagCnt(tag.id)
+            }
+        }
         tagMapper.deleteBoardTag(boardId)
 
         newTags.forEach{
             newTag ->
                 tagMapper.insertTag(categoryId, boardId, newTag.replace("[^\\p{L}\\p{N}_]".toRegex(), ""))
+
                 val tagId = tagMapper.getTagId(newTag.replace("[^\\p{L}\\p{N}_]".toRegex(), ""))
                 tagMapper.insertBoardTag(boardId,tagId)
         }
@@ -45,6 +50,10 @@ class TagService(private val tagMapper: TagMapper) {
         val tags = tagMapper.getTagListByBoardId(boardId)
 
         tagMapper.deleteBoardTag(boardId)
-        tags.forEach{tag -> tagMapper.minusTagCnt(tag.id)}
+        tags.forEach{tag ->
+            if(tagMapper.getTagCnt(tag.id)>0) {
+                tagMapper.minusTagCnt(tag.id)
+            }
+        }
     }
 }
