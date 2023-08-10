@@ -27,7 +27,7 @@
               order by count(*) desc
                   limit #{reportSize} offset 0) as board_ids
                  join board on board_id = board.id and board.state != 2
-                 join user board_user on board.user_id = board_user.id
+                 join user board_useUserReportDTOr on board.user_id = board_user.id
     </select>
     <select id="findBoardReportBySortType" resultType="AdminBoardReportDTO">
     </select>
@@ -158,5 +158,16 @@
         select id, board_id boardId, body, report_cnt reportCnt
         from comment
         where user_id = #{userId} and state = 2
+    </select>
+    <select id="findReportByUserId" resultType="Boolean">
+        SELECT IF(EXISTS (SELECT * FROM user_report WHERE user_id = #{userId}), 1, 0)
+    </select>
+    <select id="findReportInfoByUserId" resultType="UserReportDTO">
+        SELECT user_report.id AS id,
+               user_report.user_id AS userId,
+               user_report.deadline_at AS deadlineAt,
+               user_report.sanction_reason AS sanctionReason
+        from user_report
+        where user_id = #{userId}
     </select>
 </mapper>
