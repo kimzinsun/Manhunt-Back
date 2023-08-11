@@ -24,37 +24,31 @@ class ProfileService(
     private val commentMapper: CommentMapper
 ) {
     //프로필 이미지의 Dto 불러오기
-    fun getNicknameAndBodyAndImage(userId: Int, targetUserId: Int): ProfileNicknameAndBodyAndImageDto {
+    fun getNicknameAndBodyAndImage(targetUserId: Int): ProfileNicknameAndBodyAndImageDto {
         return profileMapper.findNicknameAndBodyAndImageById(targetUserId)
+
     }
 
     //유저가 작성한 댓글 목록 불러오기
     fun getCommentList(userId: Int, targetUserId: Int, params: PagingDto): PagingResponse<CommentExtDTO> {
         var count = profileMapper.cntComment(targetUserId)
-
         if (userId != targetUserId) {
             count -= profileMapper.cntAnonymousComment(targetUserId)
         }
-
         if (count < 1) {
             return PagingResponse(Collections.emptyList(), null)
         }
-
         val pagination = Pagination(count, params)
         val comments = commentMapper.findAllCommentByUser(userId, targetUserId, params)
-
-
         return PagingResponse(comments, pagination)
     }
 
     //유저가 작성한 글 목록 불러오기
     fun getBoardsList(userId: Int, targetUserId: Int, params: PagingDto): PagingResponse<BoardResDto> {
-        //getBoardCount xml 구현
+//        getBoardCount xml 구현
         var count = profileMapper.cntBoard(targetUserId);
-        println(count)
         if (userId != targetUserId) {
             count -= profileMapper.cntAnonymousAndHideBoard(targetUserId)
-            println(count)
         }
 
         if (count < 1) {
