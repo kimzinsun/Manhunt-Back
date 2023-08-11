@@ -69,7 +69,7 @@ class CommentController(
 
 
     @PostMapping("/insert")
-    fun insertComment(@RequestBody commentDTO: CommentDTO): ResponseEntity<ResponseUnit> {
+    fun insertComment(@RequestBody commentDTO: setCommentDTO): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val userId = auth.getUserId()
         if (commentDTO.body.isBlank()) {
@@ -83,7 +83,7 @@ class CommentController(
         } else {
             rateLimitingService.requestCheck(userId, "WRITE_COMMENT")
         }
-        commentService.insertComment(commentDTO)
+        commentService.insertComment(commentDTO.toCommentDTO(userId))
         fcmService.send(
             FcmMessageDTO(
                 commentService.getBoardUserId(commentDTO.board_id),

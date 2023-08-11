@@ -14,6 +14,31 @@ data class CommentDTO(
     val state: Int,
 )
 
+data class setCommentDTO(
+    val id: Int,
+    val board_id: Int,
+    val body: String,
+    val is_anonymous: Boolean,
+    val created_at: LocalDateTime?,
+    val modified_at: LocalDateTime?,
+    val like_cnt: Int,
+    val state: Int,
+) {
+    fun toCommentDTO(user_id: Int): CommentDTO {
+        return CommentDTO(
+            id = id,
+            user_id = user_id,
+            board_id = board_id,
+            body = body,
+            is_anonymous = is_anonymous,
+            created_at = created_at,
+            modified_at = modified_at,
+            like_cnt = like_cnt,
+            state = state,
+        )
+    }
+}
+
 data class CommentExtDTO(
     val id: Int,
     val user_id: Int,
