@@ -180,6 +180,10 @@ class BoardController(
             return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
         }
         boardService.deleteBoard(boardId)
+
+        //게시물에 있었던 각 태그들의 갯수를 1씩 감소시킴
+        tagService.deleteTagCnt(boardId)
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -217,7 +221,9 @@ class BoardController(
     }
 
     @PutMapping("/update")
-    fun updateBoard(@RequestBody board: UpgradeUpdateBoardDTO): ResponseEntity<ResponseUnit> {
+    fun updateBoard(@RequestBody board: UpgradeUpdateBoardDTO,
+                    @RequestHeader("x-category") category: Int
+    ): ResponseEntity<ResponseUnit> {
         // 현재 로그인한 사용자 정보 가져오기
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
@@ -239,6 +245,9 @@ class BoardController(
         }
         // 게시글 읽어오기
         boardService.updateBoard(board.toUpdateBoardDTO())
+        // 태그 수정하기
+        tagService.modifyTag(category, board.id, board.tags)
+
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
