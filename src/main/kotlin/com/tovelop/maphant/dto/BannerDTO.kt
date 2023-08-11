@@ -5,5 +5,7 @@ data class BannerDTO(
     val title: String,
     val company: String,
     val imagesUrl: String,
-    val url: String
+    val url: String,
+    val frequency: Int,
+    val pay: Int
 )

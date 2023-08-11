@@ -36,4 +36,18 @@
         set url = #{url}
         where banner_id = #{bannerId}
     </update>
+    <update id="updateFrequency">
+        update banner
+        set frequency = #{frequency}
+        where id = #{bannerId}
+    </update>
+    <select id="sumAllPay" resultType="Int">
+        select sum(pay)
+        from banner
+    </select>
+    <select id="findPayByBannerId" resultType="Int">
+        select pay
+        from banner
+        where id = #{bannerId}
+    </select>
 </mapper>

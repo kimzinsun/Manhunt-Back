@@ -15,4 +15,7 @@ interface BannerMapper{
 
     fun updateImagesUrlByBannerId(bannerId: Int, imagesUrl: String)
     fun updateUrlByBannerId(bannerId: Int, url: String)
+    fun updateFrequency(bannerId: Int, frequency: Int)
+    fun sumAllPay(): Int
+    fun findPayByBannerId(bannerId: Int): Int
 }
