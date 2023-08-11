@@ -246,7 +246,7 @@ class BoardController(
         // 게시글 읽어오기
         boardService.updateBoard(board.toUpdateBoardDTO())
         // 태그 수정하기
-        tagService.modifyTag(category, board.id, board.tags)
+        if(!board.tags.isNullOrEmpty()) tagService.modifyTag(category, board.id, board.tags)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
