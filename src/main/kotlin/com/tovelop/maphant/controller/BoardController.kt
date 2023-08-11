@@ -137,7 +137,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    data class BoardInfo(val board: UpgradeExtBoardDTO, val answerList: List<BoardDTO>?)
+    data class BoardInfo(val board: UpgradeExtBoardDTO, val answerList: List<BoardDTO>?, val isMyArticle: Boolean)
 
     @GetMapping("/{boardId}")
     fun readBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
@@ -156,9 +156,9 @@ class BoardController(
         }
         if (board.typeId == 2 && board.parentId == null) {
             val answerList = boardService.findAnswerBoardListByParentBoardId(board.id!!)
-            return ResponseEntity.ok(Response.success(BoardInfo(board, answerList)))
+            return ResponseEntity.ok(Response.success(BoardInfo(board, answerList, auth.getUserId() == board.userId)))
         }
-        return ResponseEntity.ok(Response.success(BoardInfo(board, null)))
+        return ResponseEntity.ok(Response.success(BoardInfo(board, null, auth.getUserId() == board.userId)))
     }
 
     @DeleteMapping("/{boardId}")

@@ -28,10 +28,12 @@ import org.springframework.web.bind.annotation.RestController
 class AdminPageController(@Autowired val adminPageService: AdminPageService) {
     @GetMapping("/")
     fun listBoardReport(model: Model, @RequestParam sortType: String?): String {
-        val findBoardReport = adminPageService.findBoardReport(sortType?:"reportedAt", 10)
-        val findCommentReport = adminPageService.findCommentReport(sortType?:"reportedAt", 10)
+        val findBoardReport = adminPageService.findBoardReport(sortType?:"reportedAt", 5)
+        val findCommentReport = adminPageService.findCommentReport(sortType?:"reportedAt", 5)
+        val findUserList = adminPageService.findAllUserSanction()
         model.addAttribute("boardReport", findBoardReport)
         model.addAttribute("commentReport", findCommentReport)
+        model.addAttribute("userSanction", findUserList)
         return "admin_index_page"
     }
     @GetMapping("/reportInfo/board")
@@ -56,21 +58,31 @@ class AdminPageController(@Autowired val adminPageService: AdminPageService) {
     }
     @PostMapping("/sanction/user")
     fun sanctionUser(@RequestBody userReportDTO: UserReportDTO): ResponseEntity<ResponseUnit> {
+        if(adminPageService.findReportByUserId(userReportDTO.userId)) {
+            return ResponseEntity.ok(Response.stateOnly(false))
+        }
+        //유저를 정지 상태(2)로 변경
         //정지할 유저가 작성한 모든 글, 댓글을 임시 블락 상태(3)으로 변경
         adminPageService.updateBoardBlockByUserId(userReportDTO.userId)
         adminPageService.updateCommentBlockByUserId(userReportDTO.userId)
         //유저 제재 내역 테이블에 삽입
         adminPageService.insertUserReport(userReportDTO)
-        //유저를 정지 상태(2)로 변경
         adminPageService.updateUserState(userReportDTO.userId, 2)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-    @ResponseBody
-    fun listBoardReport() /*: ResponseEntity<Response<List<BoardReportDTO>>>*/ {
-        // 검색 후 비어있으면 비어있다고 에러처리
-        // 아니면 보드리포트DTO 리스트 반환
+    @PostMapping("/unSanction/user")
+    fun unSanctionUser(@RequestParam userId: Int): ResponseEntity<ResponseUnit> {
+        //유저 제재 내역 테이블에서 삭제
+        adminPageService.deleteRecentUserReportByUserId(userId)
+        //유저를 정상 상태(1)로 변경
+        adminPageService.updateUserState(userId, 1)
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
-
+    @GetMapping("/reportInfo/user")
+    fun userReportInfo(@RequestParam userId: Int): ResponseEntity<Response<List<UserReportDTO>>> {
+        val findUserReportInfo = adminPageService.findReportInfoByUserId(userId)
+        return ResponseEntity.ok().body(Response.success(findUserReportInfo))
+    }
     @GetMapping("/login")
     fun loginPage(): String {
         return "admin_login_page"

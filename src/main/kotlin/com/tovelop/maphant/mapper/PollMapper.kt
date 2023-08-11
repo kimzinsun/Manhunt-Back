@@ -32,4 +32,13 @@ interface PollMapper {
 
     fun isPollOption(pollId: Int, pollOptionId: Int): Int
 
+    fun isExistencePollByBoardId(boardId: Int): Int
+
+    fun deletePollByBoardId(boardId: Int): Int
+
+    fun deletePollByPollId(pollId: Int): Int
+
+    fun closePollByBoardId(boardId: Int): Int
+
+    fun closePollByPollId(pollId: Int): Int
 }
