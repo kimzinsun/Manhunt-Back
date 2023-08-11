@@ -14,9 +14,6 @@ import javax.xml.stream.events.Comment
 
 @Service
 class CommentService(val commentMapper: CommentMapper) {
-    fun findAllComment(boardId: Int, userId: Int, params: PagingDto) =
-        commentMapper.findAllComment(boardId, userId, params)
-
     fun getCommentList(boardId: Int, userId: Int, params: PagingDto): PagingResponse<CommentExtDTO> {
         val count = commentMapper.getCommentCount(boardId)
         if (count < 1) {
