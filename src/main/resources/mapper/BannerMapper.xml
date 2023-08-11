@@ -21,4 +21,19 @@
         from banner
         where company like '%#{company}%'
     </select>
+    <update id="updateTitleByBannerId">
+        update banner
+        set title = #{title}
+        where banner_id = #{bannerId}
+    </update>
+    <update id="updateImagesUrlByBannerId">
+        update banner
+        set images_url = #{imagesUrl}
+        where banner_id = #{bannerId}
+    </update>
+    <update id="updateUrlByBannerId">
+        update banner
+        set url = #{url}
+        where banner_id = #{bannerId}
+    </update>
 </mapper>

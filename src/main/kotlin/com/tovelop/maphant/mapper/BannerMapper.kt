@@ -11,5 +11,8 @@ interface BannerMapper{
     fun deleteBanner(bannerId: Int)
     fun findBannerByBannerId(bannerId: Int): BannerDTO
     fun findBannerByCompany(company: String): List<BannerDTO>
+    fun updateTitleByBannerId(bannerId: Int, title: String)
 
+    fun updateImagesUrlByBannerId(bannerId: Int, imagesUrl: String)
+    fun updateUrlByBannerId(bannerId: Int, url: String)
 }

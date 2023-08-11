@@ -12,11 +12,19 @@ class BannerService(@Autowired val bannerService: BannerService) {
     fun deleteBanner(bannerId: Int) {
         bannerService.deleteBanner(bannerId)
     }
-    fun findBannerByBannerId(bannerId: Int) {
-
+    fun findBannerByBannerId(bannerId: Int): BannerDTO {
+        return bannerService.findBannerByBannerId(bannerId)
     }
-    fun findBannerByCompany(company: String) {
-
+    fun findBannerByCompany(company: String):List<BannerDTO> {
+        return bannerService.findBannerByCompany(company)
     }
-
+    fun updateTitleByBannerId(bannerId: Int, title: String) {
+        bannerService.updateTitleByBannerId(bannerId, title)
+    }
+    fun updateImagesUrlByBannerId(bannerId: Int, imagesUrl: String) {
+        bannerService.updateImagesUrlByBannerId(bannerId, imagesUrl)
+    }
+    fun updateUrlByBannerId(bannerId: Int, url: String) {
+        bannerService.updateUrlByBannerId(bannerId, url)
+    }
 }
