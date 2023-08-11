@@ -39,7 +39,7 @@ class CommentController(
     fun findAllComment(
         @ModelAttribute pagingDto: PagingDto,
         @PathVariable boardId: Int,
-    ): ResponseEntity<Response<List<FormatTimeDTO>>> {
+    ): ResponseEntity<Response<PagingResponse<FormatTimeDTO>>> {
         val auth = SecurityContextHolder.getContext().authentication
 
         if (auth is AnonymousAuthenticationToken) {
@@ -55,7 +55,6 @@ class CommentController(
 
         val commentTime = comment.list.map {
             if (it.is_anonymous) {
-//                it.user_id = 0
                 it.nickname = "익명"
             }
             if (it.modified_at == null) {
@@ -64,8 +63,10 @@ class CommentController(
                 it.timeFormat(it, it.modified_at.formatTime() + "(수정됨)")
             }
         }
-        return ResponseEntity.ok().body(Response.success(commentTime))
+        val pagingResponse = PagingResponse(commentTime, comment.pagination)
+        return ResponseEntity.ok().body(Response.success(pagingResponse))
     }
+
 
     @PostMapping("/insert")
     fun insertComment(@RequestBody commentDTO: CommentDTO): ResponseEntity<ResponseUnit> {

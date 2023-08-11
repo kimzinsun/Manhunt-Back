@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 data class PageBoardDTO(
     val boardId: Int,
     val title: String,
+    val body: String,
     val createdAt: LocalDateTime,
     val modifiedAt: LocalDateTime?,
     val userNickname: String,
@@ -12,37 +13,17 @@ data class PageBoardDTO(
     val likeCnt: Int,
     val isAnonymous: Int,
     val isHide: Int,
-    val isLike: Int?,
-    val imagesUrl: String? = null
-
+    var isLike: Boolean,
+    private val imagesUrlString: String? = null,
+    private val tagStrings: String?
 ) {
-    fun toUpgradePageBoardDTO(): UpgradePageBoardDTO {
-        return UpgradePageBoardDTO(
-            boardId = boardId,
-            title = title,
-            createdAt = createdAt,
-            modifiedAt = modifiedAt,
-            userNickname = userNickname,
-            commentCnt = commentCnt,
-            likeCnt = likeCnt,
-            isAnonymous = isAnonymous,
-            isHide = isHide,
-            isLike = isLike,
-            imagesUrl = imagesUrl?.split(",")
-        )
-    }
+
+    val imagesUrl: List<String>
+        get() = imagesUrlString?.split(",") ?: listOf()
+
+    val tags: List<String>
+        get() = tagStrings?.split(",") ?: listOf()
+
 }
 
-data class UpgradePageBoardDTO(
-    val boardId: Int,
-    val title: String,
-    val createdAt: LocalDateTime,
-    val modifiedAt: LocalDateTime?,
-    val userNickname: String,
-    val commentCnt: Int,
-    val likeCnt: Int,
-    val isAnonymous: Int,
-    val isHide: Int,
-    val isLike: Int?,
-    val imagesUrl: List<String>? = null
-)
+

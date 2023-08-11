@@ -119,7 +119,10 @@ class AdminPageService(
     fun findUserReportList(): List<UserDTO> {
         return adminPageMapper.findUserReportList(adminPageMapper.findBoardCommentSanctionCount().map { it.userId })
     }
-    fun findUserReportInfo(userId: Int): List<List<Any>> {
-        return adminPageMapper.findUserReportInfo()
+    fun findReportByUserId(userId: Int): Boolean {
+        return adminPageMapper.findReportByUserId(userId)
+    }
+    fun findReportInfoByUserId(userId: Int): List<UserReportDTO> {
+        return adminPageMapper.findReportInfoByUserId(userId)
     }
 }
