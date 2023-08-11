@@ -8,4 +8,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface BannerMapper{
     fun insertBanner(bannerDTO: BannerDTO)
+    fun deleteBanner(bannerId: Int)
+    fun findBannerByBannerId(bannerId: Int): BannerDTO
+    fun findBannerByCompany(company: String): List<BannerDTO>
+
 }
