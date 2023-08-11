@@ -8,6 +8,7 @@
                comment.user_id,
                user.nickname,
                comment.board_id,
+               board.title,
                comment.body,
                comment.is_anonymous,
                comment.created_at,
@@ -33,6 +34,7 @@
                    ELSE 'Anonymous'
                    END as nickname,
                comment.board_id,
+               board.title,
                CASE
                    WHEN ((#{userId} != #{targetUserId} AND comment.is_anonymous = 0) OR comment.user_id = #{userId})
                        THEN comment.body
@@ -44,6 +46,7 @@
                comment.like_cnt,
                IFNULL(comment_like.comment_id, 0)
         FROM comment
+                 Join board ON board.id = comment.board_id
                  INNER JOIN user ON user.id = comment.user_id
                  LEFT OUTER JOIN comment_like
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{targetUserId}

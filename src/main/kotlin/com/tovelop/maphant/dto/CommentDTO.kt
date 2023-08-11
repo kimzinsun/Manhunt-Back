@@ -19,6 +19,7 @@ data class CommentExtDTO(
     val user_id: Int,
     var nickname: String,
     val board_id: Int,
+    val board_title: String,
     val body: String,
     val is_anonymous: Boolean,
     val created_at: LocalDateTime,
