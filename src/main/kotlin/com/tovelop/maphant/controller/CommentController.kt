@@ -67,17 +67,27 @@ class CommentController(
     @PostMapping("/insert")
     fun insertComment(@RequestBody commentDTO: setCommentDTO): ResponseEntity<ResponseUnit> {
         val userId = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
+        if (rateLimitingService.isBanned(userId)) {
+            return ResponseEntity.badRequest().body(Response.error("차단된 사용자입니다."))
+        } else {
+            rateLimitingService.requestCheck(userId, "WRITE_COMMENT")
+        }
         if (commentDTO.body.isBlank()) {
             return ResponseEntity.badRequest().body(Response.error("댓글 내용을 입력해주세요."))
         }
         if (commentDTO.body.length > 255) {
             return ResponseEntity.badRequest().body(Response.error("댓글은 255자 이내로 작성해주세요."))
         }
-        if (rateLimitingService.isBanned(userId)) {
-            return ResponseEntity.badRequest().body(Response.error("차단된 사용자입니다."))
-        } else {
-            rateLimitingService.requestCheck(userId, "WRITE_COMMENT")
+
+        commentService.getCommentById(commentDTO.parent_id ?: 0)?.let {
+            if (it.state == 1) {
+                return ResponseEntity.badRequest().body(Response.error("삭제된 댓글입니다."))
+            }
+            if (it.state == 2 || it.state == 3) {
+                return ResponseEntity.badRequest().body(Response.error("차단된 댓글입니다."))
+            }
         }
+
         commentService.insertComment(commentDTO.toCommentDTO(userId))
         fcmService.send(
             FcmMessageDTO(
@@ -94,7 +104,7 @@ class CommentController(
     fun deleteComment(@PathVariable commentId: Int): ResponseEntity<ResponseUnit> {
         val current = commentService.getCommentById(commentId) ?: return ResponseEntity.badRequest()
             .body(Response.error("존재하지 않는 댓글입니다."))
-        
+
         val userId = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
         if (current.user_id != userId) {
             return ResponseEntity.badRequest().body(Response.error("댓글 작성자만 삭제할 수 있습니다."))
@@ -133,8 +143,13 @@ class CommentController(
     @PostMapping("/like")
     fun changeCommentLike(@RequestBody commentRequest: CommentRequest): ResponseEntity<Response<String>> {
         val userId = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
-        if (commentService.getCommentById(commentRequest.commentId) == null) {
-            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
+        val comment = commentService.getCommentById(commentRequest.commentId) ?: return ResponseEntity.badRequest()
+            .body(Response.error("존재하지 않는 댓글입니다."))
+        if (comment.state == 1) {
+            return ResponseEntity.badRequest().body(Response.error("삭제된 댓글입니다."))
+        }
+        if (comment.state == 2 || comment.state == 3) {
+            return ResponseEntity.badRequest().body(Response.error("차단된 댓글입니다."))
         }
         return if (commentService.findCommentLike(
                 userId,
@@ -172,8 +187,13 @@ class CommentController(
     @PostMapping("/report")
     fun insertCommentReport(@RequestBody commentRequest: CommentRequest): ResponseEntity<ResponseUnit> {
         val userId = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
-        if (commentService.getCommentById(commentRequest.commentId) == null) {
-            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
+        val comment = commentService.getCommentById(commentRequest.commentId) ?: return ResponseEntity.badRequest()
+            .body(Response.error("존재하지 않는 댓글입니다."))
+        if (comment.state == 1) {
+            return ResponseEntity.badRequest().body(Response.error("삭제된 댓글입니다."))
+        }
+        if (comment.state == 2 || comment.state == 3) {
+            return ResponseEntity.badRequest().body(Response.error("차단된 댓글입니다."))
         }
         if (commentService.findCommentReport(
                 commentRequest.commentId
