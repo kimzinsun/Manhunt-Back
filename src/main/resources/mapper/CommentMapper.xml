@@ -5,6 +5,7 @@
 <mapper namespace="com.tovelop.maphant.mapper.CommentMapper">
     <select id="findAllComment" resultType="CommentExtDTO">
         SELECT comment.id,
+               comment.parent_id,
                comment.user_id,
                user.nickname,
                comment.board_id,
@@ -28,6 +29,7 @@
     </select>
     <select id="findAllCommentByUser" resultType="CommentExtDTO">
         SELECT comment.id,
+               comment.parent_id,
                comment.user_id,
                CASE
                    WHEN comment.user_id = #{targetUserId} THEN user.nickname
