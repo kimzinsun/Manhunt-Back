@@ -46,11 +46,9 @@ class CommentController(
         val userId = (auth as TokenAuthToken).getUserId()
         val comment = commentService.getCommentList(boardId, userId, pagingDto)
 
-        if (boardId < 1 || comment.list.isEmpty()) {
-            return ResponseEntity.badRequest().body(Response.error("게시글을 찾을 수 없습니다."))
+        if (commentService.findBoard(boardId) == null) {
+            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 게시글입니다."))
         }
-
-
         val commentTime = comment.list.map {
             if (it.is_anonymous) {
                 it.nickname = "익명"
@@ -91,7 +89,7 @@ class CommentController(
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-   
+
     @DeleteMapping("/{commentId}")
     fun deleteComment(@PathVariable commentId: Int): ResponseEntity<ResponseUnit> {
         val current = commentService.getCommentById(commentId)!!
