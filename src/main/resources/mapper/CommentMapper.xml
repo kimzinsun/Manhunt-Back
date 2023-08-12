@@ -57,8 +57,8 @@
         OFFSET #{params.offset}
     </select>
     <insert id="insertComment">
-        INSERT INTO comment(board_id, user_id, body, created_at, is_anonymous)
-        VALUES (#{board_id}, #{user_id}, #{body}, NOW(), #{is_anonymous})
+        INSERT INTO comment(board_id, user_id, parent_id, body, created_at, is_anonymous)
+        VALUES (#{board_id}, #{user_id}, #{parent_id}, #{body}, NOW(), #{is_anonymous})
     </insert>
     <delete id="deleteComment">
         UPDATE comment
