@@ -10,10 +10,11 @@ import org.springframework.stereotype.Repository
 interface BoardMapper {
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int
     fun getCategoryIdByCategoryName(categoryName: String): Int
-    fun findBoardList(findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int): List<PageBoardDTO>
+    fun findBoardList(userId:Int,findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int): List<PageBoardDTO>
     fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int
     fun insertBoard(boardDTO: BoardDTO)
     fun findBoard(boardId: Int): BoardDTO?
+    fun findBoardById(userId: Int,boardId: Int): ExtBoardDTO?
     fun updateBoard(updateBoardDTO: UpdateBoardDTO)
     fun deleteBoard(boardId: Int)
     fun insertBoardLike(boardId: Int, userId: Int)
