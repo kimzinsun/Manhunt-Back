@@ -44,6 +44,7 @@ data class setCommentDTO(
 
 data class CommentExtDTO(
     val id: Int,
+    val parent_id: Int?,
     val user_id: Int,
     var nickname: String,
     val board_id: Int,
@@ -58,6 +59,7 @@ data class CommentExtDTO(
     fun timeFormat(comment: CommentExtDTO, time: String): FormatTimeDTO {
         return FormatTimeDTO(
             id = comment.id,
+            parent_id = comment.parent_id,
             user_id = comment.user_id,
             nickname = comment.nickname,
             board_id = comment.board_id,
@@ -102,6 +104,7 @@ data class UpdateCommentDTO(
 
 data class FormatTimeDTO(
     val id: Int,
+    val parent_id: Int?,
     val user_id: Int,
     val nickname: String,
     val board_id: Int,
