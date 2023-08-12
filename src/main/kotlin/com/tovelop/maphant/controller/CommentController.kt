@@ -91,27 +91,7 @@ class CommentController(
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
-    @PostMapping("/reply")
-    fun replyComment(@RequestBody replyDTO: ReplyDTO): ResponseEntity<ResponseUnit> {
-        SecurityContextHolder.getContext().authentication as TokenAuthToken
-        val rep = replyDTO.body
-        if (rep.isBlank()) {
-            return ResponseEntity.badRequest().body(Response.error("댓글 내용을 입력해주세요."))
-        }
-        if (rep.length > 255) {
-            return ResponseEntity.badRequest().body(Response.error("댓글은 255자 이내로 작성해주세요."))
-        }
-        commentService.insertReply(replyDTO)
-        fcmService.send(
-            FcmMessageDTO(
-                commentService.getBoardUserId(replyDTO.parent_id),
-                "댓글이 달렸습니다",
-                replyDTO.body
-            )
-        )
-        return ResponseEntity.ok().body(Response.stateOnly(true))
-    }
-
+   
     @DeleteMapping("/{commentId}")
     fun deleteComment(@PathVariable commentId: Int): ResponseEntity<ResponseUnit> {
         val current = commentService.getCommentById(commentId)!!
