@@ -4,6 +4,7 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.BoardService
+import com.tovelop.maphant.service.PollService
 import com.tovelop.maphant.service.RateLimitingService
 import com.tovelop.maphant.service.TagService
 import com.tovelop.maphant.type.paging.PagingDto
@@ -22,7 +23,8 @@ import org.springframework.web.bind.annotation.*
 class BoardController(
     @Autowired val boardService: BoardService,
     @Autowired val rateLimitingService: RateLimitingService,
-    @Autowired val tagService: TagService
+    @Autowired val tagService: TagService,
+    @Autowired val pollService: PollService
 ) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
@@ -221,8 +223,9 @@ class BoardController(
     }
 
     @PutMapping("/update")
-    fun updateBoard(@RequestBody board: UpgradeUpdateBoardDTO,
-                    @RequestHeader("x-category") category: Int
+    fun updateBoard(
+        @RequestBody board: UpgradeUpdateBoardDTO,
+        @RequestHeader("x-category") category: Int
     ): ResponseEntity<ResponseUnit> {
         // 현재 로그인한 사용자 정보 가져오기
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
@@ -246,7 +249,7 @@ class BoardController(
         // 게시글 읽어오기
         boardService.updateBoard(board.toUpdateBoardDTO())
         // 태그 수정하기
-        if(!board.tags.isNullOrEmpty()) tagService.modifyTag(category, board.id, board.tags)
+        if (!board.tags.isNullOrEmpty()) tagService.modifyTag(category, board.id, board.tags)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -311,6 +314,18 @@ class BoardController(
         boardService.completeBoard(questId, answerId, auth.getUserId())
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
+    }
+
+    @PostMapping("/poll")
+    fun createPoll(@RequestBody pollDTO: PollDTO): ResponseEntity<Any> {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        if (auth.isNotLogged()) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
+        }
+        if(auth.getUserId() != boardService.getUserIdByBoardId(pollDTO.boardId)){
+            return ResponseEntity.badRequest().body(Response.error<Any>("게시글 작성자만 투표를 열 수 있습니다."))
+        }
+        return pollService.createPoll(pollDTO)
     }
 }
 
