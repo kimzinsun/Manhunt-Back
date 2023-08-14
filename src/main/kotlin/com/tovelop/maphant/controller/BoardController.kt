@@ -313,46 +313,5 @@ class BoardController(
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-
-    @PostMapping("/poll/")
-    fun createPoll(@RequestBody pollDTO: PollDTO): ResponseEntity<Any> {
-        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        if (auth.isNotLogged()) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
-        }
-        if (auth.getUserId() != boardService.getUserIdByBoardId(pollDTO.boardId)) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("게시글 작성자만 투표를 열 수 있습니다."))
-        }
-        return pollService.createPoll(pollDTO)
-    }
-
-    @PostMapping("/poll/vote/")
-    fun vote(@RequestParam pollId: Int, @RequestParam pollOption: Int): ResponseEntity<Any> {
-        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        if (auth.isNotLogged()) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
-        }
-        return ResponseEntity.ok(
-            Response.stateOnly(
-                pollService.increaseOptionCount(
-                    auth.getUserId(), pollId, pollOption
-                )
-            )
-        )
-    }
-
-    @DeleteMapping("/poll/")
-    fun deletePoll(@RequestParam boardId: Int): ResponseEntity<Any> {
-        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        if (auth.isNotLogged()) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
-        }
-        if (!(auth.getUserId() == boardService.getUserIdByBoardId(boardId) || auth.getUserRole() == "admin")) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("투표 작성자만이 지울 수 있습니다."))
-        }
-        return pollService.deletePollByBoardId(boardId)
-    }
-
-
 }
 
