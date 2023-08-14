@@ -79,6 +79,23 @@ class CommentController(
             return ResponseEntity.badRequest().body(Response.error("댓글은 255자 이내로 작성해주세요."))
         }
 
+        if (commentDTO.parent_id != null) {
+            if (commentService.getCommentById(commentDTO.parent_id ?: 0) == null) {
+                return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
+            }
+            val id = commentService.getCommentById(commentDTO.parent_id)
+            commentDTO.board_id = id!!.board_id
+        }
+
+        commentService.findBoard(commentDTO.board_id)?.let {
+            if (it.state == 1) {
+                return ResponseEntity.badRequest().body(Response.error("삭제된 게시글입니다."))
+            }
+            if (it.state == 2 || it.state == 3) {
+                return ResponseEntity.badRequest().body(Response.error("차단된 게시글입니다."))
+            }
+        }
+
         commentService.getCommentById(commentDTO.parent_id ?: 0)?.let {
             if (it.state == 1) {
                 return ResponseEntity.badRequest().body(Response.error("삭제된 댓글입니다."))
