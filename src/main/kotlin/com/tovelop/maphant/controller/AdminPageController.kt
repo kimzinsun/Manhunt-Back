@@ -1,19 +1,11 @@
 package com.tovelop.maphant.controller
 
-import com.amazonaws.services.ec2.model.transform.DiskImageStaxUnmarshaller
 import org.springframework.http.ResponseEntity
-import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
-import com.tovelop.maphant.mapper.UserMapper
-import com.tovelop.maphant.configure.security.PasswordEncoderSHA512
-
 import com.tovelop.maphant.service.AdminPageService
 import com.tovelop.maphant.service.BannerService
-import com.tovelop.maphant.service.BoardService
-import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
-import jdk.jfr.consumer.RecordedThread
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
