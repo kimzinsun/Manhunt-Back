@@ -102,7 +102,7 @@ data class CommentReportDTO(
 
 data class UpdateCommentDTO(
     val id: Int,
-    val body: String,
+    var body: String,
     val modified_at: LocalDateTime?,
 )
 
