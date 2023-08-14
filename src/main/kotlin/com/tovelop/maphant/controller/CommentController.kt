@@ -45,11 +45,11 @@ class CommentController(
             return ResponseEntity.badRequest().body(Response.error("로그인 후 이용해주세요."))
         }
         val userId = (auth as TokenAuthToken).getUserId()
-        val comment = commentService.getCommentList(boardId, userId, pagingDto)
-
         if (commentService.findBoard(boardId) == null) {
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 게시글입니다."))
         }
+        val comment = commentService.getCommentList(boardId, userId, pagingDto)
+
         val commentTime = comment.list.map {
             if (it.is_anonymous) {
                 it.nickname = "익명"
@@ -68,6 +68,9 @@ class CommentController(
     @PostMapping("/insert")
     fun insertComment(@RequestBody commentDTO: setCommentDTO): ResponseEntity<ResponseUnit> {
         val userId = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
+        if (commentService.findBoard(commentDTO.board_id) == null) {
+            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 게시글입니다."))
+        }
         if (rateLimitingService.isBanned(userId)) {
             return ResponseEntity.badRequest().body(Response.error("차단된 사용자입니다."))
         } else {

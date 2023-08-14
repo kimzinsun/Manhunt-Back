@@ -12,5 +12,5 @@ interface BookmarkMapper {
 
     fun selectBoardAllById(userId: Int): List<BookmarkDTO>
 
-    fun deleteBoardById(userId: Int, boardId: Int)
+    fun deleteBoardById(userId: Int, boardId: Int): Int
 }
