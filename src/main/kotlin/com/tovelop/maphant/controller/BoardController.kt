@@ -19,7 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/board/")
 class BoardController(
     @Autowired val boardService: BoardService,
     @Autowired val rateLimitingService: RateLimitingService,
@@ -30,12 +30,12 @@ class BoardController(
 
     data class SortCriterionInfo(val id: Int, val name: String)
 
-    @GetMapping("/boardType")
+    @GetMapping("/boardType/")
     fun readBoardType(): ResponseEntity<Any> {
         return ResponseEntity.ok().body(Response.success(boardService.getAllBoardType()))
     }
 
-    @GetMapping("/sortCriterion")
+    @GetMapping("/sortCriterion/")
     fun readSortCriterion(): ResponseEntity<Any> {
         return ResponseEntity.ok().body(Response.success(sortCriterionMap.map { SortCriterionInfo(it.key, it.value) }))
     }
@@ -60,7 +60,7 @@ class BoardController(
 
     data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
 
-    @GetMapping("")
+    @GetMapping("/")
     fun readBoardList(
         @RequestParam boardTypeId: Int,
         @RequestParam page: Int,
@@ -109,7 +109,7 @@ class BoardController(
         return ResponseEntity.ok().body(Response.success(boardList))
     }
 
-    @PostMapping("/like/{boardId}")
+    @PostMapping("/like/{boardId}/")
     fun insertLikePost(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
@@ -126,7 +126,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @DeleteMapping("/like/{boardId}")
+    @DeleteMapping("/like/{boardId}/")
     fun deleteLikeBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
@@ -140,7 +140,7 @@ class BoardController(
 
     data class BoardInfo(val board: ExtBoardDTO, val answerList: List<BoardDTO>?, val poll: Result<PollInfoDTO>)
 
-    @GetMapping("/{boardId}")
+    @GetMapping("/{boardId}/")
     fun readBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
@@ -166,7 +166,7 @@ class BoardController(
         )
     }
 
-    @DeleteMapping("/{boardId}")
+    @DeleteMapping("/{boardId}/")
     fun deleteBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
         // 게시글 삭제
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
@@ -192,7 +192,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/create")
+    @PostMapping("/create/")
     fun createBoard(
         @RequestBody board: SetBoardDTO, @RequestHeader("x-category") category: Int
     ): ResponseEntity<ResponseUnit> {
@@ -223,7 +223,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/")
     fun updateBoard(
         @RequestBody board: UpgradeUpdateBoardDTO, @RequestHeader("x-category") category: Int
     ): ResponseEntity<ResponseUnit> {
@@ -254,7 +254,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/")
     fun searchBoard(
         @RequestParam content: String, @RequestParam boardTypeId: Int, @RequestHeader("x-category") category: Int
     ): Any {
@@ -262,7 +262,7 @@ class BoardController(
         return ResponseEntity.ok(Response.success(searchBoard))
     }
 
-    @PostMapping("/report")
+    @PostMapping("/report/")
     fun reportBoard(@RequestParam boardId: Int, @RequestParam reportId: Int): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
@@ -286,7 +286,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    @PostMapping("/complete")
+    @PostMapping("/complete/")
     fun completeBoard(@RequestParam questId: Int, @RequestParam answerId: Int): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         if (auth.isNotLogged()) {
@@ -313,46 +313,5 @@ class BoardController(
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
-
-    @PostMapping("/poll")
-    fun createPoll(@RequestBody pollDTO: PollDTO): ResponseEntity<Any> {
-        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        if (auth.isNotLogged()) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
-        }
-        if (auth.getUserId() != boardService.getUserIdByBoardId(pollDTO.boardId)) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("게시글 작성자만 투표를 열 수 있습니다."))
-        }
-        return pollService.createPoll(pollDTO)
-    }
-
-    @PostMapping("/poll/vote")
-    fun vote(@RequestParam pollId: Int, @RequestParam pollOption: Int): ResponseEntity<Any> {
-        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        if (auth.isNotLogged()) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
-        }
-        return ResponseEntity.ok(
-            Response.stateOnly(
-                pollService.increaseOptionCount(
-                    auth.getUserId(), pollId, pollOption
-                )
-            )
-        )
-    }
-
-    @DeleteMapping("/poll")
-    fun deletePoll(@RequestParam boardId: Int): ResponseEntity<Any> {
-        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        if (auth.isNotLogged()) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("로그인 안됨"))
-        }
-        if (!(auth.getUserId() == boardService.getUserIdByBoardId(boardId) || auth.getUserRole() == "admin")) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("투표 작성자만이 지울 수 있습니다."))
-        }
-        return pollService.deletePollByBoardId(boardId)
-    }
-
-
 }
 

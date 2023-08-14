@@ -41,4 +41,8 @@ interface PollMapper {
     fun closePollByBoardId(boardId: Int): Int
 
     fun closePollByPollId(pollId: Int): Int
+
+    fun isPollUserByPollId(userId: Int, pollId: Int): Int
+
+    fun isPollUserByBoardId(userId: Int, boardId: Int): Int
 }

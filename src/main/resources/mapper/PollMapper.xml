@@ -142,4 +142,18 @@
     <update id="closePollByPollId">
         update poll set state = 1 where id = #{boardId} and state = 0;
     </update>
+
+    <select id="isPollUserByPollId" resultType="int">
+        select *
+        from poll, board
+        where board_id = board.id and
+              poll.id = #{pollId} and user_id = #{userId} and poll.state != 2;
+    </select>
+
+    <select id="isPollUserByBoardId" resultType="int">
+        select *
+        from poll, board
+        where board_id = board.id and
+              board_id = #{boardId} and user_id = #{userId} and poll.state != 2;
+    </select>
 </mapper>
