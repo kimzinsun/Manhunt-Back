@@ -91,4 +91,12 @@ class PollService(val pollMapper: PollMapper) {
         }
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
+
+    fun isPollUserByPollId(userId: Int, pollId: Int): Boolean {
+        return Result.runCatching { pollMapper.isPollUserByPollId(userId, pollId) }.isSuccess
+    }
+
+    fun isPollUserByBoardId(userId: Int, boardId: Int): Boolean {
+        return Result.runCatching { pollMapper.isPollUserByBoardId(userId, boardId) }.isSuccess
+    }
 }

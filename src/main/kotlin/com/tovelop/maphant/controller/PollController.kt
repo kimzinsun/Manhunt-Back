@@ -24,21 +24,33 @@ class PollController(val pollService: PollService) {
 
     @PostMapping("/close/{poll_id}")
     fun closePollByPollId(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
+        if(!pollService.isPollUserByPollId((SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId(), pollId)) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("투표를 생성한 사람만 투표를 종료할 수 있습니다."))
+        }
         return pollService.closePollByPollId(pollId)
     }
 
     @PostMapping("/close/board/{board_id}")
     fun closePollByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
+        if(!pollService.isPollUserByBoardId((SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId(), boardId)) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("투표를 생성한 사람만 투표를 종료할 수 있습니다."))
+        }
         return pollService.closePollByBoardId(boardId)
     }
 
     @DeleteMapping("/{poll_id}")
     fun deletePollByPollId(@PathVariable("poll_id") pollId: Int): ResponseEntity<Any> {
+        if(!pollService.isPollUserByPollId((SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId(), pollId)) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("투표를 생성한 사람만 투표를 삭제할 수 있습니다."))
+        }
         return pollService.deletePollByPollId(pollId)
     }
 
     @DeleteMapping("/board/{board_id}")
     fun deletePollByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
+        if(!pollService.isPollUserByBoardId((SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId(), boardId)) {
+            return ResponseEntity.badRequest().body(Response.error<Any>("투표를 생성한 사람만 투표를 삭제할 수 있습니다."))
+        }
         return pollService.deletePollByBoardId(boardId)
     }
 
