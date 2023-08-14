@@ -109,10 +109,10 @@
                                                pageBoards.user_id = board_like.user_id
     </select>
     <select id="getBoardSizeByCategoryIdAndBoardTypeId" resultType="Int">
-        select count(*)
-        from board
+        select cnt
+        from board_cnt_by_category
         where category_id = #{categoryId}
-          and type_id = #{boardTypeId}
+          and board_type_id = #{boardTypeId}
     </select>
     <select id="isInCategory" resultType="String">
         select name
