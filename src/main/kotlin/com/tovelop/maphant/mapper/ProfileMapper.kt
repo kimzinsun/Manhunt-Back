@@ -31,4 +31,6 @@ interface ProfileMapper {
     fun cntBoard(userId: Int): Int
     fun cntAnonymousAndHideBoard(userId: Int): Int
     fun findLikeBoardWithPaging(userId: Int, params: PagingDto): List<BoardResDto>
+
+    fun findLikeBoardCntByUser(userId: Int): Int
 }

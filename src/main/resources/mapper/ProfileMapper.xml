@@ -127,5 +127,11 @@
         OFFSET #{params.offset}
     </select>
 
+    <select id="findLikeBoardCntByUser">
+        SELECT COUNT(*)
+        FROM board_like
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>
 
