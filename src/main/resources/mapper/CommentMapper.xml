@@ -141,6 +141,10 @@
         FROM board
         WHERE id = #{boardId}
     </select>
-
-
+    <select id="getAnonymousListByBoardId">
+        select distinct user_id
+        from comment
+        where is_anonymous = 1
+          AND board_id = #{boardId}
+    </select>
 </mapper>
