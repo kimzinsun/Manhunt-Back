@@ -36,11 +36,6 @@
         set url = #{url}
         where banner_id = #{bannerId}
     </update>
-    <update id="updateFrequency">
-        update banner
-        set frequency = #{frequency}
-        where id = #{bannerId}
-    </update>
     <select id="sumAllPay" resultType="Int">
         select sum(pay)
         from banner
@@ -49,5 +44,21 @@
         select pay
         from banner
         where id = #{bannerId}
+    </select>
+    <select id="findCountColumnOnBanner" resultType="Int">
+        select max(id)
+        from banner
+    </select>
+    <select id="getBannerByBannerId" resultType="GetBannerDTO">
+        select title, images_url, url
+        from banner
+        where id = #{bannerId}
+    </select>
+    <select id="findBannerIdByMaxPay" resultType="Int">
+        select id
+        from banner
+        where pay = (
+            select max(pay)
+            from banner)
     </select>
 </mapper>

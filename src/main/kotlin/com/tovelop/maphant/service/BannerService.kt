@@ -1,13 +1,16 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.BannerDTO
+import com.tovelop.maphant.dto.GetBannerDTO
 import com.tovelop.maphant.mapper.BannerMapper
 import okhttp3.internal.format
+import okhttp3.internal.wait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.Banner
 import org.springframework.boot.env.RandomValuePropertySource
 import org.springframework.data.annotation.Id
 import org.springframework.stereotype.Service
+import org.w3c.dom.ranges.Range
 import kotlin.random.Random
 
 @Service
@@ -33,18 +36,24 @@ class BannerService(@Autowired val bannerMapper: BannerMapper) {
     fun updateUrlByBannerId(bannerId: Int, url: String) {
         bannerMapper.updateUrlByBannerId(bannerId, url)
     }
-
-    /**
-     * 광고 노출 빈도수 설정. frequency = 빈도 수
-     */
-    fun updateFrequency(bannerId: Int, frequency: Int) {
-        bannerMapper.updateFrequency(bannerId, frequency)
-    }
     fun findPercentageByBannerId(bannerId: Int): Double {
         return bannerMapper.findPayByBannerId(bannerId) / bannerMapper.sumAllPay().toDouble()
     }
-    fun findBannerByPercentage(bannerId: Int): Boolean {
-        val ramdomValue= Random.nextDouble()
-        return ramdomValue <= findPercentageByBannerId(bannerId)
+    fun getBannerByBannerId(bannerId: Int): GetBannerDTO {
+        val ramdomValue= Random.nextInt(1, bannerMapper.sumAllPay())
+        var tmp = bannerMapper.findPayByBannerId(1)
+        var payPercentageList= mutableListOf<Int>()
+        payPercentageList[0] = 0
+        payPercentageList[1] = tmp
+        for( i in 2 .. bannerMapper.findCountColumnOnBanner() - 1) {
+            tmp = bannerMapper.findPayByBannerId(i + 1)
+            payPercentageList[i] = payPercentageList[i - 1] + tmp
+        }
+        for(i in 1 .. bannerMapper.findCountColumnOnBanner() - 1) {
+            if(ramdomValue > payPercentageList[i - 1] && ramdomValue <= payPercentageList[i]) {
+                return bannerMapper.getBannerByBannerId(i)
+            }
+        }
+        return bannerMapper.getBannerByBannerId(bannerMapper.findBannerIdByMaxPay())
     }
 }

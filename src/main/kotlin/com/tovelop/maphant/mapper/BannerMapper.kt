@@ -1,6 +1,7 @@
 package com.tovelop.maphant.mapper
 
 import com.tovelop.maphant.dto.BannerDTO
+import com.tovelop.maphant.dto.GetBannerDTO
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
@@ -15,7 +16,9 @@ interface BannerMapper{
 
     fun updateImagesUrlByBannerId(bannerId: Int, imagesUrl: String)
     fun updateUrlByBannerId(bannerId: Int, url: String)
-    fun updateFrequency(bannerId: Int, frequency: Int)
     fun sumAllPay(): Int
     fun findPayByBannerId(bannerId: Int): Int
+    fun findCountColumnOnBanner(): Int
+    fun getBannerByBannerId(bannerId: Int): GetBannerDTO
+    fun findBannerIdByMaxPay(): Int
 }
