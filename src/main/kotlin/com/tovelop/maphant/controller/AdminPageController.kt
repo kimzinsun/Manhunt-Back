@@ -17,14 +17,7 @@ import jdk.jfr.consumer.RecordedThread
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Controller
 @RequestMapping("/admin")
@@ -33,14 +26,26 @@ class AdminPageController(
     @Autowired val bannerService: BannerService
 ) {
     @GetMapping("/")
+    fun adminPage(): String {
+        return "admin_index_page"
+    }
+    @GetMapping("/board")
     fun listBoardReport(model: Model, @RequestParam sortType: String?): String {
         val findBoardReport = adminPageService.findBoardReport(sortType ?: "reportedAt", 5)
-        val findCommentReport = adminPageService.findCommentReport(sortType ?: "reportedAt", 5)
-        val findUserList = adminPageService.findAllUserSanction()
         model.addAttribute("boardReport", findBoardReport)
+        return "admin_board_page"
+    }
+    @GetMapping("/comment")
+    fun listCommentReport(model: Model, @RequestParam sortType: String?): String {
+        val findCommentReport = adminPageService.findCommentReport(sortType ?: "reportedAt", 5)
         model.addAttribute("commentReport", findCommentReport)
-        model.addAttribute("userSanction", findUserList)
-        return "admin_index_page"
+        return "admin_comment_page"
+    }
+    @GetMapping("/user")
+    fun listUserReport(model: Model, @RequestParam sortType: String?): String {
+        val findUserList = adminPageService.findAllUserSanction()
+        model.addAttribute("userReport", findUserList)
+        return "admin_user_page"
     }
 
     @GetMapping("/reportInfo/board")
