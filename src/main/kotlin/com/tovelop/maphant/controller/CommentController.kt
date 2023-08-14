@@ -9,6 +9,7 @@ import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.BadWordFiltering
 import com.tovelop.maphant.utils.FormatterHelper.Companion.formatTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -104,6 +105,9 @@ class CommentController(
                 return ResponseEntity.badRequest().body(Response.error("차단된 댓글입니다."))
             }
         }
+
+        val badWordFiltering = BadWordFiltering()
+        commentDTO.body = badWordFiltering.filterBadWords(commentDTO.body)
 
         commentService.insertComment(commentDTO.toCommentDTO(userId))
         fcmService.send(
