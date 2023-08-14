@@ -19,7 +19,7 @@ data class setCommentDTO(
     val id: Int,
     val parent_id: Int?,
     var board_id: Int,
-    val body: String,
+    var body: String,
     val is_anonymous: Boolean,
     val created_at: LocalDateTime?,
     val modified_at: LocalDateTime?,
@@ -54,7 +54,7 @@ data class CommentExtDTO(
     val created_at: LocalDateTime,
     val modified_at: LocalDateTime?,
     val like_cnt: Int,
-    val comment_id: Int?
+    val comment_id: Int?,
 ) {
     fun timeFormat(comment: CommentExtDTO, time: String): FormatTimeDTO {
         return FormatTimeDTO(
