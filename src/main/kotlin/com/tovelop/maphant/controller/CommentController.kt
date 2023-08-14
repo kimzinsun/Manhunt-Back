@@ -157,6 +157,8 @@ class CommentController(
 //        if (commentService.getCommentById(updateCommentDTO.id)!!.is_anonymous != updateCommentDTO.is_anonymous) {
 //            return ResponseEntity.badRequest().body(Response.error("댓글 익명 여부는 수정할 수 없습니다."))
 //        }
+        val badWordFiltering = BadWordFiltering()
+        updateCommentDTO.body = badWordFiltering.filterBadWords(updateCommentDTO.body)
         commentService.updateComment(updateCommentDTO)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
