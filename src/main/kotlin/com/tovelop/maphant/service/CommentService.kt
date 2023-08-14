@@ -4,6 +4,7 @@ import com.tovelop.maphant.dto.CommentDTO
 import com.tovelop.maphant.dto.ReplyDTO
 import com.tovelop.maphant.dto.UpdateCommentDTO
 import com.tovelop.maphant.dto.CommentExtDTO
+import com.tovelop.maphant.mapper.BoardMapper
 import com.tovelop.maphant.mapper.CommentMapper
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
@@ -13,10 +14,7 @@ import java.util.*
 import javax.xml.stream.events.Comment
 
 @Service
-class CommentService(val commentMapper: CommentMapper) {
-    fun findAllComment(boardId: Int, userId: Int, params: PagingDto) =
-        commentMapper.findAllComment(boardId, userId, params)
-
+class CommentService(val commentMapper: CommentMapper, val boardMapper: BoardMapper) {
     fun getCommentList(boardId: Int, userId: Int, params: PagingDto): PagingResponse<CommentExtDTO> {
         val count = commentMapper.getCommentCount(boardId)
         if (count < 1) {
@@ -49,4 +47,6 @@ class CommentService(val commentMapper: CommentMapper) {
     fun insertReply(replyDTO: ReplyDTO) = commentMapper.insertReply(replyDTO)
 
     fun changeState(commentId: Int, state: Int) = commentMapper.changeState(commentId, state)
+    fun getBoardUserId(boardId: Int) = commentMapper.getBoardUserId(boardId)
+    fun findBoard(boardId: Int) = boardMapper.findBoard(boardId)
 }

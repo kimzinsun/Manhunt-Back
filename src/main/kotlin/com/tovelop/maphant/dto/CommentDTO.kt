@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 data class CommentDTO(
     val id: Int,
     val user_id: Int,
+    val parent_id: Int?,
     val board_id: Int,
     val body: String,
     val is_anonymous: Boolean,
@@ -14,11 +15,40 @@ data class CommentDTO(
     val state: Int,
 )
 
+data class setCommentDTO(
+    val id: Int,
+    val parent_id: Int?,
+    val board_id: Int,
+    val body: String,
+    val is_anonymous: Boolean,
+    val created_at: LocalDateTime?,
+    val modified_at: LocalDateTime?,
+    val like_cnt: Int,
+    val state: Int,
+) {
+    fun toCommentDTO(user_id: Int): CommentDTO {
+        return CommentDTO(
+            id = id,
+            parent_id = parent_id,
+            user_id = user_id,
+            board_id = board_id,
+            body = body,
+            is_anonymous = is_anonymous,
+            created_at = created_at,
+            modified_at = modified_at,
+            like_cnt = like_cnt,
+            state = state,
+        )
+    }
+}
+
 data class CommentExtDTO(
     val id: Int,
+    val parent_id: Int?,
     val user_id: Int,
-    val nickname: String,
+    var nickname: String,
     val board_id: Int,
+    val board_title: String,
     val body: String,
     val is_anonymous: Boolean,
     val created_at: LocalDateTime,
@@ -29,6 +59,7 @@ data class CommentExtDTO(
     fun timeFormat(comment: CommentExtDTO, time: String): FormatTimeDTO {
         return FormatTimeDTO(
             id = comment.id,
+            parent_id = comment.parent_id,
             user_id = comment.user_id,
             nickname = comment.nickname,
             board_id = comment.board_id,
@@ -73,6 +104,7 @@ data class UpdateCommentDTO(
 
 data class FormatTimeDTO(
     val id: Int,
+    val parent_id: Int?,
     val user_id: Int,
     val nickname: String,
     val board_id: Int,
