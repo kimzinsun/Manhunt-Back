@@ -12,7 +12,7 @@ interface BoardNoticeMapper {
     fun insertNotice(boardNoticeDTO: BoardNoticeDTO)
     fun findBoard(noticeId: Int): BoardNoticeDTO?
     fun updateNotice(updateBoardNoticeDTO: UpdateBoardNoticeDTO)
-    fun deleteNotice(noticeId: Int)
+    fun deleteNotice(noticeId: Int): Int
     fun findNoticeList(): List<BoardNoticeListDTO>
 
 }
