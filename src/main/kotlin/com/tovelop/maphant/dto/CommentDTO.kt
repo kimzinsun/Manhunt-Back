@@ -18,7 +18,7 @@ data class CommentDTO(
 data class setCommentDTO(
     val id: Int,
     val parent_id: Int?,
-    val board_id: Int,
+    var board_id: Int,
     val body: String,
     val is_anonymous: Boolean,
     val created_at: LocalDateTime?,
