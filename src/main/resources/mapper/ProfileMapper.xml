@@ -99,5 +99,33 @@
         WHERE user_id = #{userId}
     </select>
 
+    <select id="findLikeBoardWithPaging" resultType="BoardResDto">
+        SELECT b.id                                as id,
+               category_id,
+               b.user_id                           as user_id,
+               board_type.name                     as type,
+               title,
+               body,
+               is_hide,
+               is_complete,
+               is_anonymous,
+               created_at,
+               modified_at,
+               comment_cnt,
+               like_cnt,
+               report_cnt,
+               images_url,
+               IF(blike.user_id IS NOT NULL, 1, 0) as isLike
+        FROM board b
+                 INNER JOIN board_type ON b.type_id = board_type.id
+                 LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
+        WHERE b.user_id = #{userId}
+          AND blike.user_id = #{userId}
+          AND b.state = 0
+        ORDER BY created_at DESC
+            LIMIT #{params.recordSize}
+        OFFSET #{params.offset}
+    </select>
+
 </mapper>
 
