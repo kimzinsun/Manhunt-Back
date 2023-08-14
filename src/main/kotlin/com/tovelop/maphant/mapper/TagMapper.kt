@@ -1,7 +1,9 @@
 package com.tovelop.maphant.mapper
 
+import com.tovelop.maphant.dto.BoardSearchByTagDto
 import com.tovelop.maphant.dto.ReqTagDTO
 import com.tovelop.maphant.dto.TagDTO
+import com.tovelop.maphant.type.paging.PagingDto
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
@@ -25,4 +27,8 @@ interface TagMapper {
     fun getTagCnt(id:Int):Int
     fun getTagId(tagName: String):Int
     fun findBoardTags(boardId: Int): List<ReqTagDTO>
+
+    fun findBoardByTagName(tagName: String, userId:Int, categoryId: Int, pagingDto: PagingDto): List<BoardSearchByTagDto>
+
+    fun countBoardByTagName(tagName: String,categoryId: Int,userId:Int):Int
 }
