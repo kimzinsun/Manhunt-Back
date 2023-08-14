@@ -4,5 +4,5 @@ data class TagDTO(
     val id: Int,
     val name: String,
     val category_id: Int,
-    val cnt: Int,
+    val cnt: Int
 )

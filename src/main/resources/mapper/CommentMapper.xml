@@ -5,9 +5,11 @@
 <mapper namespace="com.tovelop.maphant.mapper.CommentMapper">
     <select id="findAllComment" resultType="CommentExtDTO">
         SELECT comment.id,
+               comment.parent_id,
                comment.user_id,
                user.nickname,
                comment.board_id,
+               board.title,
                comment.body,
                comment.is_anonymous,
                comment.created_at,
@@ -27,12 +29,14 @@
     </select>
     <select id="findAllCommentByUser" resultType="CommentExtDTO">
         SELECT comment.id,
+               comment.parent_id,
                comment.user_id,
                CASE
                    WHEN comment.user_id = #{targetUserId} THEN user.nickname
                    ELSE 'Anonymous'
                    END as nickname,
                comment.board_id,
+               board.title,
                CASE
                    WHEN ((#{userId} != #{targetUserId} AND comment.is_anonymous = 0) OR comment.user_id = #{userId})
                        THEN comment.body
@@ -44,6 +48,7 @@
                comment.like_cnt,
                IFNULL(comment_like.comment_id, 0)
         FROM comment
+                 Join board ON board.id = comment.board_id
                  INNER JOIN user ON user.id = comment.user_id
                  LEFT OUTER JOIN comment_like
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{targetUserId}
@@ -54,8 +59,8 @@
         OFFSET #{params.offset}
     </select>
     <insert id="insertComment">
-        INSERT INTO comment(board_id, user_id, body, created_at, is_anonymous)
-        VALUES (#{board_id}, #{user_id}, #{body}, NOW(), #{is_anonymous})
+        INSERT INTO comment(board_id, user_id, parent_id, body, created_at, is_anonymous)
+        VALUES (#{board_id}, #{user_id}, #{parent_id}, #{body}, NOW(), #{is_anonymous})
     </insert>
     <delete id="deleteComment">
         UPDATE comment
@@ -68,9 +73,10 @@
             modified_at = NOW()
         WHERE id = #{id}
     </update>
-    <select id="getCommentById">
+    <select id="getCommentById" resultType="CommentDTO">
         SELECT id,
                user_id,
+               parent_id,
                board_id,
                body,
                is_anonymous,
