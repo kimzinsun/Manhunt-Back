@@ -1,7 +1,10 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
+import com.tovelop.maphant.dto.BookmarkDTO
 import com.tovelop.maphant.service.BookmarkService
+import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -30,18 +33,16 @@ class BookmarkController(@Autowired val bookmarkService: BookmarkService) {
 
     //나의 북마크 보기
     @GetMapping("/my-list")
-    fun showBookmarks(): ResponseEntity<Any> {
+    fun showBookmarks(@ModelAttribute pagingDto: PagingDto): ResponseEntity<Response<PagingResponse<BookmarkDTO>>> {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth == null || auth !is TokenAuthToken || !auth.isAuthenticated) {
-            return ResponseEntity.badRequest().body("로그인 안됨")
+            return ResponseEntity.badRequest().body(Response.error("로그인 안됨."))
         }
+        val bookmarkList = bookmarkService.showBookmarks(auth.getUserId(), pagingDto)
 
-        val bookmarkList = bookmarkService.showBookmarks(auth.getUserId())
-        if (bookmarkList.isFailure) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("요청에 실패했습니다."))
-        }
-
-        return ResponseEntity.ok().body(Response.success(bookmarkList.getOrNull()))
+        //return ResponseEntity.badRequest().body(Response.error("요청에 실패했습니다."))
+        
+        return ResponseEntity.ok().body(Response.success(bookmarkList))
     }
 
     @DeleteMapping("/{boardId}")
