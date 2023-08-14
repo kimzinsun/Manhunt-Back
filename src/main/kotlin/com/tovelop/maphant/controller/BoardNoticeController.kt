@@ -38,7 +38,16 @@ class BoardNoticeController(@Autowired val boardNoticeService: BoardNoticeServic
 
     @DeleteMapping("/{noticeId}")
     fun deleteNotice(@PathVariable("noticeId") noticeId: Int): ResponseEntity<Any> {
-        boardNoticeService.deleteNotice(noticeId)
+        val deleteResult = boardNoticeService.deleteNotice(noticeId)
+        if (deleteResult == 0)
+            return ResponseEntity.badRequest().body(Response.error<Any>("삭제에 실패했습니다. 아이디를 확인하세요."))
         return ResponseEntity.ok().body(Response.stateOnly(true))
+    }
+
+    @GetMapping("/all")
+    fun findNoticeAll(): ResponseEntity<Any> {
+        val noticeResult =
+            boardNoticeService.findNoticeList() ?: return ResponseEntity.badRequest().body("불러 오는데 실패했습니다.")
+        return ResponseEntity.ok().body(noticeResult)
     }
 }
