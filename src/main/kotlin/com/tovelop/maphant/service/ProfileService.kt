@@ -95,4 +95,17 @@ class ProfileService(
         }
 
     fun existProfile(userId: Int): Boolean = profileMapper.findById(userId) != null
+
+    fun getLikeBoardsList(userId: Int, params: PagingDto): PagingResponse<BoardResDto> {
+        var count = profileMapper.cntBoard(userId)
+
+        if (count < 1) {
+            return PagingResponse(Collections.emptyList(), null)
+        }
+
+        val pagination = Pagination(count, params)
+        val boards = profileMapper.findLikeBoardWithPaging(userId, params)
+
+        return PagingResponse(boards, pagination)
+    }
 }

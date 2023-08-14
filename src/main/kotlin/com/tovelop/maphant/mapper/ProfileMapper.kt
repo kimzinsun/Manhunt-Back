@@ -30,4 +30,5 @@ interface ProfileMapper {
     fun cntAnonymousComment(userId: Int): Int
     fun cntBoard(userId: Int): Int
     fun cntAnonymousAndHideBoard(userId: Int): Int
+    fun findLikeBoardWithPaging(userId: Int, params: PagingDto): List<BoardResDto>
 }

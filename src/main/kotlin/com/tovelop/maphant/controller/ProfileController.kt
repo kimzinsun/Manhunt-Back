@@ -69,4 +69,14 @@ class ProfileController(
         return ResponseEntity.ok()
             .body(Response.success(profileService.getBoardsList(userId, targetUserId ?: userId, pagingDto)))
     }
+
+    @GetMapping("/like")
+    fun getLikeBoardList(
+        @ModelAttribute @Valid pagingDto: PagingDto,
+    ): ResponseEntity<Response<PagingResponse<BoardResDto>>> {
+        val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
+        return ResponseEntity.ok()
+            .body(Response.success(profileService.getLikeBoardsList(userId, pagingDto)))
+    }
+
 }
