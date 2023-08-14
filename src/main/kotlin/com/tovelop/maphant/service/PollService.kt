@@ -91,4 +91,8 @@ class PollService(val pollMapper: PollMapper) {
         }
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
+
+    fun isPollUser(userId: Int, pollId: Int): Boolean {
+        return Result.runCatching { pollMapper.isPollUser(userId, pollId) }.isSuccess
+    }
 }
