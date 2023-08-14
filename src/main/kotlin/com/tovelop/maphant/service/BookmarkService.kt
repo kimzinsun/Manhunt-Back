@@ -22,13 +22,7 @@ class BookmarkService(@Autowired val bookmarkMapper: BookmarkMapper) {
         return Result.runCatching { bookmarkMapper.selectBoardAllById(userId) }
     }
 
-    fun deleteBookmark(userId: Int, boardId: Int): Boolean {
-        try {
-            bookmarkMapper.deleteBoardById(userId, boardId)
-        } catch (e: Exception) {
-            // 삭제 실패
-            return false
-        }
-        return true
+    fun deleteBookmark(userId: Int, boardId: Int): Int {
+        return bookmarkMapper.deleteBoardById(userId, boardId)
     }
 }
