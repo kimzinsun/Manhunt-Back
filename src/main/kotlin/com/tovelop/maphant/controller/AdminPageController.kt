@@ -88,6 +88,7 @@ class AdminPageController(
         adminPageService.deleteRecentUserReportByUserId(userId)
         //유저를 정상 상태(1)로 변경
         adminPageService.updateUserState(userId, 1)
+        return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @GetMapping("/reportInfo/user")
