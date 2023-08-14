@@ -9,6 +9,7 @@ import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.BadWordFiltering
 import com.tovelop.maphant.utils.FormatterHelper.Companion.formatTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -44,11 +45,11 @@ class CommentController(
             return ResponseEntity.badRequest().body(Response.error("로그인 후 이용해주세요."))
         }
         val userId = (auth as TokenAuthToken).getUserId()
-        val comment = commentService.getCommentList(boardId, userId, pagingDto)
-
         if (commentService.findBoard(boardId) == null) {
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 게시글입니다."))
         }
+        val comment = commentService.getCommentList(boardId, userId, pagingDto)
+
         val commentTime = comment.list.map {
             if (it.is_anonymous) {
                 it.nickname = "익명"
@@ -67,6 +68,9 @@ class CommentController(
     @PostMapping("/insert")
     fun insertComment(@RequestBody commentDTO: setCommentDTO): ResponseEntity<ResponseUnit> {
         val userId = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
+        if (commentService.findBoard(commentDTO.board_id) == null) {
+            return ResponseEntity.badRequest().body(Response.error("존재하지 않는 게시글입니다."))
+        }
         if (rateLimitingService.isBanned(userId)) {
             return ResponseEntity.badRequest().body(Response.error("차단된 사용자입니다."))
         } else {
@@ -79,6 +83,23 @@ class CommentController(
             return ResponseEntity.badRequest().body(Response.error("댓글은 255자 이내로 작성해주세요."))
         }
 
+        if (commentDTO.parent_id != null) {
+            if (commentService.getCommentById(commentDTO.parent_id ?: 0) == null) {
+                return ResponseEntity.badRequest().body(Response.error("존재하지 않는 댓글입니다."))
+            }
+            val id = commentService.getCommentById(commentDTO.parent_id)
+            commentDTO.board_id = id!!.board_id
+        }
+
+        commentService.findBoard(commentDTO.board_id)?.let {
+            if (it.state == 1) {
+                return ResponseEntity.badRequest().body(Response.error("삭제된 게시글입니다."))
+            }
+            if (it.state == 2 || it.state == 3) {
+                return ResponseEntity.badRequest().body(Response.error("차단된 게시글입니다."))
+            }
+        }
+
         commentService.getCommentById(commentDTO.parent_id ?: 0)?.let {
             if (it.state == 1) {
                 return ResponseEntity.badRequest().body(Response.error("삭제된 댓글입니다."))
@@ -87,6 +108,9 @@ class CommentController(
                 return ResponseEntity.badRequest().body(Response.error("차단된 댓글입니다."))
             }
         }
+
+        val badWordFiltering = BadWordFiltering()
+        commentDTO.body = badWordFiltering.filterBadWords(commentDTO.body)
 
         commentService.insertComment(commentDTO.toCommentDTO(userId))
         fcmService.send(
@@ -136,6 +160,8 @@ class CommentController(
 //        if (commentService.getCommentById(updateCommentDTO.id)!!.is_anonymous != updateCommentDTO.is_anonymous) {
 //            return ResponseEntity.badRequest().body(Response.error("댓글 익명 여부는 수정할 수 없습니다."))
 //        }
+        val badWordFiltering = BadWordFiltering()
+        updateCommentDTO.body = badWordFiltering.filterBadWords(updateCommentDTO.body)
         commentService.updateComment(updateCommentDTO)
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
