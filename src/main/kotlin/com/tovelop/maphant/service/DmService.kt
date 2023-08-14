@@ -43,7 +43,7 @@ class DmService(
         }
 
         var is_sender: Boolean = true
-        var room: RoomDto = roomMapper.findRoom(sender_id, receiver_id);
+        var room: RoomDto? = roomMapper.findRoom(sender_id, receiver_id);
 
         if(blockMapper.getBlockCount(sender_id, receiver_id)>0||blockMapper.getBlockCount(receiver_id, sender_id)>0){
             throw IllegalStateException("쪽지를 보낼 수 없는 상대입니다.")
@@ -74,20 +74,21 @@ class DmService(
                 is_sender = true
             }
         }
-        var is_from_sender: Boolean = false
-        if (is_sender) is_from_sender = true
 
-        if(is_from_sender && room.sender_is_deleted) {
-            roomMapper.updateSenderIsDelete(room.id)
-        }
+        //여기로 오면 항상 room은 null이 아니다.
+        room as RoomDto
 
-        if(!is_from_sender && room.receiver_is_deleted) {
-            roomMapper.updateReceiverIsDeleted(room.id)
-        }
+//        if(is_sender && room.sender_is_deleted) {
+//            roomMapper.updateSenderIsDelete(room.id)
+//        }
+//
+//        if(!is_sender && room.receiver_is_deleted) {
+//            roomMapper.updateReceiverIsDeleted(room.id)
+//        }
 
         val dmDto = DmDto(
             id = null,
-            is_from_sender = is_from_sender,
+            is_from_sender = is_sender,
             content = content,
             is_read = false,
             time = LocalDateTime.now(),
@@ -95,16 +96,17 @@ class DmService(
             visible = VisibleChoices.BOTH
         )
 
-        roomMapper.updateRoomTime(dmDto.time, room.id)
+//        roomMapper.updateRoomTime(dmDto.time, room.id)
         dmMapper.createDm(dmDto)
 
         // is_from_sender == true이면 receiver_unread_count ++
-        if(is_from_sender){
-            roomMapper.updateSenderUnreadCountAndLastContent(room.id, content)
-        }
-        // is_from_sender == false이면 sender_unread_count ++
-        else roomMapper.updateReceiverUnreadCountAndLastContent(room.id, content)
+//        if(is_sender){
+//            roomMapper.updateSenderUnreadCountAndLastContent(room.id, content)
+//        }
+//        // is_from_sender == false이면 sender_unread_count ++
+//        else roomMapper.updateReceiverUnreadCountAndLastContent(room.id, content)
 
+        roomMapper.updateRoomWhenSendDm(dmDto.time,dmDto.content,is_sender,room.id)
 
         fcmService.send(FcmMessageDTO(
             receiver_id,
@@ -196,7 +198,7 @@ class DmService(
 
         val list = dmMapper.findDmListWithCursorBasedPaging(isSender, roomId, cursor, dmCursor,limit)
         val otherName = userMapper.findNicknameIdBy(otherId) as String
-        val nextCursor = if(list.size == limit) list[0].id else null
+        val nextCursor = if(list.size == limit) list[limit-1].id else null
 
         return DmCursorPagingResponse(otherId, otherName, list, nextCursor)
     }

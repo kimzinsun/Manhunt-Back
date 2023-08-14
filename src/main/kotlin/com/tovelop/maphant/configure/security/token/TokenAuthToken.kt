@@ -46,6 +46,8 @@ class TokenAuthToken(
         return userData?.getUserID() ?: throw BadCredentialsException("No user")
     }
 
+    fun getUserStudentNo(): String = userData?.getUserStudentNo() ?: throw BadCredentialsException("No user")
+
     fun getUserCategories() = userData?.getUserCategories() ?: throw BadCredentialsException("유저의 계열정보가 존재하지 않습니다.")
 
 
