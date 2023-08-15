@@ -1,6 +1,6 @@
 package com.tovelop.maphant.mapper
 
-import com.tovelop.maphant.dto.BoardSearchByTagDto
+import com.tovelop.maphant.dto.BoardSearchResponseDto
 import com.tovelop.maphant.dto.ReqTagDTO
 import com.tovelop.maphant.dto.TagDTO
 import com.tovelop.maphant.type.paging.PagingDto
@@ -28,7 +28,7 @@ interface TagMapper {
     fun getTagId(tagName: String):Int
     fun findBoardTags(boardId: Int): List<ReqTagDTO>
 
-    fun findBoardByTagName(tagName: String, userId:Int, categoryId: Int, pagingDto: PagingDto): List<BoardSearchByTagDto>
+    fun findBoardByTagName(tagName: String, userId:Int, categoryId: Int, pagingDto: PagingDto): List<BoardSearchResponseDto>
 
     fun countBoardByTagName(tagName: String,categoryId: Int,userId:Int):Int
 }

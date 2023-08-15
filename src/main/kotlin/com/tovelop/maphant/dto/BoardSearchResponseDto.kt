@@ -2,7 +2,7 @@ package com.tovelop.maphant.dto
 
 import java.time.LocalDateTime
 
-data class BoardSearchByTagDto(
+data class BoardSearchResponseDto(
     val boardId : Int,
     val title: String,
     val body: String,
