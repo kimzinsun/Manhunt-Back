@@ -21,7 +21,7 @@ class ProfileService(
     private val uploadLogService: UploadLogService,
     private val commentMapper: CommentMapper
 ) {
-    val defaultProfileImg = "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+    val defaultProfileImg = "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg"
 
     //프로필 이미지의 Dto 불러오기
     fun getNicknameAndBodyAndImage(targetUserId: Int): ProfileNicknameAndBodyAndImageDto =
