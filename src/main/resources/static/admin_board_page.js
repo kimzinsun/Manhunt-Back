@@ -14,7 +14,7 @@ $(document).ready(function() {
     }
 
     // 이벤트 핸들러: 게시글 제재 버튼 클릭
-    $(document).on("click", ".sanction-button-board", function() {
+    $('.sanction-button-board').click(function() {
         const boardId = $(this).data("board-id");
         if (confirm('이 게시글을 정지시키겠습니까?')) {
             $.post({
@@ -24,7 +24,7 @@ $(document).ready(function() {
                     // 서버로부터 받은 응답을 처리합니다.
                     console.log(response);
                     // 예시: 페이지를 새로고침하여 변경사항을 반영합니다.
-                    location.reload();
+                    $("#content").load("/admin/board");
                 },
                 error: function(error) {
                     console.error('요청 중 에러 발생:', error);
@@ -33,7 +33,7 @@ $(document).ready(function() {
         }
     });
     // 이벤트 핸들러: 게시글 정보 버튼 클릭
-    $(document).on("click", ".info-button-board", function() {
+    $(".info-button-board").click(function() {
         const boardId = $(this).data("board-id");
         $.get({
             url: '/admin/reportInfo/board',
@@ -50,7 +50,7 @@ $(document).ready(function() {
         });
     });
     // 이벤트 핸들러: 댓글 제재 버튼 클릭
-    $(document).on("click", ".sanction-button-comment", function() {
+    $(".sanction-button-comment").click(function() {
         const commentId = $(this).data("comment-id");
         if (confirm('이 댓글을 정지시키겠습니까?')) {
             $.post({
@@ -60,7 +60,7 @@ $(document).ready(function() {
                     // 서버로부터 받은 응답을 처리합니다.
                     console.log(response);
                     // 예시: 페이지를 새로고침하여 변경사항을 반영합니다.
-                    location.reload();
+                    $("#content").load("/admin/comment");
                 },
                 error: function(error) {
                     console.error('요청 중 에러 발생:', error);
@@ -69,7 +69,7 @@ $(document).ready(function() {
         }
     });
     // 이벤트 핸들러: 댓글 정보 버튼 클릭
-    $(document).on("click", ".info-button-comment", function() {
+    $(".info-button-comment").click(function() {
         const commentId = $(this).data("comment-id");
         $.get({
             url: '/admin/reportInfo/comment',
@@ -87,7 +87,7 @@ $(document).ready(function() {
     });
 
     // 이벤트 핸들러: 유저 정지 버튼 클릭
-    $(document).on("click", ".sanction-button-user", function() {
+    $(".user-sanction-button").click(function() {
         event.preventDefault();
 
         const days = parseInt($("#sanctionDays").val()) || 0;
@@ -118,7 +118,7 @@ $(document).ready(function() {
                     } else {
                         alert('유저가 정지되었습니다.');
                     }
-                    location.reload();
+                    $("#content").load("/admin/user");
                 },
                 error: function(error) {
                     console.error('User sanction request error:', error);
@@ -129,7 +129,7 @@ $(document).ready(function() {
         }
     });
     // 이벤트 핸들러: 유저 정지 해제 버튼 클릭
-    $(document).on("click", ".unSanction-button-user", function() {
+    $(".unSanction-button").click(function() {
         const userId = $(this).data("user-id");
         if (confirm('이 유저의 정지를 해제하시겠습니까?')) {
             $.post({
@@ -139,7 +139,7 @@ $(document).ready(function() {
                     // 서버로부터 받은 응답을 처리합니다.
                     console.log(response);
                     // 예시: 페이지를 새로고침하여 변경사항을 반영합니다.
-                    location.reload();
+                    $("#content").load("/admin/user");
                 },
                 error: function(error) {
                     console.error('요청 중 에러 발생:', error);
@@ -147,7 +147,7 @@ $(document).ready(function() {
             });
         }
     });
-    $(document).on("click", ".info-button-user", function() {
+    $(".info-button-sanction").click(function() {
         const userId = $(this).data("user-id");
         $.get({
             url: '/admin/reportInfo/user',

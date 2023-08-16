@@ -36,7 +36,7 @@ class AdminPageController(
     @GetMapping("/user")
     fun listUserReport(model: Model, @RequestParam sortType: String?): String {
         val findUserList = adminPageService.findAllUserSanction()
-        model.addAttribute("userReport", findUserList)
+        model.addAttribute("userSanction", findUserList)
         return "admin_user_page"
     }
 
@@ -55,12 +55,14 @@ class AdminPageController(
     @PostMapping("/sanction/board")
     fun sanctionBoard(@RequestParam boardId: Int): ResponseEntity<ResponseUnit> {
         adminPageService.updateBoardSanction(boardId)
+        adminPageService.updateBoardReportStateByBoardId(boardId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/sanction/comment")
     fun sanctionComment(@RequestParam commentId: Int): ResponseEntity<ResponseUnit> {
         adminPageService.updateCommentSanction(commentId)
+        adminPageService.updateCommentReportStateByCommentId(commentId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -76,6 +78,7 @@ class AdminPageController(
         //유저 제재 내역 테이블에 삽입
         adminPageService.insertUserReport(userReportDTO)
         adminPageService.updateUserState(userReportDTO.userId, 2)
+        print(userReportDTO)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 

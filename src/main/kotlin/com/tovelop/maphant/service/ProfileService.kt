@@ -63,8 +63,13 @@ class ProfileService(
     fun updateProfileNickname(userId: Int, nickname: String) =
         profileMapper.updateProfileNickname(userId, nickname)
 
-    fun updateProfileBody(userId: Int, body: String) =
-        profileMapper.updateProfileBody(userId, body)
+    fun updateProfileBody(userId: Int, body: String){
+        existProfile(userId).let {
+            if(it)profileMapper.updateProfileBody(userId, body)
+            else profileMapper.insertProfileBody(userId, body)
+        }
+
+    }
 
     @Transactional
     fun updateProfileImage(userId: Int, imageUrl: String, file: MultipartFile): String {

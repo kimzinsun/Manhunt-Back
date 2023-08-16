@@ -336,5 +336,18 @@ class BoardController(
         // return: json
         return ResponseEntity.ok(Response.stateOnly(true))
     }
+
+    @GetMapping("/poll")
+    fun getPollBoardList(
+        @RequestParam("boardTypeId") boardTypeId: Int?,
+        @ModelAttribute @Valid pagingDto: PagingDto,
+        @RequestHeader("x-category") category: Int): ResponseEntity<Response<PagingResponse<PageBoardDTO>>> {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val userId = auth.getUserId()
+
+        val result = boardService.getPollBoardList(userId,boardTypeId,category,pagingDto)
+
+        return ResponseEntity.ok(Response.success(result))
+    }
 }
 
