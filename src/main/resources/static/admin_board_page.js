@@ -147,7 +147,7 @@ $(document).ready(function() {
             });
         }
     });
-    $(".info-button-user").click(function() {
+    $(".info-button-sanction").click(function() {
         const userId = $(this).data("user-id");
         $.get({
             url: '/admin/reportInfo/user',
