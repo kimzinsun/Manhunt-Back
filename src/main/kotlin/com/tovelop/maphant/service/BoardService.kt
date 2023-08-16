@@ -2,6 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
+import com.tovelop.maphant.mapper.TagMapper
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
@@ -11,7 +12,10 @@ import java.util.Random
 
 
 @Service
-class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private val redisService: RedisService) {
+class BoardService(@Autowired val boardMapper: BoardMapper,
+                   @Autowired private val redisService: RedisService,
+                   @Autowired private val tagMapper: TagMapper,
+                   @Autowired private val pollService: PollService) {
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
         return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
     }
@@ -22,7 +26,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private v
 
     fun findBoardList(findBoardDTO: FindBoardDTO, userId: Int, categoryId: Int): List<PageBoardDTO> {
         val startRow = (findBoardDTO.page - 1) * findBoardDTO.pageSize
-        return boardMapper.findBoardList(findBoardDTO, startRow, categoryId)
+        return boardMapper.findBoardList(userId,findBoardDTO, startRow, categoryId)
     }
 
     fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int {
@@ -34,7 +38,10 @@ class BoardService(@Autowired val boardMapper: BoardMapper, @Autowired private v
     }
 
     fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
-        return boardMapper.findBoard(boardId)?.toExtBoardDTO(findBoardLike(boardId, userId))
+        val board = boardMapper.findBoardById(userId,boardId)
+        board?.tags = tagMapper.findBoardTags(boardId)
+        board?.pollInfo = pollService.getPollByBoardId(boardId,userId).getOrNull()
+        return board
     }
 
     fun updateBoard(updateBoardDTO: UpdateBoardDTO) {
