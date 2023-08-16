@@ -177,11 +177,11 @@
     <update id="updateBoardReportStateByBoardId">
         update board_report
         set state = 1
-        where id = #{boardId} and state = 0
+        where board_id = #{boardId} and state = 0
     </update>
     <update id="updateCommentReportStateByCommentId">
         update comment_report
         set state = 1
-        where id = #{commentId} and state = 0
+        where comment_id = #{commentId} and state = 0
     </update>
 </mapper>
