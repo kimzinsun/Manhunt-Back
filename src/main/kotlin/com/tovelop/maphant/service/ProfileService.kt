@@ -21,7 +21,7 @@ class ProfileService(
     private val uploadLogService: UploadLogService,
     private val commentMapper: CommentMapper
 ) {
-    val defaultProfileImg = "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+    val defaultProfileImg = "https://tovelope.s3.ap-northeast-2.amazonaws.com/image_1.jpg"
 
     //프로필 이미지의 Dto 불러오기
     fun getNicknameAndBodyAndImage(targetUserId: Int): ProfileNicknameAndBodyAndImageDto =

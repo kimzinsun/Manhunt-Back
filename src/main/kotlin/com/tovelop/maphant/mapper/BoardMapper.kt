@@ -12,7 +12,7 @@ interface BoardMapper {
     fun getCategoryIdByCategoryName(categoryName: String): Int
     fun findBoardList(userId:Int,findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int): List<PageBoardDTO>
     fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int
-    fun insertBoard(boardDTO: BoardDTO)
+    fun insertBoard(boardDTO: BoardDTO): Int
     fun findBoard(boardId: Int): BoardDTO?
     fun findBoardById(userId: Int,boardId: Int): ExtBoardDTO?
     fun updateBoard(updateBoardDTO: UpdateBoardDTO)

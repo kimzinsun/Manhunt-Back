@@ -9,7 +9,8 @@ data class SetBoardDTO(
     val isComplete: Int,
     val isAnonymous: Int,
     val imagesUrl: List<String>?,
-    val tagNames: List<String>?
+    val tagNames: List<String>?,
+    val poll : BoardPollDto?
 ) {
     fun toBoardDTO(userId: Int, categoryId: Int): BoardDTO {
         return BoardDTO(
