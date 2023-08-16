@@ -122,3 +122,9 @@ data class FormatTimeDTO(
     val comment_id: Int?,
     val time: String,
 )
+
+data class AnonymousListDTO(
+    val user_id: Int,
+    val board_id: Int,
+    val rowNum: Int,
+)

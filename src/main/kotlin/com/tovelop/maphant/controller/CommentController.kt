@@ -25,7 +25,6 @@ class CommentController(
     @Autowired val rateLimitingService: RateLimitingService,
 ) {
 
-
     data class CommentRequest(
         val commentId: Int,
         val reportId: Int?,
@@ -52,7 +51,8 @@ class CommentController(
 
         val commentTime = comment.list.map {
             if (it.is_anonymous) {
-                it.nickname = "익명"
+                if (it.user_id == commentService.getAnonymousListByBoardId(boardId).user_id)
+                    it.nickname = "익명" + commentService.getAnonymousListByBoardId(boardId).rowNum
             }
             if (it.modified_at == null) {
                 it.timeFormat(it, it.created_at.formatTime())
