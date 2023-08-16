@@ -54,6 +54,8 @@ class LoginAuthFilter(
     }
 
     override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication? {
+        val ip = request?.getHeader("X-Forwarded-For") ?: request?.remoteAddr
+        println(ip)
         val body = request?.reader?.readText()
         val loginReq = objectMapper.readValue(body, LoginDTO::class.java)
 
