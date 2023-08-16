@@ -36,7 +36,7 @@ class AdminPageController(
     @GetMapping("/user")
     fun listUserReport(model: Model, @RequestParam sortType: String?): String {
         val findUserList = adminPageService.findAllUserSanction()
-        model.addAttribute("userReport", findUserList)
+        model.addAttribute("userSanction", findUserList)
         return "admin_user_page"
     }
 
@@ -78,6 +78,7 @@ class AdminPageController(
         //유저 제재 내역 테이블에 삽입
         adminPageService.insertUserReport(userReportDTO)
         adminPageService.updateUserState(userReportDTO.userId, 2)
+        print(userReportDTO)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
