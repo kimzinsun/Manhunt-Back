@@ -1,7 +1,10 @@
 package com.tovelop.maphant.service
 
-import com.tovelop.maphant.dto.TagDTO
+import com.tovelop.maphant.dto.BoardSearchResponseDto
 import com.tovelop.maphant.mapper.TagMapper
+import com.tovelop.maphant.type.paging.Pagination
+import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -55,5 +58,14 @@ class TagService(private val tagMapper: TagMapper) {
                 tagMapper.minusTagCnt(tag.id)
             }
         }
+    }
+
+    fun getBoardListWithTag(tagName:String, userId:Int, categoryId: Int, pagingDto: PagingDto): PagingResponse<BoardSearchResponseDto> {
+
+        val count = tagMapper.countBoardByTagName(tagName,categoryId,userId)
+        val boardList = tagMapper.findBoardByTagName(tagName, userId, categoryId, pagingDto);
+        val pagination = Pagination(count, pagingDto)
+
+        return PagingResponse(boardList,pagination)
     }
 }

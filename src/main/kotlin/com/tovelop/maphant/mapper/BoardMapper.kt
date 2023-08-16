@@ -44,4 +44,7 @@ interface BoardMapper {
     fun getHotBoardCount(categoryId: Int): Int
     fun getAllBoardType(): MutableList<BoardTypeDTO>
     fun findLastInsertId(): Int
+
+    fun findBoardListBySearch(boardSearchDto: BoardSearchDto, pagingDto: PagingDto, categoryId: Int, userId: Int): List<BoardSearchResponseDto>
+    fun countBoardListBySearch(boardSearchDto: BoardSearchDto, categoryId: Int): Int
 }
