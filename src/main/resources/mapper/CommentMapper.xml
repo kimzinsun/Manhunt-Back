@@ -8,6 +8,8 @@
                comment.parent_id,
                comment.user_id,
                user.nickname,
+               board.type_id,
+               board_type.name as type,
                comment.board_id,
                board.title,
                comment.body,
@@ -21,6 +23,7 @@
                  JOIN user ON comment.user_id = user.id
                  LEFT OUTER JOIN comment_like
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{userId}
+                 join board_type on board.type_id = board_type.id
         WHERE board_id = #{boardId}
           AND comment.state = 0
         ORDER BY comment.created_at DESC
@@ -34,14 +37,16 @@
                CASE
                    WHEN comment.user_id = #{targetUserId} THEN user.nickname
                    ELSE 'Anonymous'
-                   END as nickname,
+                   END         as nickname,
+               board.type_id,
+               board_type.name as type,
                comment.board_id,
                board.title,
                CASE
                    WHEN ((#{userId} != #{targetUserId} AND comment.is_anonymous = 0) OR comment.user_id = #{userId})
                        THEN comment.body
                    ELSE NULL
-                   END as body,
+                   END         as body,
                comment.is_anonymous,
                comment.created_at,
                comment.modified_at,
@@ -52,6 +57,7 @@
                  INNER JOIN user ON user.id = comment.user_id
                  LEFT OUTER JOIN comment_like
                                  ON comment.id = comment_like.comment_id and comment_like.user_id = #{targetUserId}
+                 join board_type on board.type_id = board_type.id
         WHERE ((#{userId} != #{targetUserId} AND comment.is_anonymous = 0) OR comment.user_id = #{userId})
           AND comment.user_id = #{targetUserId}
         ORDER BY comment.created_at DESC

@@ -10,6 +10,7 @@ import com.tovelop.maphant.service.RateLimitingService
 import com.tovelop.maphant.service.TagService
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
@@ -272,10 +273,16 @@ class BoardController(
 
     @GetMapping("/search/")
     fun searchBoard(
-        @RequestParam content: String, @RequestParam boardTypeId: Int, @RequestHeader("x-category") category: Int
-    ): Any {
-        val searchBoard = boardService.findBoardByKeyword(content, boardTypeId, category)
-        return ResponseEntity.ok(Response.success(searchBoard))
+        @ModelAttribute boardSearchDto: BoardSearchDto,
+        @ModelAttribute pagingDto: PagingDto,
+        @RequestHeader("x-category") category: Int
+    ): ResponseEntity<Response<PagingResponse<BoardSearchResponseDto>>> {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val userId = auth.getUserId()
+
+        boardSearchDto.trimFields()
+        val result = boardService.findBoardListBySearch(boardSearchDto, pagingDto, category, userId)
+        return ResponseEntity.ok(Response.success(result))
     }
 
     @PostMapping("/report/")

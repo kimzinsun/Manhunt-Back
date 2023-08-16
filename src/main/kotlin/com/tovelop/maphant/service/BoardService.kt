@@ -8,6 +8,7 @@ import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.Collections
 import java.util.Random
 
 
@@ -81,6 +82,17 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun findBoardByKeyword(keyword: String, boardTypeId: Int, categoryId: Int): List<BoardDTO> {
         return boardMapper.findBoardByKeyword(keyword, boardTypeId, categoryId)
+    }
+
+    fun findBoardListBySearch(boardSearchDto:BoardSearchDto,pagingDto: PagingDto, categoryId: Int, userId: Int): PagingResponse<BoardSearchResponseDto> {
+
+        val count = boardMapper.countBoardListBySearch(boardSearchDto,categoryId);
+        if(count < 1) return PagingResponse(Collections.emptyList(),Pagination(0,pagingDto))
+
+        val pagination = Pagination(count,pagingDto)
+        val boardList = boardMapper.findBoardListBySearch(boardSearchDto, pagingDto, categoryId, userId)
+
+        return PagingResponse(boardList,pagination)
     }
 
     fun isInCategory(categoryId: Int): Boolean {
