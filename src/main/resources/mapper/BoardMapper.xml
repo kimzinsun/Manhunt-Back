@@ -430,4 +430,50 @@
                 </if>
         </if>
     </select>
+    <select id="getPollBoardList" resultType="PageBoardDto">
+        select
+            b.id AS boardId,
+            b.title,
+            SUBSTRING(b.body, 1, 30) as body,
+            b.created_at AS createdAt,
+            b.modified_at AS modifiedAt,
+            IF(is_anonymous, '익명',u.nickname) AS userNickname,
+            comment_cnt AS commentCnt,
+            like_cnt AS likeCnt,
+            is_anonymous AS isAnonymous,
+            is_hide AS isHide,
+            IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
+            b.images_url as imagesUrlString,
+            GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings
+        FROM board b
+                 INNER JOIN user u ON b.user_id = u.id
+                 INNER JOIN poll p ON b.id = p.board_id
+                 LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
+                 LEFT OUTER JOIN board_tag ON b.id = board_tag.board_id
+                 LEFT OUTER JOIN tag t ON board_tag.tag_id = t.id
+        WHERE
+            is_hide = 0 AND
+            b.state = 0 AND
+            b.category_id = #{categoryId}
+            <if test="boardTypeId != null">
+                AND b.type_id = #{boardTypeId}
+            </if>
+        GROUP BY b.id
+        ORDER BY b.id DESC
+        LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
+    </select>
+
+    <select id="countPollBoardList">
+        SELECT
+            COUNT(distinct b.id)
+        FROM board b
+            INNER JOIN poll p ON b.id = p.board_id
+        WHERE
+            is_hide = 0 AND
+            b.state = 0 AND
+            b.category_id = #{categoryId}
+            <if test="boardTypeId != null">
+                AND b.type_id = #{boardTypeId}
+            </if>
+    </select>
 </mapper>

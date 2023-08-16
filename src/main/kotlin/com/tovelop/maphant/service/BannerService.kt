@@ -42,12 +42,12 @@ class BannerService(@Autowired val bannerMapper: BannerMapper) {
     fun getBannerByBannerId(bannerId: Int): GetBannerDTO {
         val ramdomValue= Random.nextInt(1, bannerMapper.sumAllPay())
         var tmp = bannerMapper.findPayByBannerId(1)
-        var payPercentageList= mutableListOf<Int>()
-        payPercentageList[0] = 0
-        payPercentageList[1] = tmp
+        val payPercentageList= mutableListOf<Int>()
+        payPercentageList.add(0)
+        payPercentageList.add(tmp)
         for( i in 2 .. bannerMapper.findCountColumnOnBanner() - 1) {
-            tmp = bannerMapper.findPayByBannerId(i + 1)
-            payPercentageList[i] = payPercentageList[i - 1] + tmp
+            tmp = bannerMapper.findPayByBannerId(i)
+            payPercentageList.add(payPercentageList[i - 1] + tmp)
         }
         for(i in 1 .. bannerMapper.findCountColumnOnBanner() - 1) {
             if(ramdomValue > payPercentageList[i - 1] && ramdomValue <= payPercentageList[i]) {
