@@ -80,6 +80,14 @@ class AdminPageService(
         boardMapper.updateStateOfBoard(boardId, 2)
     }
 
+    fun updateBoardReportStateByBoardId(boardId: Int){
+        adminPageMapper.updateBoardReportStateByBoardId(boardId)
+    }
+
+    fun updateCommentReportStateByCommentId(commentId: Int){
+        adminPageMapper.updateCommentReportStateByCommentId(commentId)
+    }
+
     /**
      *유저 제재에 의한 게시글 블락 처리
      */
