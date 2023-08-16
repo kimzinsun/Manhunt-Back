@@ -18,13 +18,15 @@
           <th>
             유저 ID
           </th>
+            내용
+          <th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="report : ${commentReport}">
           <td th:text="${report.commentId}">
           </td>
-          <td th:text="${report.commentUserId}">
+          <td th:text="${report.commentUserEmail}">
           </td>
           <td th:text="${report.commentBody}">
           </td>
