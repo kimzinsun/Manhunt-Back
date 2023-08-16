@@ -39,7 +39,7 @@
         from user u
                  left join user_category_major ucm on u.id = ucm.user_id
                  left join category c on c.id = ucm.category_id
-                 left join major m on m.id = ucm.category_id
+                 left join major m on m.id = ucm.major_id
                  left join profile p on u.id = p.user_id
         where email = '${email}';
     </select>
@@ -80,7 +80,7 @@
         from user u
                  left join user_category_major ucm on u.id = ucm.user_id
                  left join category c on c.id = ucm.category_id
-                 left join major m on m.id = ucm.category_id
+                 left join major m on m.id = ucm.major_id
                  left join profile p on u.id = p.user_id
         where u.id = '${userId}';
     </select>
