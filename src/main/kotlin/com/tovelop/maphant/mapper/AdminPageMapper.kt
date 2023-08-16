@@ -3,6 +3,7 @@ package com.tovelop.maphant.mapper
 import com.tovelop.maphant.dto.*
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Mapper
 @Repository
@@ -35,4 +36,7 @@ interface AdminPageMapper {
     fun findReportInfoByUserId(boardId: Int): List<UserReportDTO>
     fun updateBoardReportStateByBoardId(boardId: Int)
     fun updateCommentReportStateByCommentId(commentId: Int)
+    fun findLoginLogByDate(start: LocalDateTime, end: LocalDateTime): Int
+    fun findBoardLogByDate(start: LocalDateTime, end: LocalDateTime): Int
+    fun findCommentLogByDate(start: LocalDateTime, end: LocalDateTime): Int
 }

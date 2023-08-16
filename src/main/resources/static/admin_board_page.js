@@ -60,7 +60,7 @@ $(document).ready(function() {
                     // 서버로부터 받은 응답을 처리합니다.
                     console.log(response);
                     // 예시: 페이지를 새로고침하여 변경사항을 반영합니다.
-                    location.reload();
+                    $("#content").load("/admin/comment");
                 },
                 error: function(error) {
                     console.error('요청 중 에러 발생:', error);
@@ -87,7 +87,7 @@ $(document).ready(function() {
     });
 
     // 이벤트 핸들러: 유저 정지 버튼 클릭
-    $(".sanction-button-user").click(function() {
+    $(".user-sanction-button").click(function() {
         event.preventDefault();
 
         const days = parseInt($("#sanctionDays").val()) || 0;
@@ -118,7 +118,7 @@ $(document).ready(function() {
                     } else {
                         alert('유저가 정지되었습니다.');
                     }
-                    location.reload();
+                    $("#content").load("/admin/user");
                 },
                 error: function(error) {
                     console.error('User sanction request error:', error);
@@ -129,7 +129,7 @@ $(document).ready(function() {
         }
     });
     // 이벤트 핸들러: 유저 정지 해제 버튼 클릭
-    $(".unSanction-button-user").click(function() {
+    $(".unSanction-button").click(function() {
         const userId = $(this).data("user-id");
         if (confirm('이 유저의 정지를 해제하시겠습니까?')) {
             $.post({
@@ -139,7 +139,7 @@ $(document).ready(function() {
                     // 서버로부터 받은 응답을 처리합니다.
                     console.log(response);
                     // 예시: 페이지를 새로고침하여 변경사항을 반영합니다.
-                    location.reload();
+                    $("#content").load("/admin/user");
                 },
                 error: function(error) {
                     console.error('요청 중 에러 발생:', error);
