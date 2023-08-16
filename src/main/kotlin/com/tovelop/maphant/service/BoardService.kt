@@ -110,7 +110,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun isInReportByBoardId(boardId: Int, userId: Int): Boolean {
         val boardReportDTO = boardMapper.isInReportByBoardId(boardId, userId)
-        return boardReportDTO != null
+        return boardReportDTO != 0
     }
 
     fun isInReportId(reportId: Int): Boolean {
