@@ -48,11 +48,12 @@ class CommentController(
             return ResponseEntity.badRequest().body(Response.error("존재하지 않는 게시글입니다."))
         }
         val comment = commentService.getCommentList(boardId, userId, pagingDto)
+        val anonymous = commentService.getAnonymousListByBoardId(boardId)
+        val anonymousKV = anonymous.map { it.user_id to it }.toMap()
 
         val commentTime = comment.list.map {
-            if (it.is_anonymous) {
-                if (it.user_id == commentService.getAnonymousListByBoardId(boardId).user_id)
-                    it.nickname = "익명" + commentService.getAnonymousListByBoardId(boardId).rowNum
+            if (it.is_anonymous && anonymousKV.containsKey(it.user_id)) {
+                it.nickname = "익명" + anonymousKV[it.user_id]!!.rowNum
             }
             if (it.modified_at == null) {
                 it.timeFormat(it, it.created_at.formatTime())
@@ -116,7 +117,7 @@ class CommentController(
         fcmService.send(
             FcmMessageDTO(
                 commentService.getBoardUserId(commentDTO.board_id),
-                "댓글이 달렸습니다",
+                "댓글이 달렸습니다.",
                 commentDTO.body
             )
         )

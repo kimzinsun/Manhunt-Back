@@ -125,6 +125,5 @@ data class FormatTimeDTO(
 
 data class AnonymousListDTO(
     val user_id: Int,
-    val board_id: Int,
     val rowNum: Int,
 )
