@@ -55,12 +55,14 @@ class AdminPageController(
     @PostMapping("/sanction/board")
     fun sanctionBoard(@RequestParam boardId: Int): ResponseEntity<ResponseUnit> {
         adminPageService.updateBoardSanction(boardId)
+        adminPageService.updateBoardReportStateByBoardId(boardId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/sanction/comment")
     fun sanctionComment(@RequestParam commentId: Int): ResponseEntity<ResponseUnit> {
         adminPageService.updateCommentSanction(commentId)
+        adminPageService.updateCommentReportStateByCommentId(commentId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 

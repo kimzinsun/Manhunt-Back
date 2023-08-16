@@ -192,8 +192,8 @@
         where board_id = #{boardId}
           and user_id = #{userId}
     </select>
-    <select id="isInReportByBoardId" resultType="BoardReportDTO">
-        select *
+    <select id="isInReportByBoardId" resultType="Int">
+        select count(*)
         from board_report
         where board_id = #{boardId}
           and user_id = #{userId}

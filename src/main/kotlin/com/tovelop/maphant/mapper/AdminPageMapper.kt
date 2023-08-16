@@ -33,4 +33,6 @@ interface AdminPageMapper {
     fun findCommentReportInfoByUserId(userId: Int): List<CommentSanctionDTO>
     fun findReportByUserId(userId: Int): Boolean
     fun findReportInfoByUserId(boardId: Int): List<UserReportDTO>
+    fun updateBoardReportStateByBoardId(boardId: Int)
+    fun updateCommentReportStateByCommentId(commentId: Int)
 }
