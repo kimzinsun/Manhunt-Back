@@ -184,4 +184,19 @@
         set state = 1
         where comment_id = #{commentId} and state = 0
     </update>
+    <select id="findLoginLogByDate" resultType="Int">
+        select count(*)
+        from log_login
+        where time >= #{start} and #{end} >= time
+    </select>
+    <select id="findBoardLogByDate" resultType="Int">
+        select count(*)
+        from board
+        where board.created_at >= #{start} and #{end} >= board.created_at
+    </select>
+    <select id="findCommentLogByDate" resultType="Int">
+        select count(*)
+        from comment
+        where comment.created_at >= #{start} and #{end} >= comment.created_at
+    </select>
 </mapper>

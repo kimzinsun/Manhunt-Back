@@ -7,6 +7,7 @@ import com.tovelop.maphant.mapper.CommentMapper
 import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class AdminPageService(
@@ -132,5 +133,17 @@ class AdminPageService(
     }
     fun findReportInfoByUserId(userId: Int): List<UserReportDTO> {
         return adminPageMapper.findReportInfoByUserId(userId)
+    }
+
+    fun findLoginLogByDate(start: LocalDateTime, end: LocalDateTime): Int {
+        return adminPageMapper.findLoginLogByDate(start, end)
+    }
+
+    fun findBoardLogByDate(start: LocalDateTime, end: LocalDateTime): Int {
+        return adminPageMapper.findBoardLogByDate(start, end)
+    }
+
+    fun findCommentLogByDate(start: LocalDateTime, end: LocalDateTime): Int {
+        return adminPageMapper.findCommentLogByDate(start, end)
     }
 }
