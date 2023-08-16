@@ -47,4 +47,7 @@ interface BoardMapper {
 
     fun findBoardListBySearch(boardSearchDto: BoardSearchDto, pagingDto: PagingDto, categoryId: Int, userId: Int): List<BoardSearchResponseDto>
     fun countBoardListBySearch(boardSearchDto: BoardSearchDto, categoryId: Int): Int
+
+    fun getPollBoardList(userId:Int, categoryId:Int, boardTypeId:Int?, pagingDto: PagingDto): List<PageBoardDTO>
+    fun countPollBoardList(categoryId:Int, boardTypeId:Int?):Int
 }

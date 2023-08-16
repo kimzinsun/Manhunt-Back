@@ -3,6 +3,7 @@ package com.tovelop.maphant.configure.security.filter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.tovelop.maphant.configure.security.token.LoginAuthToken
 import com.tovelop.maphant.dto.LoginDTO
+import com.tovelop.maphant.service.LogService
 import com.tovelop.maphant.utils.ResponseJsonWriter.Companion.writeJSON
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -12,7 +13,10 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
-class LoginAuthFilter(authenticationManager: AuthenticationManager?)
+class LoginAuthFilter(
+    authenticationManager: AuthenticationManager?,
+    private val logService: LogService
+)
     :AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POST"), authenticationManager) {
 
     private val objectMapper = ObjectMapper()
@@ -22,6 +26,10 @@ class LoginAuthFilter(authenticationManager: AuthenticationManager?)
         this.setAuthenticationSuccessHandler { request, response, authentication ->
             run {
                 val authResult = authentication as LoginAuthToken
+                val userIp = request.remoteAddr
+
+                logService.login(authResult.getUserId()!!, userIp)
+
                 val output = mutableMapOf<String, Any>(
                     "success" to true,
                     "pubKey" to authResult.principal,
@@ -46,6 +54,8 @@ class LoginAuthFilter(authenticationManager: AuthenticationManager?)
     }
 
     override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication? {
+        val ip = request?.getHeader("X-Forwarded-For") ?: request?.remoteAddr
+        println(ip)
         val body = request?.reader?.readText()
         val loginReq = objectMapper.readValue(body, LoginDTO::class.java)
 
