@@ -13,7 +13,7 @@ class BoardNoticeService(@Autowired val boardNoticeMapper: BoardNoticeMapper) {
         boardNoticeMapper.insertNotice(boardNoticeDTO)
     }
 
-    fun findNotice(noticeId: Int): BoardNoticeDTO {
+    fun findNotice(noticeId: Int): BoardNoticeDTO? {
         return boardNoticeMapper.findBoard(noticeId)
     }
 
@@ -21,11 +21,11 @@ class BoardNoticeService(@Autowired val boardNoticeMapper: BoardNoticeMapper) {
         boardNoticeMapper.updateNotice(updateBoardNoticeDTO)
     }
 
-    fun deleteNotice(noticeId: Int) {
-        boardNoticeMapper.deleteNotice(noticeId)
+    fun deleteNotice(noticeId: Int): Int {
+        return boardNoticeMapper.deleteNotice(noticeId)
     }
 
-    fun findNoticeList(): List<BoardNoticeListDTO> {
+    fun findNoticeList(): List<BoardNoticeListDTO>? {
         return boardNoticeMapper.findNoticeList()
     }
 }

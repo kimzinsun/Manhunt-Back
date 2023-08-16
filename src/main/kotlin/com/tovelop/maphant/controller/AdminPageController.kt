@@ -1,30 +1,15 @@
 package com.tovelop.maphant.controller
 
-import com.amazonaws.services.ec2.model.transform.DiskImageStaxUnmarshaller
 import org.springframework.http.ResponseEntity
-import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
-import com.tovelop.maphant.mapper.UserMapper
-import com.tovelop.maphant.configure.security.PasswordEncoderSHA512
-
 import com.tovelop.maphant.service.AdminPageService
 import com.tovelop.maphant.service.BannerService
-import com.tovelop.maphant.service.BoardService
-import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
-import jdk.jfr.consumer.RecordedThread
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Controller
 @RequestMapping("/admin")
@@ -33,14 +18,26 @@ class AdminPageController(
     @Autowired val bannerService: BannerService
 ) {
     @GetMapping("/")
+    fun adminPage(): String {
+        return "admin_index_page"
+    }
+    @GetMapping("/board")
     fun listBoardReport(model: Model, @RequestParam sortType: String?): String {
         val findBoardReport = adminPageService.findBoardReport(sortType ?: "reportedAt", 5)
-        val findCommentReport = adminPageService.findCommentReport(sortType ?: "reportedAt", 5)
-        val findUserList = adminPageService.findAllUserSanction()
         model.addAttribute("boardReport", findBoardReport)
+        return "admin_board_page"
+    }
+    @GetMapping("/comment")
+    fun listCommentReport(model: Model, @RequestParam sortType: String?): String {
+        val findCommentReport = adminPageService.findCommentReport(sortType ?: "reportedAt", 5)
         model.addAttribute("commentReport", findCommentReport)
-        model.addAttribute("userSanction", findUserList)
-        return "admin_index_page"
+        return "admin_comment_page"
+    }
+    @GetMapping("/user")
+    fun listUserReport(model: Model, @RequestParam sortType: String?): String {
+        val findUserList = adminPageService.findAllUserSanction()
+        model.addAttribute("userReport", findUserList)
+        return "admin_user_page"
     }
 
     @GetMapping("/reportInfo/board")
@@ -58,12 +55,14 @@ class AdminPageController(
     @PostMapping("/sanction/board")
     fun sanctionBoard(@RequestParam boardId: Int): ResponseEntity<ResponseUnit> {
         adminPageService.updateBoardSanction(boardId)
+        adminPageService.updateBoardReportStateByBoardId(boardId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/sanction/comment")
     fun sanctionComment(@RequestParam commentId: Int): ResponseEntity<ResponseUnit> {
         adminPageService.updateCommentSanction(commentId)
+        adminPageService.updateCommentReportStateByCommentId(commentId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
