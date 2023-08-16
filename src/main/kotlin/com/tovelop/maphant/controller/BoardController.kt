@@ -3,10 +3,12 @@ package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
+import com.tovelop.maphant.mapper.BoardMapper
 import com.tovelop.maphant.service.BoardService
 import com.tovelop.maphant.service.PollService
 import com.tovelop.maphant.service.RateLimitingService
 import com.tovelop.maphant.service.TagService
+import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
@@ -24,7 +26,8 @@ class BoardController(
     @Autowired val boardService: BoardService,
     @Autowired val rateLimitingService: RateLimitingService,
     @Autowired val tagService: TagService,
-    @Autowired val pollService: PollService
+    @Autowired val pollService: PollService,
+    @Autowired val boardMapper: BoardMapper
 ) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
@@ -58,13 +61,14 @@ class BoardController(
             .body(Response.success(boardService.findHotBoardList(userId, category, boardTypeId, pagingDto)))
     }
 
-    data class BoardListInfo(val name: String, val list: List<PageBoardDTO>)
+    data class BoardListInfo(val name: String?, val list: List<PageBoardDTO>, val pagination: Pagination)
 
     @GetMapping("/")
     fun readBoardList(
         @RequestParam boardTypeId: Int,
         @RequestParam page: Int,
-        @RequestParam pageSize: Int,
+        @RequestParam recordSize: Int,
+        @RequestParam pageSize:Int,
         @RequestParam sortCriterionId: Int,
         @RequestHeader("x-category") category: Int
     ): ResponseEntity<Any> {
@@ -77,7 +81,7 @@ class BoardController(
         if (page <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageNum가 일치하지 않습니다."))
         }
-        if (pageSize <= 0) {
+        if (recordSize <= 0) {
             return ResponseEntity.badRequest().body(Response.error<Any>("pageSize가 일치하지 않습니다."))
         }
         if (sortCriterionId !in sortCriterionMap) {
@@ -92,17 +96,29 @@ class BoardController(
             boardService.getAllBoardType().map {
                 BoardListInfo(
                     it.name, boardService.findBoardList(
-                        FindBoardDTO(it.id, page, pageSize, sortCriterionMap[sortCriterionId]!!),
+                        FindBoardDTO(it.id, page, recordSize, sortCriterionMap[sortCriterionId]!!),
                         auth.getUserId(),
-                        category
+                        category,
+
+                        ),
+                    Pagination(
+                        boardService.getBoardSizeByCategoryIdAndBoardTypeId(category, it.id),
+                        PagingDto(page, recordSize, pageSize)
                     )
                 )
             }
         } else {
-            boardService.findBoardList(
-                FindBoardDTO(boardTypeId, page, pageSize, sortCriterionMap[sortCriterionId]!!),
-                auth.getUserId(),
-                category
+            BoardListInfo(
+                null,
+                boardService.findBoardList(
+                    FindBoardDTO(boardTypeId, page, recordSize, sortCriterionMap[sortCriterionId]!!),
+                    auth.getUserId(),
+                    category
+                ),
+                Pagination(
+                    boardService.getBoardSizeByCategoryIdAndBoardTypeId(category, boardTypeId),
+                    PagingDto(page, recordSize, pageSize)
+                )
             )
         }
 
