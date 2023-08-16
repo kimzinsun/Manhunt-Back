@@ -40,9 +40,9 @@ class BookmarkController(@Autowired val bookmarkService: BookmarkService) {
         }
         val bookmarkList = bookmarkService.showBookmarks(auth.getUserId(), pagingDto)
 
-        //return ResponseEntity.badRequest().body(Response.error("요청에 실패했습니다."))
-        
-        return ResponseEntity.ok().body(Response.success(bookmarkList))
+        val pagingResponse = PagingResponse(bookmarkList.list, bookmarkList.pagination)
+
+        return ResponseEntity.ok().body(Response.success(pagingResponse))
     }
 
     @DeleteMapping("/{boardId}")

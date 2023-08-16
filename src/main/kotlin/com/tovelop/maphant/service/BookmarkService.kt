@@ -28,7 +28,7 @@ class BookmarkService(@Autowired val bookmarkMapper: BookmarkMapper) {
             return PagingResponse(Collections.emptyList(), null)
         }
         val pagination = Pagination(count, params)
-        val bookmarks = bookmarkMapper.selectBoardAllById(userId)
+        val bookmarks = bookmarkMapper.selectBoardAllById(userId, params)
         return PagingResponse(bookmarks, pagination)
     }
 
