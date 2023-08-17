@@ -26,9 +26,8 @@
                  join board_type on board.type_id = board_type.id
         WHERE board_id = #{boardId}
           AND comment.state = 0
-        ORDER BY comment.created_at DESC
-            LIMIT #{params.recordSize}
-        OFFSET #{params.offset}
+        ORDER BY comment.created_at
+        LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
     <select id="findAllCommentByUser" resultType="CommentExtDTO">
         SELECT comment.id,
@@ -60,9 +59,8 @@
                  join board_type on board.type_id = board_type.id
         WHERE ((#{userId} != #{targetUserId} AND comment.is_anonymous = 0) OR comment.user_id = #{userId})
           AND comment.user_id = #{targetUserId}
-        ORDER BY comment.created_at DESC
-            LIMIT #{params.recordSize}
-        OFFSET #{params.offset}
+        ORDER BY comment.created_at
+        LIMIT #{params.recordSize} OFFSET #{params.offset}
     </select>
     <insert id="insertComment">
         INSERT INTO comment(board_id, user_id, parent_id, body, created_at, is_anonymous)
@@ -141,6 +139,11 @@
         FROM board
         WHERE id = #{boardId}
     </select>
-
-
+    <select id="getAnonymousListByBoardId">
+        SELECT user_id, ROW_NUMBER() OVER () AS rowNum
+        FROM (SELECT DISTINCT user_id
+              FROM comment
+              WHERE is_anonymous = 1
+                AND board_id = #{boardId}) AS subquery;
+    </select>
 </mapper>
