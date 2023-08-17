@@ -15,13 +15,13 @@ import java.time.LocalDateTime
 class NotificationController(private val notificationService: NotificationService) {
 
     @GetMapping("/")
-    fun getNotifications(): List<NotificationDBDTO> {
+    fun getNotifications(): List<NotificationResponseDTO> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         return notificationService.getNotificationsByUserId(auth.getUserId())
     }
 
     @GetMapping("/{userId}")
-    fun getNotificationsByUserId(@PathVariable userId: Int): List<NotificationDBDTO> {
+    fun getNotificationsByUserId(@PathVariable userId: Int): List<NotificationResponseDTO> {
         return notificationService.getNotificationsByUserId(userId)
     }
 
