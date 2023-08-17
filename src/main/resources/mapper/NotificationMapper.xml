@@ -15,7 +15,7 @@
     </insert>
     <update id="updateNotification">
         UPDATE log_alert
-        SET is_read = NOW()
+        SET is_read = #{readAt}
         WHERE id = #{id}
           and is_read is null
     </update>
