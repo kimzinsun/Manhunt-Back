@@ -4,7 +4,7 @@ data class SetBoardDTO(
     val parentId: Int?,
     val typeId: Int,
     val title: String,
-    val body: String,
+    var body: String,
     val isHide: Int,
     val isComplete: Int,
     val isAnonymous: Int,
