@@ -43,27 +43,30 @@ class UserService(val mapper: UserMapper) {
     fun updateUserPhoneNumByEmail(email: String, newPhoneNum: String) {
         mapper.updateUserPhoneNumByEmail(email, newPhoneNum)
     }
+
     fun insertUserCategoryMajorByEmail(email: String, newCategoryId: Int, newMajorId: Int) {
         val userId = mapper.findUserIdByUserEmail(email)
         mapper.insertCategoryIdMajorIdByUserId(userId, newCategoryId, newMajorId)
     }
-    fun deleteCategoryIdMajorIdByUserId(email: String, categoryId: Int, majorId: Int){
+
+    fun deleteCategoryIdMajorIdByUserId(email: String, categoryId: Int, majorId: Int) {
         val userId = mapper.findUserIdByUserEmail(email)
         mapper.deleteCategoryIdMajorIdByUserId(userId, categoryId, majorId)
     }
-    fun findCategoryIdByEmail(email: String): List<Int>{
+
+    fun findCategoryIdByEmail(email: String): List<Int> {
         return mapper.findCategoryIdByEmail(email)
     }
 
-    fun findCategoryIdByName(name: String): Int{
+    fun findCategoryIdByName(name: String): Int {
         return mapper.findCategoryIdByName(name)
     }
 
-    fun findMajorIdByEmail(email: String): List<Int>{
+    fun findMajorIdByEmail(email: String): List<Int> {
         return mapper.findMajorIdByEmail(email)
     }
 
-    fun findMajorIdByName(name: String): Int{
+    fun findMajorIdByName(name: String): Int {
         return mapper.findMajorIdByName(name)
     }
 
@@ -143,5 +146,13 @@ class UserService(val mapper: UserMapper) {
 
     fun updateUserRole(role: String, id: Int) {
         mapper.updateUserRole(role, id)
+    }
+
+    fun withDrawUser(email: String) {
+        mapper.withDrawUser(email)
+    }
+
+    fun updateWithDrawUser(email: String) {
+        mapper.updateWithDrawUser(email)
     }
 }
