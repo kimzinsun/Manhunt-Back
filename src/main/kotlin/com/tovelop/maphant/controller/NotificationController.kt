@@ -25,11 +25,11 @@ class NotificationController(private val notificationService: NotificationServic
         return notificationService.getNotificationsByUserId(userId)
     }
 
-    @GetMapping("{userId}/{notificationId}")
-    fun updateNotification(
-        @PathVariable userId: Int,
-        @PathVariable notificationId: Int
-    ) {
-        notificationService.updateNotification(notificationId)
-    }
+//    @GetMapping("{userId}/{notificationId}")
+//    fun updateNotification(
+//        @PathVariable userId: Int,
+//        @PathVariable notificationId: Int
+//    ) {
+//        notificationService.updateNotification(notificationId)
+//    }
 }
