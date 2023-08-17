@@ -33,12 +33,14 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
          * 5. 토큰마다 구한 tf*idf를 board_id마다 합산
          * 6. 내림차순으로 정렬 후 반환
          */
+        val wordNMap = splitAndCount(keyword)
+
     }
 
     fun splitAndCount(input: String): Map<String, Int> {
         val wordMap = mutableMapOf<String, Int>()
 
-        input.trim().split(" ").forEach { word ->
+        input.lowercase().trim().split(" ").forEach { word ->
             for (i in 0 until word.length - 1) {
                 val twoChar = word.substring(i, i + 2)
                 wordMap[twoChar] = wordMap.getOrDefault(twoChar, 0) + 1
