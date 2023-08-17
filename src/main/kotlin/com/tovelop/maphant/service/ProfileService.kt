@@ -63,9 +63,9 @@ class ProfileService(
     fun updateProfileNickname(userId: Int, nickname: String) =
         profileMapper.updateProfileNickname(userId, nickname)
 
-    fun updateProfileBody(userId: Int, body: String){
+    fun updateProfileBody(userId: Int, body: String) {
         existProfile(userId).let {
-            if(it)profileMapper.updateProfileBody(userId, body)
+            if (it) profileMapper.updateProfileBody(userId, body)
             else profileMapper.insertProfileBody(userId, body)
         }
 
@@ -103,7 +103,6 @@ class ProfileService(
 
     fun getLikeBoardsList(userId: Int, params: PagingDto): PagingResponse<BoardResDto> {
         var count = profileMapper.findLikeBoardCntByUser(userId)
-        println(count)
 
         if (count < 1) {
             return PagingResponse(Collections.emptyList(), null)
