@@ -1,0 +1,89 @@
+/* 기존 스타일 유지 */
+body {
+    font-family: '나눔고딕', NanumGothic, '돋움', Dotum, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #333;
+    letter-spacing: -1px;
+}
+
+/* 추가한 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0; /* 추가: 바디 마진 제거 */
+    padding: 0; /* 추가: 바디 패딩 제거 */
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.date_info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.info_box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section-graph {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.graph-title {
+    margin-bottom: 10px;
+    min-height: auto; /* 수정: 기본값으로 설정 */
+}
+
+.graph-list {
+    padding-left: 24px;
+    position: relative; /* 수정: 절대 위치 제거 */
+    /* top: 0; */
+    /* left: 0; */
+    /* bottom: 0; */
+    width: 256px;
+    border-right: 1px solid #d8dde3;
+    background: #f6f8fc;
+    float: left; /* 수정: 왼쪽으로 부유 */
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.sub-title {
+    position: relative;
+    z-index: 20;
+    height: 54px;
+    line-height: 53px;
+    color: #6a7589;
+    list-style-type: none;
+}
+
+.sub-title.active {
+    background: #7baade;
+    color: #fff;
+    list-style-type: none;
+}
+
+.graph-area {
+    padding: 50px 47px 50px;
+    box-sizing: border-box;
+    overflow: hidden; /* 수정: 내용 오버플로우 숨김 */
+}
+
+.div {
+    display: block;
+}

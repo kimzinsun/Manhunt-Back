@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @Controller
 @RequestMapping("/admin")
@@ -42,6 +43,26 @@ class AdminPageController(
         val findUserList = adminPageService.findAllUserSanction()
         model.addAttribute("userSanction", findUserList)
         return "admin_user_page"
+    }
+    @GetMapping("/statistics")
+    fun listStatistics(model: Model): String {
+        // 가상의 데이터 생성 (예시)
+        val dateInfo = "2023.08.17. (목)"
+        val infoBoxContent = "유용한 정보를 제공합니다."
+
+        // 그래프 데이터 생성 (예시)
+        val visitorData = listOf(100, 150, 80, 120, 200)
+        val postCountData = listOf(50, 70, 40, 60, 90)
+        val commentCountData = listOf(200, 300, 150, 180, 250)
+
+        // 모델에 데이터 추가
+        model.addAttribute("dateInfo", dateInfo)
+        model.addAttribute("infoBoxContent", infoBoxContent)
+        model.addAttribute("visitorData", visitorData)
+        model.addAttribute("postCountData", postCountData)
+        model.addAttribute("commentCountData", commentCountData)
+
+        return "admin_statistics_page"
     }
 
     @GetMapping("/reportInfo/board")
@@ -84,7 +105,7 @@ class AdminPageController(
         //유저 제재 내역 테이블에 삽입
         adminPageService.insertUserReport(userReportDTO)
         //유저 정보 업데이트
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(userReportDTO.userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -98,7 +119,7 @@ class AdminPageController(
         adminPageService.updateBoardUnblockByUserId(userId)
         adminPageService.updateCommentUnblockByUserId(userId)
         //유저 정보 업데이트
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 

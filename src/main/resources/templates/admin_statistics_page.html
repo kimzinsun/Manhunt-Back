@@ -1,10 +1,169 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Admin Statistics Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/admin_statistics_page.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+<div class="container">
+    <div class="section-top-statistic">
+        <div class="date_info">
+            <div class="date_info_inner">
+                <a href="#" class="date_button_on">
+                    <span class="blind">이전 날짜로 가기</span>
+                </a>
+                <a href="#" class="date_button_next">
+                    <span class="blind">다음 날짜로 가기</span>
+                </a>
+            </div>
+            <div class="date_box">
+                <span class="date_txt" th:text="${dateInfo}"></span>
+                <a href="#" class="date_select">
+                    <span class="blind">날짜 선택</span>
+                </a>
+            </div>
+        </div>
+        <div class="info_box" th:text="${infoBoxContent}">
+            <!-- 정보 박스 내용을 표시합니다. -->
+        </div>
+    </div>
+    <div>
+        <div class="section-graph">
+            <div class="graph-list">
+                <ul class="list-sub-title">
+                    <li class="sub-title active">
+                        <a href="#" class="title-area">
+                            <span class="title-txt">방문자수</span>
+                        </a>
+                    </li>
+                    <li class="sub-title">
+                        <a href="#" class="title-area">
+                            <span class="title-txt">게시글수</span>
+                        </a>
+                    </li>
+                    <li class="sub-title">
+                        <a href="#" class="title-area">
+                            <span class="title-txt">댓글수</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="graph-area">
+                <div class="graph-title">
+                    <h4>데이터 통계</h4>
+                </div>
+                <div class="graph">
+                    <!-- 그래프가 표시될 곳 -->
+                    <canvas id="myChart"></canvas>
+                </div>
+                <div class="graph-element-list">
+                    <!-- 그래프 요소 리스트 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        // 그래프 데이터 (임의의 데이터 사용)
+        var visitorData = [100, 150, 80, 120, 200];
+        var postCountData = [50, 70, 40, 60, 90];
+        var commentCountData = [200, 300, 150, 180, 250];
+        var labels = ['월', '화', '수', '목', '금'];
 
+        // 그래프 생성
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line', // 선 그래프로 설정
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '방문자수',
+                        data: visitorData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: '게시글수',
+                        data: postCountData,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: '댓글수',
+                        data: commentCountData,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: false,
+                    },
+                },
+                interaction: {
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        },
+                        suggestedMin: -10,
+                        suggestedMax: 200
+                    }
+                }
+            },
+        });
+    });
+    // 날짜 변경을 위한 함수
+    function changeDate(changeAmount) {
+        // 현재 날짜 정보 가져오기
+        let currentDate = new Date(document.getElementById(".date_select").textContent);
+
+        // 날짜 변경
+        currentDate.setDate(currentDate.getDate() + changeAmount);
+
+        // 변경된 날짜 업데이트
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        const day = String(currentDate.getDate()).padStart(2, "0");
+        const dayOfWeek = ["일", "월", "화", "수", "목", "금", "토"][currentDate.getDay()];
+
+        // 화면에 날짜 업데이트
+        $(".date_select").textContent = year + "." + month + "." + day + " (" + dayOfWeek + ")";
+    }
+
+    // 이전 날짜로 가기 버튼 클릭 이벤트 처리
+    $(".date_button_on").click(function (e) {
+        e.preventDefault();
+        changeDate(-1); // -1일로 변경
+    });
+
+    // 다음 날짜로 가기 버튼 클릭 이벤트 처리
+    $(".date_button_next").click( function (e) {
+        e.preventDefault();
+        changeDate(1); // 1일로 변경
+    });
+
+</script>
 </body>
 </html>

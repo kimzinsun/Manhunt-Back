@@ -5,6 +5,7 @@
     <title>과끼리 관리자 페이지</title>
     <link rel="stylesheet" th:href="@{/admin_index_page.css}">
     <link rel="stylesheet" th:href="@{/admin_board_page.css}">
+    <link rel="stylesheet" th:href="@{/admin_statistics_page.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -15,7 +16,7 @@
     <a href="#" class="active" onclick="setActiveMenu(this, '/admin/board')"><i class="board"></i>게시판</a>
     <a href="#" onclick="setActiveMenu(this, '/admin/comment')"><i class="comment"></i>댓글</a>
     <a href="#" onclick="setActiveMenu(this, '/admin/user')"><i class="user"></i>유저</a>
-    <a href="#" onclick="setActiveMenu(this, '/admin_statistics_page.html')"><i class="statistics"></i>통계</a>
+    <a href="#" onclick="setActiveMenu(this, '/admin/statistics')"><i class="statistics"></i>통계</a>
 </div>
 <div id="content"></div>
 <footer>
