@@ -8,13 +8,14 @@ import org.springframework.stereotype.Repository
 @Mapper
 @Repository
 interface BoardMapper {
+    fun getABoardCnt(parentId: Int): Int
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int
     fun getCategoryIdByCategoryName(categoryName: String): Int
-    fun findBoardList(userId:Int,findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int): List<PageBoardDTO>
+    fun findBoardList(userId: Int, findBoardDTO: FindBoardDTO, startRow: Int, categoryId: Int): List<PageBoardDTO>
     fun getBoardSizeByCategoryIdAndBoardTypeId(categoryId: Int, boardTypeId: Int): Int
     fun insertBoard(boardDTO: BoardDTO)
     fun findBoard(boardId: Int): BoardDTO?
-    fun findBoardById(userId: Int,boardId: Int): ExtBoardDTO?
+    fun findBoardById(userId: Int, boardId: Int): ExtBoardDTO?
     fun updateBoard(updateBoardDTO: UpdateBoardDTO)
     fun deleteBoard(boardId: Int)
     fun insertBoardLike(boardId: Int, userId: Int)
@@ -45,7 +46,13 @@ interface BoardMapper {
     fun getAllBoardType(): MutableList<BoardTypeDTO>
     fun findLastInsertId(): Int
 
-    fun findBoardListBySearch(boardSearchDto: BoardSearchDto, pagingDto: PagingDto, categoryId: Int, userId: Int): List<BoardSearchResponseDto>
+    fun findBoardListBySearch(
+        boardSearchDto: BoardSearchDto,
+        pagingDto: PagingDto,
+        categoryId: Int,
+        userId: Int
+    ): List<BoardSearchResponseDto>
+
     fun countBoardListBySearch(boardSearchDto: BoardSearchDto, categoryId: Int): Int
 
     fun getPollBoardList(userId:Int, categoryId:Int, boardTypeId:Int?, pagingDto: PagingDto): List<PageBoardDTO>
