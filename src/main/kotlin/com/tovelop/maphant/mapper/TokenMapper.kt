@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface TokenMapper {
     fun insertToken(userId: Int, token: String)
+
+    fun getTokensByUserId(userId: Int): List<String>
 }

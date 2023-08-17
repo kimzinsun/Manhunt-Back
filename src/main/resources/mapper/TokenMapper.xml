@@ -7,4 +7,10 @@
         insert into user_token (user_id, public_key)
         values (#{userId}, #{token})
     </insert>
+
+    <select id="getTokensByUserId">
+        select public_key
+        from user_token
+        where user_id = #{userId}
+    </select>
 </mapper>
