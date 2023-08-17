@@ -19,7 +19,11 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
-class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid, @Autowired val userDataService: UserDataService) {
+class SignupController(
+    @Autowired val userService: UserService,
+    @Autowired val sendGrid: SendGrid,
+    @Autowired val userDataService: UserDataService,
+) {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
 
@@ -36,10 +40,15 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     @DeleteMapping("")
     fun deleteUser(): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        if (auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
+            print(auth.getUserData().email)
+        }
         if (auth.isNotLogged()) {
             return ResponseEntity.unprocessableEntity().body(Response.error("로그인이 안됨"))
         }
         if (auth.getUserRole() != "admin") {
+            userService.withDrawUser(auth.getUserData().email)
+            userService.updateWithDrawUser(auth.getUserData().email)
             userService.updateUserStateByUserId(auth.getUserId(), 3)
             return ResponseEntity.ok(Response.stateOnly(true))
         }
@@ -264,7 +273,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         val oldMajorIdList = userService.findMajorIdByEmail(user.email)
         val newMajorId = userService.findMajorIdByName(changeInfoDTO.major!!)
 
-        if (newMajorId in oldMajorIdList){
+        if (newMajorId in oldMajorIdList) {
             return ResponseEntity.badRequest().body(Response.error("이미 등록된 전공입니다."))
         }
 
