@@ -259,12 +259,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val user = auth.getUserData()
 
-        val oldCategoryIdList = userService.findCategoryIdByEmail(user.email)
         val newCategoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
-
-        if (newCategoryId in oldCategoryIdList){
-            return ResponseEntity.badRequest().body(Response.error("이미 등록된 계열입니다."))
-        }
 
         val oldMajorIdList = userService.findMajorIdByEmail(user.email)
         val newMajorId = userService.findMajorIdByName(changeInfoDTO.major!!)

@@ -23,6 +23,11 @@
         WHERE user.id = #{user_id}
     </select>
 
+    <insert id="insertProfileBody">
+        INSERT INTO profile (user_id, body)
+        VALUES (#{userId}, #{body})
+    </insert>
+
     <update id="updateProfileImage">
         UPDATE profile
         SET profile_img = #{imageUrl}

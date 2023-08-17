@@ -6,7 +6,6 @@ data class CommentDTO(
     val id: Int,
     val user_id: Int,
     val parent_id: Int?,
-    var board_type: String,
     val board_id: Int,
     val body: String,
     val is_anonymous: Boolean,
@@ -19,9 +18,8 @@ data class CommentDTO(
 data class setCommentDTO(
     val id: Int,
     val parent_id: Int?,
-    val board_type: String,
-    val board_id: Int,
-    val body: String,
+    var board_id: Int,
+    var body: String,
     val is_anonymous: Boolean,
     val created_at: LocalDateTime?,
     val modified_at: LocalDateTime?,
@@ -33,7 +31,6 @@ data class setCommentDTO(
             id = id,
             parent_id = parent_id,
             user_id = user_id,
-            board_type = board_type,
             board_id = board_id,
             body = body,
             is_anonymous = is_anonymous,
@@ -59,7 +56,7 @@ data class CommentExtDTO(
     val created_at: LocalDateTime,
     val modified_at: LocalDateTime?,
     val like_cnt: Int,
-    val comment_id: Int?
+    val comment_id: Int?,
 ) {
     fun timeFormat(comment: CommentExtDTO, time: String): FormatTimeDTO {
         return FormatTimeDTO(
@@ -105,7 +102,7 @@ data class CommentReportDTO(
 
 data class UpdateCommentDTO(
     val id: Int,
-    val body: String,
+    var body: String,
     val modified_at: LocalDateTime?,
 )
 
@@ -124,4 +121,9 @@ data class FormatTimeDTO(
     val like_cnt: Int,
     val comment_id: Int?,
     val time: String,
+)
+
+data class AnonymousListDTO(
+    val user_id: Int,
+    val rowNum: Int,
 )

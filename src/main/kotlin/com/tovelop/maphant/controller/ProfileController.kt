@@ -38,7 +38,6 @@ class ProfileController(
     ): ResponseEntity<Response<String>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
         val userId: Int = auth.getUserId()
-
         if (nickname != null) profileService.updateProfileNickname(userId, nickname)
         if (body != null) profileService.updateProfileBody(userId, body)
         if (file != null) {

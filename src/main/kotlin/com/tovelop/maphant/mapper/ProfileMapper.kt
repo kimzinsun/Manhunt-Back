@@ -15,6 +15,8 @@ interface ProfileMapper {
 
     fun findById(userId: Int): ProfileDto?
 
+    fun insertProfileBody(userId: Int, body: String):Boolean
+
     fun updateProfileImage(userId: Int, imageUrl: String): Boolean
 
     fun updateProfileNickname(userId: Int, nickname: String): Boolean
