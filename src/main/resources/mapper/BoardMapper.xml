@@ -19,7 +19,7 @@
         from category
         where name = #{categoryName};
     </select>
-    <insert id="insertBoard">
+    <insert id="insertBoard" parameterType="BoardDTO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete,
                           is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
         VALUES (#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete},

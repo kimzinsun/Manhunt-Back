@@ -230,6 +230,8 @@ class BoardController(
         if (board.title.isBlank() || board.body.isBlank()) {
             return ResponseEntity.badRequest().body(Response.error("제목이나 본문이 비어있습니다."))
         }
+        val boardDto = board.toBoardDTO(auth.getUserId(), category)
+        boardService.insertBoard(boardDto)
         val badWordFiltering = BadWordFiltering()
         if (badWordFiltering.hasBadWords(board.title)) {
             return ResponseEntity.badRequest().body(Response.error("제목에는 비속어를 적을 수 없습니다."))
@@ -237,6 +239,18 @@ class BoardController(
         board.body=badWordFiltering.filterBadWords(board.body)
         boardService.insertBoard(board.toBoardDTO(auth.getUserId(), category))
         rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
+
+        if(board.poll != null) { //투표생성
+            val poll = PollDTO(
+                board.poll.id,
+                boardDto.id as Int,
+                board.poll.title,
+                board.poll.options,
+                board.poll.expireDateTime,
+                board.poll.state
+            )
+            pollService.createPoll(poll)
+        }
         // tagNames가 비어있지 않은 경우 tagService.insertTag
         if (board.tagNames.isNullOrEmpty().not()) board.tagNames?.let {
             val boardId = boardService.findLastInsertId()

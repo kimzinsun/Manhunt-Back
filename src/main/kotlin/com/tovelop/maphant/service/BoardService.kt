@@ -39,6 +39,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
+        println("boardId = ${boardDTO.id}")
     }
 
     fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
