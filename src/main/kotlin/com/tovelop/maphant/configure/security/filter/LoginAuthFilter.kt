@@ -3,6 +3,7 @@ package com.tovelop.maphant.configure.security.filter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.tovelop.maphant.configure.security.token.LoginAuthToken
 import com.tovelop.maphant.dto.LoginDTO
+import com.tovelop.maphant.mapper.TokenMapper
 import com.tovelop.maphant.service.LogService
 import com.tovelop.maphant.utils.ResponseJsonWriter.Companion.writeJSON
 import jakarta.servlet.FilterChain
@@ -18,7 +19,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 class LoginAuthFilter(
     authenticationManager: AuthenticationManager?,
-    private val logService: LogService
+    private val logService: LogService,
+    private val tokenMapper: TokenMapper
 )
     :AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/user/login", "POST"), authenticationManager) {
 
@@ -32,6 +34,7 @@ class LoginAuthFilter(
                 val userIP = (request as HttpServletRequest).getHeader("X-Forwarded-For")
 
                 logService.login(authResult.getUserId()!!, userIP)
+                tokenMapper.insertToken(authResult.getUserId()!!, authResult.principal)
 
                 val output = mutableMapOf<String, Any>(
                     "success" to true,
