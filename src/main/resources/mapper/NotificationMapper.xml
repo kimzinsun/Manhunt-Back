@@ -13,7 +13,7 @@
         VALUES (#{notification.userId}, #{notification.title}, #{notification.body}, #{jsonStr},
                 NOW())
     </insert>
-    <update id="updateNotification">
+    <update id="updateNotificationReadAt">
         UPDATE log_alert
         SET is_read = #{readAt}
         WHERE id = #{id}

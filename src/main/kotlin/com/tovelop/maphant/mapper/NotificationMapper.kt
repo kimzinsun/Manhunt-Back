@@ -11,5 +11,5 @@ import java.time.LocalDateTime
 interface NotificationMapper {
     fun getNotificationsByUserId(userId: Int): List<NotificationDBDTO>
     fun createNotification(notification: FcmMessageDTO, jsonStr: String)
-    fun updateNotification(id: Int, readAt: LocalDateTime)
+    fun updateNotificationReadAt(id: Int, readAt: LocalDateTime)
 }

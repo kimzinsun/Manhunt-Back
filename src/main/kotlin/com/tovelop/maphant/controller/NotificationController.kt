@@ -27,7 +27,7 @@ class NotificationController(private val notificationService: NotificationServic
     }
 
     @PostMapping("/updateread")
-    fun updateNotification (@RequestBody body: Map<String, Any>): ResponseEntity<Any> {
+    fun updateNotificationReadAt (@RequestBody body: Map<String, Any>): ResponseEntity<Any> {
         var id: Int?
         var readAt: LocalDateTime?
         try {
@@ -39,7 +39,7 @@ class NotificationController(private val notificationService: NotificationServic
             return ResponseEntity.badRequest().body(Response.error<Any>(e.message ?: "알 수 없는 오류가 발생했습니다."))
         }
 
-        notificationService.updateNotification(id, readAt)
+        notificationService.updateNotificationReadAt(id, readAt)
 
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
