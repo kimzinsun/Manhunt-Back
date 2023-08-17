@@ -13,9 +13,10 @@
                board_user.id boardUserId, board_user.email boardUserEmail
         from (select board_id, user_id, report_id, reported_at, id
               from board_report
+              where state = 0
               order by reported_at
-                  limit #{reportSize} offset 0) as reports
-                 join board on reports.board_id = board.id and board.state != 2
+              limit #{reportSize} offset 0) as reports
+                 join board on reports.board_id = board.id
                  join user board_user on board.user_id = board_user.id
     </select>
     <select id="findBoardReportByMostReportedRanking" resultType="AdminBoardReportDTO">
@@ -23,11 +24,12 @@
                board_user.id boardUserId, board_user.email boardUserEmail
         from (select board_id
               from board_report
+              where state = 0
               group by board_id
               order by count(*) desc
-                  limit #{reportSize} offset 0) as board_ids
-                 join board on board_id = board.id and board.state != 2
-                 join user board_useUserReportDTOr on board.user_id = board_user.id
+              limit #{reportSize} offset 0) as board_ids
+                 join board on board_id = board.id
+                 join user board_user on board.user_id = board_user.id
     </select>
     <select id="findBoardReportBySortType" resultType="AdminBoardReportDTO">
     </select>
@@ -45,9 +47,10 @@
         select reports.comment_id commentId, comment.body commentBody, user.id commentUserId,user.email commentUserEmail
         from (select comment_id, user_id, report_id, id, reported_at
               from comment_report
+              where state = 0
               order by reported_at
                   limit #{reportSize} offset 0) as reports
-                 join comment on reports.comment_id = comment.id and comment.state != 2
+                 join comment on reports.comment_id = comment.id
                  join user on comment.user_id = user.id
     </select>
     <select id="findCommentReportByMostReportedRanking" resultType="AdminCommentReportDTO">
@@ -55,10 +58,11 @@
                user.id commentUserId,user.email commentUserEmail
         from (select comment_id
               from comment_report
+              where state = 0
               group by comment_id
               order by count(*) desc
                   limit #{reportSize} offset 0) as comment_ids
-                 join comment on comment_ids.comment_id = comment.id and comment.state != 2
+                 join comment on comment_ids.comment_id = comment.id
                  join user on comment.user_id = user.id
     </select>
     <select id="findCommentReportBySortType" resultType="AdminCommentReportDTO">
@@ -169,5 +173,30 @@
                user_report.sanction_reason AS sanctionReason
         from user_report
         where user_id = #{userId}
+    </select>
+    <update id="updateBoardReportStateByBoardId">
+        update board_report
+        set state = 1
+        where board_id = #{boardId} and state = 0
+    </update>
+    <update id="updateCommentReportStateByCommentId">
+        update comment_report
+        set state = 1
+        where comment_id = #{commentId} and state = 0
+    </update>
+    <select id="findLoginLogByDate" resultType="Int">
+        select count(*)
+        from log_login
+        where time >= #{start} and #{end} >= time
+    </select>
+    <select id="findBoardLogByDate" resultType="Int">
+        select count(*)
+        from board
+        where board.created_at >= #{start} and #{end} >= board.created_at
+    </select>
+    <select id="findCommentLogByDate" resultType="Int">
+        select count(*)
+        from comment
+        where comment.created_at >= #{start} and #{end} >= comment.created_at
     </select>
 </mapper>
