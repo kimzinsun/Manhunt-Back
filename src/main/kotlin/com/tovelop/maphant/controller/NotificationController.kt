@@ -1,17 +1,15 @@
 package com.tovelop.maphant.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.NotificationDBDTO
-import com.tovelop.maphant.dto.NotificationResponseDTO
 import com.tovelop.maphant.service.NotificationService
 import com.tovelop.maphant.type.response.Response
 import org.springframework.http.ResponseEntity
-import org.springframework.http.StreamingHttpOutputMessage.Body
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import org.springframework.format.annotation.DateTimeFormat as DateTimeFormat
 
 @RestController
 @RequestMapping("/notifications")
@@ -28,13 +26,14 @@ class NotificationController(private val notificationService: NotificationServic
         return notificationService.getNotificationsByUserId(userId)
     }
 
-    @PostMapping("/")
-    fun updateNotification (body: Map<String, Any>): ResponseEntity<Any> {
-        var id: Int
+    @PostMapping("/updateread")
+    fun updateNotification (@RequestBody body: Map<String, Any>): ResponseEntity<Any> {
+        var id: Int?
         var readAt: LocalDateTime?
         try {
             id = body["id"] as Int
-            readAt = body["readAt"] as LocalDateTime
+            val readAtString = body["readAt"] as String
+            readAt = LocalDateTime.parse(readAtString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response.error<Any>(e.message ?: "알 수 없는 오류가 발생했습니다."))
         }
