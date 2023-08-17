@@ -28,11 +28,9 @@ class BoardNoticeController(@Autowired val boardNoticeService: BoardNoticeServic
 
     @PutMapping("/update")
     fun updateNotice(@RequestBody updateBoardNoticeDTO: UpdateBoardNoticeDTO): ResponseEntity<Any> {
-        try {
-            boardNoticeService.updateNotice(updateBoardNoticeDTO)
-        } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response.error<Any>("수정을 실패했습니다."))
-        }
+        val updateResult = boardNoticeService.updateNotice(updateBoardNoticeDTO)
+        if (updateResult == 0)
+            return ResponseEntity.badRequest().body(Response.error<Any>("수정에 실패했습니다. 아이디를 확인하세요."))
         return ResponseEntity.ok().body(Response.stateOnly(true))
     }
 
