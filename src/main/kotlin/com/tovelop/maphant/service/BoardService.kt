@@ -17,6 +17,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
                    @Autowired private val redisService: RedisService,
                    @Autowired private val tagMapper: TagMapper,
                    @Autowired private val pollService: PollService) {
+    fun getABoardCnt(parentId:Int):Int{
+        return boardMapper.getABoardCnt(parentId)
+    }
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
         return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
     }
