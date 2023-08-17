@@ -32,8 +32,9 @@ class NotificationController(private val notificationService: NotificationServic
         var readAt: LocalDateTime?
         try {
             id = body["id"] as Int
-            val readAtString = body["readAt"] as String
-            readAt = LocalDateTime.parse(readAtString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+            val readAtString = body["readAt"] as String?
+            if(readAtString == null) readAt = LocalDateTime.now()
+            else readAt = LocalDateTime.parse(readAtString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response.error<Any>(e.message ?: "알 수 없는 오류가 발생했습니다."))
         }

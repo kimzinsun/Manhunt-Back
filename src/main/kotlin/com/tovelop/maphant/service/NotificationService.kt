@@ -24,7 +24,7 @@ class NotificationService(
         notificationMapper.createNotification(notification, jsonStr)
     }
 
-    fun updateNotification(id: Int, readAt: LocalDateTime?) {
-        notificationMapper.updateNotification(id, readAt ?: LocalDateTime.now())
+    fun updateNotification(id: Int, readAt: LocalDateTime) {
+        notificationMapper.updateNotification(id, readAt)
     }
 }
