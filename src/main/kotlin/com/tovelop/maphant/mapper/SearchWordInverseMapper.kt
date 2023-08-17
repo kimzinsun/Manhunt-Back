@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 @Mapper
 @Repository
 interface SearchWordInverseMapper {
+    fun findByWordId(wordId:Int): SearchWordInverseMapper?
 }

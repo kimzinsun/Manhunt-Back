@@ -7,7 +7,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SearchService(private val searchWordMapper: SearchWordMapper,
-                    private val searchWordInverseMapper: SearchWordInverseMapper) {
+                    private val searchWordInverseMapper: SearchWordInverseMapper,
+                    private val redisService: RedisService) {
 
     @Transactional
     fun create(boardId:Int, title:String, content:String, tags:List<String> ) {
@@ -23,17 +24,27 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
          */
     }
 
-    fun search(keyword:String) {
+    fun search(searchKeyword:String) {
         /**
          * 1. keyword 연속된 2글자씩 자르기 (구한 2글자를 토근이란 명칭이로 가정)
          * 2. 토큰을 search_word select -> id, word, df 값이 구해짐
-         * 3. search_word_df 테이블도 select (where search_word_id)
+         * 3. search_word_Inverse 테이블도 select (where search_word_id)
          *         - board_id, tf
-         * 4. 각 board_id마다 tf * idf(구해주면서)
-         * 5. 토큰마다 구한 tf*idf를 board_id마다 합산
+         * 4. 각 board_id 마다 tf * idf(구해주면서)
+         * 5. 토큰마다 구한 tf*idf 를 board_id 마다 합산
          * 6. 내림차순으로 정렬 후 반환
          */
-        val wordNMap = splitAndCount(keyword)
+        val searchKeywordMap = splitAndCount(searchKeyword)
+        val searchKeywordList = searchKeywordMap.keys.toList()
+
+        val boardTfIdfMap = mutableMapOf<Int, Map<String,Int>>()
+//        val boardCount = redisService.get("boardCount") ?:
+        searchWordMapper.findSearchWordListByWord(searchKeywordList)?.forEach {
+            searchWordDto -> {
+                val searchWordInverseDto = searchWordInverseMapper.findByWordId(searchWordDto.id)
+                boardTfIdfMap.
+            }
+        }
 
     }
 
