@@ -49,4 +49,6 @@ class CommentService(val commentMapper: CommentMapper, val boardMapper: BoardMap
     fun changeState(commentId: Int, state: Int) = commentMapper.changeState(commentId, state)
     fun getBoardUserId(boardId: Int) = commentMapper.getBoardUserId(boardId)
     fun findBoard(boardId: Int) = boardMapper.findBoard(boardId)
+
+    fun getAnonymousListByBoardId(boardId: Int) = commentMapper.getAnonymousListByBoardId(boardId)
 }
