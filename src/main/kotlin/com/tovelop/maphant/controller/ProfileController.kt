@@ -25,7 +25,6 @@ class ProfileController(
     @GetMapping
     fun getProfile(@RequestParam targetUserId: Int?): ResponseEntity<Response<List<ProfileNicknameAndBodyAndImageDto>>> {
         val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
-        println(profileService.getNicknameAndBodyAndImage(targetUserId ?: userId))
         return ResponseEntity.ok()
             .body(Response.success(profileService.getNicknameAndBodyAndImage(targetUserId ?: userId)))
     }
