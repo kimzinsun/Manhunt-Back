@@ -24,7 +24,7 @@ class ProfileService(
     val defaultProfileImg = "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
 
     //프로필 이미지의 Dto 불러오기
-    fun getNicknameAndBodyAndImage(targetUserId: Int): ProfileNicknameAndBodyAndImageDto =
+    fun getNicknameAndBodyAndImage(targetUserId: Int): List<ProfileNicknameAndBodyAndImageDto> =
         profileMapper.findNicknameAndBodyAndImageById(targetUserId)
 
     //유저가 작성한 댓글 목록 불러오기
@@ -98,6 +98,7 @@ class ProfileService(
 
     fun getLikeBoardsList(userId: Int, params: PagingDto): PagingResponse<BoardResDto> {
         var count = profileMapper.findLikeBoardCntByUser(userId)
+        println(count)
 
         if (count < 1) {
             return PagingResponse(Collections.emptyList(), null)
