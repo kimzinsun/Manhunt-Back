@@ -23,7 +23,7 @@ class UserDataService(@Autowired val userDataMapper: UserDataMapper,
         val user = userDataMapper.findUserByEmail(username) ?: throw UsernameNotFoundException("Not found")
         return UserData(username, user.password, user)
     }
-    fun updateUserData(userId: Int?, token: String?) {
+    fun updateUserData(userId: Int? = null, token: String? = null) {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val pubKey = token ?: auth.principal
         val userToken = redis.get("LOGIN_AUTH|${pubKey}")
