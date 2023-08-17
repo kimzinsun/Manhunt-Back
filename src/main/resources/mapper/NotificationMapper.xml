@@ -7,6 +7,9 @@
         SELECT id, etc, title, body, created_at, is_read
         FROM log_alert
         WHERE user_id = #{userId}
+        ORDER BY id DESC
+            LIMIT #{params.recordSize}
+        OFFSET #{params.offset}
     </select>
     <insert id="createNotification">
         INSERT INTO log_alert (user_id, title, body, etc, created_at)
@@ -19,5 +22,11 @@
         WHERE id = #{id}
           and is_read is null
     </update>
+
+    <select id="cntNotificationsByUserId" resultType="int">
+        select COUNT(*) as cnt
+        from log_alert
+        where user_id = #{userId}
+    </select>
 
 </mapper>
