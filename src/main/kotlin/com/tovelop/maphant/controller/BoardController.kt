@@ -13,6 +13,7 @@ import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.BadWordFiltering
 import com.tovelop.maphant.utils.SecurityHelper.Companion.isNotLogged
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
@@ -229,6 +230,11 @@ class BoardController(
         if (board.title.isBlank() || board.body.isBlank()) {
             return ResponseEntity.badRequest().body(Response.error("제목이나 본문이 비어있습니다."))
         }
+        val badWordFiltering = BadWordFiltering()
+        if (badWordFiltering.hasBadWords(board.title)) {
+            return ResponseEntity.badRequest().body(Response.error("제목에는 비속어를 적을 수 없습니다."))
+        }
+        board.body=badWordFiltering.filterBadWords(board.body)
         boardService.insertBoard(board.toBoardDTO(auth.getUserId(), category))
         rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
         // tagNames가 비어있지 않은 경우 tagService.insertTag
@@ -269,7 +275,11 @@ class BoardController(
         if (reBoard.userId != auth.getUserId() && auth.getUserRole() != "admin") {
             return ResponseEntity.badRequest().body(Response.error("권한이 없습니다."))
         }
-        // 게시글 읽어오기
+        val badWordFiltering = BadWordFiltering()
+        if (badWordFiltering.hasBadWords(board.title)) {
+            return ResponseEntity.badRequest().body(Response.error("제목에는 비속어를 적을 수 없습니다."))
+        }
+        board.body=badWordFiltering.filterBadWords(board.body)
         boardService.updateBoard(board.toUpdateBoardDTO())
         // 태그 수정하기
         if (!board.tags.isNullOrEmpty()) tagService.modifyTag(category, board.id, board.tags)

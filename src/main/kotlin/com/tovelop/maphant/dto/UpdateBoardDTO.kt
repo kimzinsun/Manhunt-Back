@@ -12,7 +12,7 @@ data class UpdateBoardDTO(
 data class UpgradeUpdateBoardDTO(
     val id: Int,
     var title: String,
-    val body: String,
+    var body: String,
     val isHide: Int,
     val imagesUrl: List<String>? = null,
     val tags: List<String>?
