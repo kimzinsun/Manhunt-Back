@@ -207,7 +207,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         //email로 nickname db저장
         userService.updateUserNicknameByEmail(auth.getUserData().email, changeInfoDTO.nickname)
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -222,7 +222,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         userService.updateUserPhoneNumByEmail(auth.getUserData().email, changeInfoDTO.phNum)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -250,7 +250,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             user.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
         )
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -270,7 +270,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         userService.insertUserCategoryMajorByEmail(user.email, newCategoryId, newMajorId)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -283,7 +283,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         val majorId = userService.findMajorIdByName(changeInfoDTO.major!!)
         userService.deleteCategoryIdMajorIdByUserId(user.email, categoryId, majorId)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -328,7 +328,9 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         userService.updateUserPasswordByEmail(newPasswordDTO.email, passwordEncoder.encode(newPasswordDTO.passwordChk))
 
-        userDataService.updateUserData()
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }
