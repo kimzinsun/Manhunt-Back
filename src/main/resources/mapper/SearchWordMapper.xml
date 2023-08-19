@@ -9,9 +9,26 @@
         where word = #{word}
     </select>
 
+    <insert id="insertSearchWord" useGeneratedKeys="true" keyProperty="id">
+        insert into search_word (word, df)
+        values (#{word}, 1)
+    </insert>
+
     <update id="plusDfCnt">
         update search_word
         set df = df + 1
-        where
+        where word = #{word}
     </update>
+
+    <select id="getIdByWord">
+        select id
+        from search_word
+        where word = {#word}
+    </select>
+
+    <select id="getDfByWord">
+        select df
+        from search_word
+        where word = #{word}
+    </select>
 </mapper>

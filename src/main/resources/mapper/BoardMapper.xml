@@ -481,4 +481,10 @@
                 AND b.type_id = #{boardTypeId}
             </if>
     </select>
+
+    <select id="getCountAllBoards">
+        SELECT
+            COUNT(*)
+        FROM board
+    </select>
 </mapper>
