@@ -13,7 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.util.*
 
 @Controller
 @RequestMapping("/admin")
@@ -47,7 +49,8 @@ class AdminPageController(
     @GetMapping("/statistics")
     fun listStatistics(model: Model): String {
         // 가상의 데이터 생성 (예시)
-        val dateInfo = "2023.08.17. (목)"
+        val today = Date()
+        val dateInfo = SimpleDateFormat("yyyy.MM.dd. (E)", Locale.KOREA).format(today)
         val infoBoxContent = "유용한 정보를 제공합니다."
 
         // 그래프 데이터 생성 (예시)
