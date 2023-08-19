@@ -72,6 +72,6 @@
     <update id="updateIdf">
         UPDATE search_word_inverse swi
         INNER JOIN search_word sw ON swi.search_word_id = sw.id
-        SET swi.idf = LN(#{boardCount} / (1 + swi.df))
+        SET swi.idf = LN(#{boardCount} / (1 + sw.df))
     </update>
 </mapper>
