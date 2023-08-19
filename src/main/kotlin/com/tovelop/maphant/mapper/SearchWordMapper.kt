@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 @Mapper
 @Repository
 interface SearchWordMapper {
+    fun getWordCnt(word:String):Int
 }

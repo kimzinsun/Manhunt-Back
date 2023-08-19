@@ -21,6 +21,23 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
          *      - 구한 결과를 search_word_inverse 테이블에 저장
          *            - tf -> 1에서 구한 tf로 저장
          */
+        val combinedString = "$title $content ${tags.joinToString(" ")}"
+        val eachCountedWords = splitAndCount(combinedString) //Map<String, Int>
+
+
+        eachCountedWords.forEach{eachCountedWord ->
+            val words:Set<String> = eachCountedWords.keys
+            val counts: Collection<Int> = eachCountedWords.values
+
+            words.forEach{word ->
+//                counts.forEach{count ->
+//                    if(searchWordMapper.getWordCnt(word)>0)
+//                }
+
+            }
+
+        }
+        //테이블에 해당 단어 유무 확인, 테이블의 df++,테이블에 저장
     }
 
     fun search(keyword:String) {
