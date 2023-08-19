@@ -24,7 +24,7 @@
              INNER JOIN (
                         SELECT swi.board_id, SUM(swi.tf * swi.idf) AS total_tfidf_value
                         FROM search_word_inverse swi
-                                 JOIN search_word n ON swi.2gram_id = n.id
+                                 JOIN search_word n ON swi.search_word_id = n.id
                         WHERE search_word.word IN
                             <foreach item="word" index="index" collection="wordList" open="(" separator="," close=")">
                                 #{word}
