@@ -57,4 +57,8 @@ interface BoardMapper {
 
     fun getPollBoardList(userId:Int, categoryId:Int, boardTypeId:Int?, pagingDto: PagingDto): List<PageBoardDTO>
     fun countPollBoardList(categoryId:Int, boardTypeId:Int?):Int
+
+    fun getCountAllBoards():Int
+
+    fun findBoardByDfIdf(boardTfIdfMap: MutableMap<Int, Double>, pagingDto: PagingDto, categoryId:Int, boardTypeId: Int?): List<PageBoardDTO>
 }

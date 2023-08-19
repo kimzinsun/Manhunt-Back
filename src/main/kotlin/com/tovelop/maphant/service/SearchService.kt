@@ -1,14 +1,20 @@
 package com.tovelop.maphant.service
 
+import com.tovelop.maphant.dto.BoardSearchResponseDto
+import com.tovelop.maphant.mapper.BoardMapper
 import com.tovelop.maphant.mapper.SearchWordInverseMapper
 import com.tovelop.maphant.mapper.SearchWordMapper
+import com.tovelop.maphant.type.paging.Pagination
+import com.tovelop.maphant.type.paging.PagingDto
+import com.tovelop.maphant.type.paging.PagingResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.math.ln
 
 @Service
 class SearchService(private val searchWordMapper: SearchWordMapper,
                     private val searchWordInverseMapper: SearchWordInverseMapper,
-                    private val redisService: RedisService) {
+                    private val boardMapper: BoardMapper) {
 
     @Transactional
     fun create(boardId:Int, title:String, content:String, tags:List<String> ) {
@@ -24,7 +30,7 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
          */
     }
 
-    fun search(searchKeyword:String) {
+    fun search(searchKeyword:String, userId:Int, categoryId:Int, boardTypeId: Int?, pagingDto: PagingDto): PagingResponse<BoardSearchResponseDto> {
         /**
          * 1. keyword 연속된 2글자씩 자르기 (구한 2글자를 토근이란 명칭이로 가정)
          * 2. 토큰을 search_word select -> id, word, df 값이 구해짐
@@ -34,18 +40,37 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
          * 5. 토큰마다 구한 tf*idf 를 board_id 마다 합산
          * 6. 내림차순으로 정렬 후 반환
          */
+        // 연속된 2글자로 자르기
         val searchKeywordMap = splitAndCount(searchKeyword)
         val searchKeywordList = searchKeywordMap.keys.toList()
 
-        val boardTfIdfMap = mutableMapOf<Int, Map<String,Int>>()
-//        val boardCount = redisService.get("boardCount") ?:
-        searchWordMapper.findSearchWordListByWord(searchKeywordList)?.forEach {
-            searchWordDto -> {
-                val searchWordInverseDto = searchWordInverseMapper.findByWordId(searchWordDto.id)
-                boardTfIdfMap.
-            }
-        }
+        val count = searchWordInverseMapper.getCountSearchBoardListByWords(searchKeywordList, categoryId, boardTypeId)
 
+        val pagination = Pagination(count,pagingDto)
+
+        val boards = searchWordInverseMapper.searchBoardListByWords(searchKeywordList, userId, categoryId, boardTypeId, pagingDto)
+
+        return PagingResponse(boards,pagination)
+        //key: boardId, value:
+//        val boardTfIdfMap = mutableMapOf<Int, Double>()
+////        val boardCount = redisService.get("boardCount") ?:
+//        searchWordMapper.findSearchWordListByWord(searchKeywordList)?.forEach {
+//            searchWordDto ->
+//            run {
+//                val searchWordInverseDto = searchWordInverseMapper.findByWordId(searchWordDto.id)
+//                if (searchWordInverseDto != null) {
+//                    val key = searchWordInverseDto.board_id
+//                    boardTfIdfMap[key] = boardTfIdfMap.getOrDefault(key, 0.0) + getTfIdf(searchWordInverseDto.tf, searchWordDto.df)
+//                }
+//            }
+//        }
+
+    }
+    fun getTfIdf(tf:Int, df: Int): Double {
+        val n = boardMapper.getCountAllBoards().toDouble()
+        val idf = ln(n / (1 + df))
+
+        return tf * idf
     }
 
     fun splitAndCount(input: String): Map<String, Int> {
