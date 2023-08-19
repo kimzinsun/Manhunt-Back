@@ -7,6 +7,7 @@ import com.tovelop.maphant.mapper.SearchWordMapper
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.math.ln
@@ -71,6 +72,12 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
         val idf = ln(n / (1 + df))
 
         return tf * idf
+    }
+
+    @Scheduled(cron = "0 0 3 1/1 * ? *") //매일 03:00에 실행
+    fun updateIdf() {
+        val boardCount = boardMapper.getCountAllBoards()
+        searchWordInverseMapper.updateIdf(boardCount)
     }
 
     fun splitAndCount(input: String): Map<String, Int> {

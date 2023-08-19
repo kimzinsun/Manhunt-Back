@@ -53,7 +53,7 @@
         INNER JOIN (
             SELECT swi.board_id
             FROM search_word_inverse swi
-            INNER JOIN search_word n ON swi.2gram_id = n.id
+            INNER JOIN search_word n ON swi.search_word_id = n.id
             WHERE search_word.word IN
                 <foreach item="word" index="index" collection="wordList" open="(" separator="," close=")">
                     #{word}
@@ -68,4 +68,10 @@
                 AND b.type_id = #{boardTypeId}
             </if>
     </select>
+
+    <update id="updateIdf">
+        UPDATE search_word_inverse swi
+        INNER JOIN search_word sw ON swi.search_word_id = sw.id
+        SET swi.idf = LN(#{boardCount} / (1 + swi.df))
+    </update>
 </mapper>
