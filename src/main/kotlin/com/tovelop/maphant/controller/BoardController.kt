@@ -4,10 +4,7 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
-import com.tovelop.maphant.service.BoardService
-import com.tovelop.maphant.service.PollService
-import com.tovelop.maphant.service.RateLimitingService
-import com.tovelop.maphant.service.TagService
+import com.tovelop.maphant.service.*
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
@@ -27,7 +24,8 @@ class BoardController(
     @Autowired val boardService: BoardService,
     @Autowired val rateLimitingService: RateLimitingService,
     @Autowired val tagService: TagService,
-    @Autowired val pollService: PollService
+    @Autowired val pollService: PollService,
+    @Autowired val searchService: SearchService
 ) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
@@ -245,8 +243,8 @@ class BoardController(
             pollService.createPoll(poll)
         }
         // tagNames가 비어있지 않은 경우 tagService.insertTag
+        val boardId = boardService.findLastInsertId()
         if (board.tagNames.isNullOrEmpty().not()) board.tagNames?.let {
-            val boardId = boardService.findLastInsertId()
             tagService.insertTag(category, boardId, it)
             it.forEach { tagName ->
                 tagService.insertBoardTag(
@@ -254,6 +252,8 @@ class BoardController(
                 )
             }
         }
+        searchService.create(boardId,boardDto.title,boardDto.body,board.tagNames)
+
 
         // 제목 내용 빈칸인지 확인
         return ResponseEntity.ok(Response.stateOnly(true))

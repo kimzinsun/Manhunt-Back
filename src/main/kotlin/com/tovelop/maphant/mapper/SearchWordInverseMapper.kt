@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository
 interface SearchWordInverseMapper {
     fun findByWordId(wordId:Int): SearchWordInverseDto?
     fun insertSearchWordInverse(boardId:Int, wordId: Int, tf:Int, idf:Double)
+    fun insertSearchWordInverses(inverseDataList:List<SearchWordInverseDto>?):Boolean
     fun searchBoardListByWords(wordList:List<String>, userId:Int, categoryId:Int, boardTypeId: Int?, pagingDto: PagingDto): List<BoardSearchResponseDto>
     fun getCountSearchBoardListByWords(wordList:List<String>, categoryId: Int, boardTypeId: Int?): Int
     fun updateIdf(boardCount: Int): Boolean

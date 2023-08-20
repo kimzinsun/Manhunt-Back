@@ -9,9 +9,19 @@
         where word = #{word}
     </select>
 
-    <insert id="insertSearchWord" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSearchWord">
         insert into search_word (word, df)
         values (#{word}, 1)
+        ON DUPLICATE KEY UPDATE df = df + 1
+    </insert>
+
+    <insert id="insertSearchWords">
+        INSERT INTO search_word (word, df)
+        VALUES
+        <foreach collection="wordList" item="wordItem" separator=",">
+            (#{wordItem}, 1)
+        </foreach>
+        ON DUPLICATE KEY UPDATE df = df + 1
     </insert>
 
     <update id="plusDfCnt">
@@ -23,7 +33,7 @@
     <select id="getIdByWord">
         select id
         from search_word
-        where word = {#word}
+        where word = #{word}
     </select>
 
     <select id="getDfByWord">
@@ -31,4 +41,14 @@
         from search_word
         where word = #{word}
     </select>
+
+    <select id="findByWords" resultType="SearchWordDto">
+        select id, word, df
+        from search_word
+        where word IN
+        <foreach item="word" index="index" collection="wordList" open="(" separator="," close=")">
+            #{word}
+        </foreach>
+    </select>
+
 </mapper>

@@ -25,7 +25,7 @@
                         SELECT swi.board_id, SUM(swi.tf * swi.idf) AS total_tfidf_value
                         FROM search_word_inverse swi
                                  JOIN search_word n ON swi.search_word_id = n.id
-                        WHERE search_word.word IN
+                        WHERE n.word IN
                             <foreach item="word" index="index" collection="wordList" open="(" separator="," close=")">
                                 #{word}
                             </foreach>
@@ -54,7 +54,7 @@
             SELECT swi.board_id
             FROM search_word_inverse swi
             INNER JOIN search_word n ON swi.search_word_id = n.id
-            WHERE search_word.word IN
+            WHERE n.word IN
                 <foreach item="word" index="index" collection="wordList" open="(" separator="," close=")">
                     #{word}
                 </foreach>
@@ -76,7 +76,15 @@
     </update>
     
     <insert id="insertSearchWordInverse">
-        insert into search_word_inverse
+        insert into search_word_inverse (board_id, search_word_id, tf, idf)
         values (#{boardId}, #{wordId}, #{tf}, #{idf})
+    </insert>
+
+    <insert id="insertSearchWordInverses">
+        INSERT INTO search_word_inverse (board_id, search_word_id, tf, idf)
+        VALUES
+        <foreach collection="inverseDataList" item="data" separator=",">
+            (#{data.board_id}, #{data.search_word_id}, #{data.tf}, #{data.idf})
+        </foreach>
     </insert>
 </mapper>

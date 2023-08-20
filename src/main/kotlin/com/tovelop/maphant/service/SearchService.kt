@@ -1,6 +1,7 @@
 package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.BoardSearchResponseDto
+import com.tovelop.maphant.dto.SearchWordInverseDto
 import com.tovelop.maphant.mapper.BoardMapper
 import com.tovelop.maphant.mapper.SearchWordInverseMapper
 import com.tovelop.maphant.mapper.SearchWordMapper
@@ -18,7 +19,7 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
                     private val boardMapper: BoardMapper) {
 
     @Transactional
-    fun create(boardId: Int, title: String, content: String, tags: List<String>){
+    fun create(boardId: Int, title: String, content: String, tags: List<String>?){
         /**
          * 1. 연속된 2글자씩 자르기
          *      -  같은 글자들은 횟수(tf) 세주기
@@ -30,16 +31,34 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
          *            - tf -> 1에서 구한 tf로 저장
          *            - idf -> idf를 searchWordInverse테이블에 저장
          */
-        val combinedString = "$title $content ${tags.joinToString(" ")}"
+        val combinedString = "$title $content ${tags?.joinToString(" ")}"
         val searchKeywordMap = splitAndCount(combinedString) //Map<String, Int>
+        val wordList =searchKeywordMap.keys.toList()
+        val boardCount = boardMapper.getCountAllBoards()
 
-        searchKeywordMap.forEach { (word, count) ->
-            if (searchWordMapper.getWordCnt(word) > 0) searchWordMapper.plusDfCnt(word)
-            else searchWordMapper.insertSearchWord(word)
 
-            val boardCount = boardMapper.getCountAllBoards()
-            searchWordInverseMapper.insertSearchWordInverse(boardId ,searchWordMapper.getIdByWord(word), count, ln((boardCount/(1+searchWordMapper.getDfByWord(word))).toDouble()))
+//        searchKeywordMap.forEach { (word, count) ->
+////            if (searchWordMapper.getWordCnt(word) > 0) searchWordMapper.plusDfCnt(word)
+////            else searchWordMapper.insertSearchWord(word)
+//            searchWordMapper.insertSearchWord(word)
+//        }
+        searchWordMapper.insertSearchWords(wordList)
+        val searchWords = searchWordMapper.findByWords(wordList)
+
+        val inverseDataList = searchWords?.map { searchWordDto ->
+            SearchWordInverseDto(
+                boardId,
+                searchWordDto.id,
+                tf = searchKeywordMap[searchWordDto.word]!!,
+                idf = ln((boardCount / (1 + searchWordDto.df)).toDouble())
+            )
         }
+
+        searchWordInverseMapper.insertSearchWordInverses(inverseDataList)
+
+//        searchWords?.forEach { searchWordDto ->
+//            searchWordInverseMapper.insertSearchWordInverse(boardId ,searchWordDto.id, searchKeywordMap[searchWordDto.word]!!, ln((boardCount/(1+searchWordDto.df)).toDouble()))
+//        }
     }
 
     fun search(
@@ -98,7 +117,7 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
         return tf * idf
     }
 
-    @Scheduled(cron = "0 0 3 1/1 * ? *") //매일 03:00에 실행
+    @Scheduled(cron = "0 0 3 1/1 * ?") //매일 03:00에 실행
     fun updateIdf() {
         val boardCount = boardMapper.getCountAllBoards()
         searchWordInverseMapper.updateIdf(boardCount)
