@@ -74,4 +74,9 @@
         INNER JOIN search_word sw ON swi.search_word_id = sw.id
         SET swi.idf = LN(#{boardCount} / (1 + sw.df))
     </update>
+    
+    <insert id="insertSearchWordInverse">
+        insert into search_word_inverse
+        values (#{boardId}, #{wordId}, #{tf}, #{idf})
+    </insert>
 </mapper>

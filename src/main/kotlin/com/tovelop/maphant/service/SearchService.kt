@@ -18,7 +18,7 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
                     private val boardMapper: BoardMapper) {
 
     @Transactional
-    fun create(boardId:Int, title:String, content:String, tags:List<String> ) {
+    fun create(boardId: Int, title: String, content: String, tags: List<String>){
         /**
          * 1. 연속된 2글자씩 자르기
          *      -  같은 글자들은 횟수(tf) 세주기
@@ -28,10 +28,27 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
          *      - return 되는 값이 search_word_id
          *      - 구한 결과를 search_word_inverse 테이블에 저장
          *            - tf -> 1에서 구한 tf로 저장
+         *            - idf -> idf를 searchWordInverse테이블에 저장
          */
+        val combinedString = "$title $content ${tags.joinToString(" ")}"
+        val searchKeywordMap = splitAndCount(combinedString) //Map<String, Int>
+
+        searchKeywordMap.forEach { (word, count) ->
+            if (searchWordMapper.getWordCnt(word) > 0) searchWordMapper.plusDfCnt(word)
+            else searchWordMapper.insertSearchWord(word)
+
+            val boardCount = boardMapper.getCountAllBoards()
+            searchWordInverseMapper.insertSearchWordInverse(boardId ,searchWordMapper.getIdByWord(word), count, ln((boardCount/(1+searchWordMapper.getDfByWord(word))).toDouble()))
+        }
     }
 
-    fun search(searchKeyword:String, userId:Int, categoryId:Int, boardTypeId: Int?, pagingDto: PagingDto): PagingResponse<BoardSearchResponseDto> {
+    fun search(
+        searchKeyword: String,
+        userId: Int,
+        categoryId: Int,
+        boardTypeId: Int?,
+        pagingDto: PagingDto
+    ): PagingResponse<BoardSearchResponseDto> {
         /**
          * 1. keyword 연속된 2글자씩 자르기 (구한 2글자를 토근이란 명칭이로 가정)
          * 2. 토큰을 search_word select -> id, word, df 값이 구해짐
@@ -47,11 +64,17 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
 
         val count = searchWordInverseMapper.getCountSearchBoardListByWords(searchKeywordList, categoryId, boardTypeId)
 
-        val pagination = Pagination(count,pagingDto)
+        val pagination = Pagination(count, pagingDto)
 
-        val boards = searchWordInverseMapper.searchBoardListByWords(searchKeywordList, userId, categoryId, boardTypeId, pagingDto)
+        val boards = searchWordInverseMapper.searchBoardListByWords(
+            searchKeywordList,
+            userId,
+            categoryId,
+            boardTypeId,
+            pagingDto
+        )
 
-        return PagingResponse(boards,pagination)
+        return PagingResponse(boards, pagination)
         //key: boardId, value:
 //        val boardTfIdfMap = mutableMapOf<Int, Double>()
 ////        val boardCount = redisService.get("boardCount") ?:
@@ -67,7 +90,8 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
 //        }
 
     }
-    fun getTfIdf(tf:Int, df: Int): Double {
+
+    fun getTfIdf(tf: Int, df: Int): Double {
         val n = boardMapper.getCountAllBoards().toDouble()
         val idf = ln(n / (1 + df))
 
