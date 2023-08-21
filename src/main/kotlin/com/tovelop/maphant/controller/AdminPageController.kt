@@ -1,18 +1,21 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.UserDataService
-import com.tovelop.maphant.configure.security.token.TokenAuthToken
-import org.springframework.http.ResponseEntity
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.AdminPageService
 import com.tovelop.maphant.service.BannerService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.*
 
 @Controller
 @RequestMapping("/admin")
@@ -43,6 +46,47 @@ class AdminPageController(
         model.addAttribute("userSanction", findUserList)
         return "admin_user_page"
     }
+    @GetMapping("/statistics")
+    fun listStatistics(
+        model: Model,
+        @RequestParam(required = false) labels: List<String>?,
+        @RequestParam(required = false) currentDate: String?
+    ): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val localDates = if (labels.isNullOrEmpty()) {
+            val endDate = LocalDate.now()
+            val startDate = endDate.minusDays(6)
+            (0..ChronoUnit.DAYS.between(startDate, endDate))
+                .map { startDate.plusDays(it) }
+        } else {
+            labels.map { LocalDate.parse(it, formatter) }
+        }
+
+        // 오늘 날짜 기준으로 처리
+
+        val startDate = localDates.first()
+        val endDate = localDates.last()
+
+        val visitorData = adminPageService.findDayLoginLogByDate(startDate, endDate)
+        val dateCountMap = visitorData.associateBy({ it.date.format(formatter) }, { it.count })
+        val visitorCounts = localDates.map { dateCountMap.getOrDefault(it.format(formatter), 0) }
+
+        val postCounts = listOf(50, 70, 40, 60, 90)
+        val commentCounts = listOf(200, 300, 150, 180, 250)
+
+        val actualCurrentDate = currentDate ?: LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd (E)"))
+        model.addAttribute("infoBoxContent", "통계")
+        model.addAttribute("dateInfo", actualCurrentDate)
+        model.addAttribute("visitorCounts", visitorCounts)
+        model.addAttribute("postCounts", postCounts)
+        model.addAttribute("commentCounts", commentCounts)
+        model.addAttribute("visitorCounts", visitorCounts)
+        return "admin_statistics_page"
+    }
+
+
+
+
 
     @GetMapping("/reportInfo/board")
     fun boardReportInfo(@RequestParam boardId: Int): ResponseEntity<Response<List<BoardReportInfoDTO>>> {
@@ -84,7 +128,7 @@ class AdminPageController(
         //유저 제재 내역 테이블에 삽입
         adminPageService.insertUserReport(userReportDTO)
         //유저 정보 업데이트
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(userReportDTO.userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -98,7 +142,7 @@ class AdminPageController(
         adminPageService.updateBoardUnblockByUserId(userId)
         adminPageService.updateCommentUnblockByUserId(userId)
         //유저 정보 업데이트
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(userId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
