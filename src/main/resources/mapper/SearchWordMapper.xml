@@ -51,4 +51,5 @@
         </foreach>
     </select>
 
+    <delete id="delete"
 </mapper>
