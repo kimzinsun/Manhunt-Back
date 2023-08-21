@@ -42,6 +42,8 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
 ////            else searchWordMapper.insertSearchWord(word)
 //            searchWordMapper.insertSearchWord(word)
 //        }
+        if(wordList.isEmpty()) return
+
         searchWordMapper.insertSearchWords(wordList)
         val searchWords = searchWordMapper.findByWords(wordList)
 
