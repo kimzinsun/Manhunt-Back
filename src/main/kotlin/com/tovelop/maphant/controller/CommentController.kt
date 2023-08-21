@@ -56,9 +56,9 @@ class CommentController(
                 it.nickname = "익명" + anonymousKV[it.user_id]!!.rowNum
             }
             if (it.modified_at == null) {
-                it.timeFormat(it, it.created_at.formatTime())
+                it.timeFormat(it, it.created_at.formatTime(), userId)
             } else {
-                it.timeFormat(it, it.modified_at.formatTime() + "(수정됨)")
+                it.timeFormat(it, it.modified_at.formatTime() + "(수정됨)", userId)
             }
         }
         val pagingResponse = PagingResponse(commentTime, comment.pagination)
