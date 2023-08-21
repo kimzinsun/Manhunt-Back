@@ -27,9 +27,9 @@ class TokenAuthToken(
     }
 
     fun createToken(timestamp: Int, privToken: String): String {
+        if(headerAuth == "maphant@pubKey" || timestamp == -1) return privToken
         val encoder = PasswordEncoderSHA512()
-        val token = encoder.encode(timestamp.toString() + privToken)
-        return if (headerAuth == "maphant@pubKey") privToken else token
+        return encoder.encode(timestamp.toString() + privToken)
     }
 
     override fun isAuthenticated() = userData != null
@@ -38,14 +38,24 @@ class TokenAuthToken(
         return userData?.getUserData() ?: throw BadCredentialsException("No user")
     }
 
+    fun setUserData(userData: UserDataDTO) {
+        this.userData?.setUserData(userData)
+    }
+
     fun getUserId(): Int {
         return userData?.getUserID() ?: throw BadCredentialsException("No user")
     }
+
+    fun getUserStudentNo(): String = userData?.getUserStudentNo() ?: throw BadCredentialsException("No user")
 
     fun getUserCategories() = userData?.getUserCategories() ?: throw BadCredentialsException("유저의 계열정보가 존재하지 않습니다.")
 
 
     fun getUserRole(): String {
         return userData?.getUserRole() ?: throw BadCredentialsException("No user")
+    }
+
+    fun getUserProfileImg(): String? {
+        return userData?.getUserData()?.profileImg
     }
 }

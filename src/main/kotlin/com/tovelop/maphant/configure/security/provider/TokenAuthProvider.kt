@@ -35,6 +35,10 @@ class TokenAuthProvider(
 
         val objMapper = ObjectMapper()
         val user = objMapper.readValue(userToken.substringAfter('|'), UserDataDTO::class.java)
+
+        if(user.state == 2) throw BadCredentialsException("제제된 사용자입니다.")
+        else if(user.state == 3) throw BadCredentialsException("탈퇴된 사용자입니다.")
+
         val userData = UserData(user.email, user.password, user)
 
         return TokenAuthToken(principal, credentials.second, credentials.third, userData)
