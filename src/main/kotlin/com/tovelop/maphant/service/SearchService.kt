@@ -95,10 +95,14 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
 
     @Transactional
     fun update(boardId:Int, title: String, content: String, tags: List<String>?) {
+        delete(boardId)
+        create(boardId, title, content, tags)
+    }
+
+    @Transactional
+    fun delete(boardId: Int) {
         searchWordMapper.updateDfByBoardId(boardId)
         searchWordInverseMapper.deleteByBoardId(boardId)
-
-        create(boardId, title, content, tags)
     }
 
     fun getTfIdf(tf: Int, df: Int): Double {

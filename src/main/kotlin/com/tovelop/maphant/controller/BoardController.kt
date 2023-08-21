@@ -210,6 +210,7 @@ class BoardController(
 
         //게시물에 있었던 각 태그들의 갯수를 1씩 감소시킴
         tagService.deleteTagCnt(boardId)
+        searchService.delete(boardId)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
