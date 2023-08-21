@@ -33,7 +33,9 @@ $(document).ready(function() {
             },
             traditional: true,
             success: function(response) {
-                const visitorCountsValue = JSON.parse($(response).find('input[name=visitorCounts]').val());
+                const visitorCountsValueInput = $(response).find('input[name=visitorCounts]');
+                const visitorCountsValue = JSON.parse(visitorCountsValueInput.attr('value'));
+                console.log(visitorCountsValue);
                 updateChart(labels, visitorCountsValue);
             },
             error: function(error) {
