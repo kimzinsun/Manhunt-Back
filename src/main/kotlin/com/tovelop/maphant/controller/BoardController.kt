@@ -249,17 +249,18 @@ class BoardController(
             )
             pollService.createPoll(poll)
         }
+
         // tagNames가 비어있지 않은 경우 tagService.insertTag
-        val boardId = boardService.findLastInsertId()
         if (board.tagNames.isNullOrEmpty().not()) board.tagNames?.let {
-            tagService.insertTag(category, boardId, it)
+            tagService.insertTag(category, boardDto.id!!, it)
             it.forEach { tagName ->
                 tagService.insertBoardTag(
-                    boardId, tagService.getTagByName(tagName)?.id ?: throw Exception("태그가 존재하지 않습니다.")
+                    boardDto.id, tagService.getTagByName(tagName)?.id ?: throw Exception("태그가 존재하지 않습니다.")
                 )
             }
         }
-        searchService.create(boardId,boardDto.title,boardDto.body,board.tagNames)
+
+        searchService.create(boardDto.id!!,boardDto.title,boardDto.body,board.tagNames)
 
 
         // 제목 내용 빈칸인지 확인
