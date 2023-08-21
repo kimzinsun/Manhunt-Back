@@ -215,4 +215,22 @@
         from comment
         where created_at >= #{start} and #{end} >= created_at
     </select>
+    <select id="findWeekLoginLogByDate" resultType="WeekLogDTO">
+        select DATE_FORMAT(time, '%Y-%u'), count(*)
+        from log_login
+        where time >= #{start} and #{end} >= time
+        group by DATE_FORMAT(time, '%Y-%u')
+    </select>
+    <select id="findWeekBoardLogByDate" resultType="WeekLogDTO">
+        select DATE_FORMAT(created_at, '%Y-%u'), count(*)
+        from board
+        where created_at >= #{start} and #{end} >= created_at
+        group by DATE_FORMAT(created_at, '%Y-%u')
+    </select>
+    <select id="findWeekCommentLogByDate" resultType="WeekLogDTO">
+        select DATE_FORMAT(created_at, '%Y-%u'), count(*)
+        from comment
+        where created_at >= #{start} and #{end} >= created_at
+        group by DATE_FORMAT(created_at, '%Y-%u')
+    </select>
 </mapper>
