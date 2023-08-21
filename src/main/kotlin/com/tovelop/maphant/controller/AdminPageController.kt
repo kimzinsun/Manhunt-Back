@@ -65,12 +65,11 @@ class AdminPageController(
         // 오늘 날짜 기준으로 처리
 
         val startDate = localDates.first()
-        val endDate = localDates.last()
+        val endDate = localDates.last().plusDays(1)
 
         val visitorData = adminPageService.findDayLoginLogByDate(startDate, endDate)
         val dateCountMap = visitorData.associateBy({ it.date.format(formatter) }, { it.count })
         val visitorCounts = localDates.map { dateCountMap.getOrDefault(it.format(formatter), 0) }
-
         val postCounts = listOf(50, 70, 40, 60, 90)
         val commentCounts = listOf(200, 300, 150, 180, 250)
 
@@ -80,7 +79,6 @@ class AdminPageController(
         model.addAttribute("visitorCounts", visitorCounts)
         model.addAttribute("postCounts", postCounts)
         model.addAttribute("commentCounts", commentCounts)
-        model.addAttribute("visitorCounts", visitorCounts)
         return "admin_statistics_page"
     }
 

@@ -33,8 +33,10 @@ $(document).ready(function() {
             },
             traditional: true,
             success: function(response) {
-                const visitorCountsValue = JSON.parse($(response).find('input[name=visitorCounts]').val());
+                const visitorCountsValueInput = $(response).find('input[name=visitorCounts]');
+                const visitorCountsValue = JSON.parse(visitorCountsValueInput.attr('value'));
                 updateChart(labels, visitorCountsValue);
+                console.log("success");
             },
             error: function(error) {
                 console.error('요청 중 에러 발생:', error);
