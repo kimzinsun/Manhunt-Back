@@ -46,4 +46,8 @@ interface UserMapper {
     fun searchUserByNickname(nickname: String): List<UserNicknameDTO>
 
     fun countById(userId: Int): Int
+
+    fun withDrawUser(email: String)
+
+    fun updateWithDrawUser(email: String)
 }
