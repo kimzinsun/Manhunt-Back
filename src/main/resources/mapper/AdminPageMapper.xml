@@ -199,10 +199,20 @@
         from comment
         where comment.created_at >= #{start} and #{end} >= comment.created_at
     </select>
-    <select id="findDayLoginLogByDate" resultType="LoginLogDTO">
+    <select id="findDayLoginLogByDate" resultType="DayLogDTO">
         select DATE_FORMAT(time, '%Y-%m-%d'), count(*)
         from log_login
         where time >= #{start} and #{end} >= time
         group by DATE_FORMAT(time, '%Y-%m-%d')
+    </select>
+    <select id="findDayBoardLogByDate" resultType="DayLogDTO">
+        select DATE_FORMAT(created_at, '%Y-%m-%d'), count(*)
+        from board
+        where created_at >= #{start} and #{end} >= created_at
+    </select>
+    <select id="findDayCommentLogByDate" resultType="DayLogDTO">
+        select DATE_FORMAT(created_at, '%Y-%m-%d'), count(*)
+        from comment
+        where created_at >= #{start} and #{end} >= created_at
     </select>
 </mapper>
