@@ -31,17 +31,15 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
          *            - tf -> 1에서 구한 tf로 저장
          *            - idf -> idf를 searchWordInverse테이블에 저장
          */
-        val combinedString = "$title $content ${tags?.joinToString(" ")}"
+        var combinedString = "$title $content "
+        if(tags != null) {
+            combinedString += tags.joinToString(" ")
+        }
+
         val searchKeywordMap = splitAndCount(combinedString) //Map<String, Int>
         val wordList =searchKeywordMap.keys.toList()
         val boardCount = boardMapper.getCountAllBoards()
 
-
-//        searchKeywordMap.forEach { (word, count) ->
-////            if (searchWordMapper.getWordCnt(word) > 0) searchWordMapper.plusDfCnt(word)
-////            else searchWordMapper.insertSearchWord(word)
-//            searchWordMapper.insertSearchWord(word)
-//        }
         if(wordList.isEmpty()) return
 
         searchWordMapper.insertSearchWords(wordList)
@@ -57,10 +55,6 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
         }
 
         searchWordInverseMapper.insertSearchWordInverses(inverseDataList)
-
-//        searchWords?.forEach { searchWordDto ->
-//            searchWordInverseMapper.insertSearchWordInverse(boardId ,searchWordDto.id, searchKeywordMap[searchWordDto.word]!!, ln((boardCount/(1+searchWordDto.df)).toDouble()))
-//        }
     }
 
     fun search(
@@ -96,20 +90,15 @@ class SearchService(private val searchWordMapper: SearchWordMapper,
         )
 
         return PagingResponse(boards, pagination)
-        //key: boardId, value:
-//        val boardTfIdfMap = mutableMapOf<Int, Double>()
-////        val boardCount = redisService.get("boardCount") ?:
-//        searchWordMapper.findSearchWordListByWord(searchKeywordList)?.forEach {
-//            searchWordDto ->
-//            run {
-//                val searchWordInverseDto = searchWordInverseMapper.findByWordId(searchWordDto.id)
-//                if (searchWordInverseDto != null) {
-//                    val key = searchWordInverseDto.board_id
-//                    boardTfIdfMap[key] = boardTfIdfMap.getOrDefault(key, 0.0) + getTfIdf(searchWordInverseDto.tf, searchWordDto.df)
-//                }
-//            }
-//        }
 
+    }
+
+    @Transactional
+    fun update(boardId:Int, title: String, content: String, tags: List<String>?) {
+        searchWordMapper.updateDfByBoardId(boardId)
+        searchWordInverseMapper.deleteByBoardId(boardId)
+
+        create(boardId, title, content, tags)
     }
 
     fun getTfIdf(tf: Int, df: Int): Double {

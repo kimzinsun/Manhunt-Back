@@ -296,6 +296,7 @@ class BoardController(
         }
         board.body=badWordFiltering.filterBadWords(board.body)
         boardService.updateBoard(board.toUpdateBoardDTO())
+        searchService.update(board.id, board.title, board.body, board.tags)
         // 태그 수정하기
         if (!board.tags.isNullOrEmpty()) tagService.modifyTag(category, board.id, board.tags)
 

@@ -51,5 +51,11 @@
         </foreach>
     </select>
 
-    <delete id="delete"
+    <update id="updateDfByBoardId">
+        UPDATE search_word sw
+        INNER JOIN search_word_inverse swi ON swi.board_id = #{boardId}
+        SET sw.df = sw.df - 1
+        WHERE sw.df > 0
+    </update>
+
 </mapper>

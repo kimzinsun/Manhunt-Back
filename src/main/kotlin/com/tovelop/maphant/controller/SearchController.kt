@@ -6,6 +6,8 @@ import com.tovelop.maphant.mapper.BoardMapper
 import com.tovelop.maphant.service.SearchService
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
@@ -21,6 +23,8 @@ class SearchController(private val searchService: SearchService,
                 @RequestHeader("x-category") category: Int): PagingResponse<BoardSearchResponseDto> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val userId = auth.getUserId()
+
+        if(search.length<2)throw IllegalStateException("두 글자 이상 검색하세요")
 
         return searchService.search(search,userId,category,boardTypeId,pagingDto)
     }

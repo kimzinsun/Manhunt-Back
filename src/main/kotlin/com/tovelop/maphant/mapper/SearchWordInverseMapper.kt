@@ -15,4 +15,5 @@ interface SearchWordInverseMapper {
     fun searchBoardListByWords(wordList:List<String>, userId:Int, categoryId:Int, boardTypeId: Int?, pagingDto: PagingDto): List<BoardSearchResponseDto>
     fun getCountSearchBoardListByWords(wordList:List<String>, categoryId: Int, boardTypeId: Int?): Int
     fun updateIdf(boardCount: Int): Boolean
+    fun deleteByBoardId(boardId:Int):Boolean
 }

@@ -17,5 +17,6 @@ interface SearchWordMapper {
     fun findByWords(wordList: List<String>): List<SearchWordDto>?
 
     fun insertSearchWords(wordList: List<String>):Boolean
+    fun updateDfByBoardId(boardId:Int):Boolean
 
 }
