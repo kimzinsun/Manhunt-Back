@@ -38,15 +38,6 @@
         WHERE user.id = #{user_id}
     </select>
 
-    <select id="findCategoryByUserId" resultType="UserMajorCategoryDTO">
-        SELECT category_id, category.name, major_id, major.name
-        FROM user_category_major
-                 JOIN category ON user_category_major.category_id = category.id
-                 JOIN major ON user_category_major.major_id = major.id
-        WHERE user_id = #{userId}
-    </select>
-
-
     <insert id="insertProfileBody">
         INSERT INTO profile (user_id, body)
         VALUES (#{userId}, #{body})
