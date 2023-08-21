@@ -92,7 +92,7 @@
             b.report_cnt as reportCnt,
             b.images_url as imagesUrlString,
             IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
-            IF(u.id = b.user_id, 1, 0) as isMyBoard
+            IF(u.id = #{userId}, 1, 0) as isMyBoard
         FROM board b
                  INNER JOIN user u ON b.user_id = u.id
                  LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
