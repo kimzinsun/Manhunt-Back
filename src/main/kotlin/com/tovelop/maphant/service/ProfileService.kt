@@ -2,7 +2,7 @@ package com.tovelop.maphant.service
 
 import com.tovelop.maphant.dto.BoardResDto
 import com.tovelop.maphant.dto.CommentExtDTO
-import com.tovelop.maphant.dto.ProfileNicknameAndBodyAndImageDto
+import com.tovelop.maphant.dto.ProfileCategoryDTO
 import com.tovelop.maphant.mapper.CommentMapper
 import com.tovelop.maphant.mapper.ProfileMapper
 import com.tovelop.maphant.type.paging.Pagination
@@ -24,7 +24,7 @@ class ProfileService(
     val defaultProfileImg = "https://tovelope.s3.ap-northeast-2.amazonaws.com/image_1.jpg"
 
     //프로필 이미지의 Dto 불러오기
-    fun getNicknameAndBodyAndImage(targetUserId: Int): List<ProfileNicknameAndBodyAndImageDto> =
+    fun getNicknameAndBodyAndImage(targetUserId: Int): ProfileCategoryDTO =
         profileMapper.findNicknameAndBodyAndImageById(targetUserId)
 
     //유저가 작성한 댓글 목록 불러오기
