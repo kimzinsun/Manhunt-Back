@@ -70,7 +70,6 @@ class AdminPageController(
         val visitorData = adminPageService.findDayLoginLogByDate(startDate, endDate)
         val dateCountMap = visitorData.associateBy({ it.date.format(formatter) }, { it.count })
         val visitorCounts = localDates.map { dateCountMap.getOrDefault(it.format(formatter), 0) }
-        print(visitorData)
         val postCounts = listOf(50, 70, 40, 60, 90)
         val commentCounts = listOf(200, 300, 150, 180, 250)
 

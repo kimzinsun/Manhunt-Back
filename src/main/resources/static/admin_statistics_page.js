@@ -35,8 +35,8 @@ $(document).ready(function() {
             success: function(response) {
                 const visitorCountsValueInput = $(response).find('input[name=visitorCounts]');
                 const visitorCountsValue = JSON.parse(visitorCountsValueInput.attr('value'));
-                console.log(visitorCountsValue);
                 updateChart(labels, visitorCountsValue);
+                console.log("success");
             },
             error: function(error) {
                 console.error('요청 중 에러 발생:', error);
