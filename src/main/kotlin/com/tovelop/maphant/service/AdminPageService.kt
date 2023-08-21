@@ -146,4 +146,8 @@ class AdminPageService(
     fun findCommentLogByDate(start: LocalDateTime, end: LocalDateTime): Int {
         return adminPageMapper.findCommentLogByDate(start, end)
     }
+
+    fun findDayLoginLogByDate(start: LocalDateTime, end: LocalDateTime): List<LoginLogDTO>{
+        return adminPageMapper.findDayLoginLogByDate(start, end)
+    }
 }
