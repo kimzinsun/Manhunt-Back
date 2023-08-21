@@ -4,12 +4,13 @@ data class SetBoardDTO(
     val parentId: Int?,
     val typeId: Int,
     val title: String,
-    val body: String,
+    var body: String,
     val isHide: Int,
     val isComplete: Int,
     val isAnonymous: Int,
     val imagesUrl: List<String>?,
-    val tagNames: List<String>?
+    val tagNames: List<String>?,
+    val poll : BoardPollDto?
 ) {
     fun toBoardDTO(userId: Int, categoryId: Int): BoardDTO {
         return BoardDTO(

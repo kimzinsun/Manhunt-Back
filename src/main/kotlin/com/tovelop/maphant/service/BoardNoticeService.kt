@@ -17,8 +17,8 @@ class BoardNoticeService(@Autowired val boardNoticeMapper: BoardNoticeMapper) {
         return boardNoticeMapper.findBoard(noticeId)
     }
 
-    fun updateNotice(updateBoardNoticeDTO: UpdateBoardNoticeDTO) {
-        boardNoticeMapper.updateNotice(updateBoardNoticeDTO)
+    fun updateNotice(updateBoardNoticeDTO: UpdateBoardNoticeDTO): Int {
+        return boardNoticeMapper.updateNotice(updateBoardNoticeDTO)
     }
 
     fun deleteNotice(noticeId: Int): Int {

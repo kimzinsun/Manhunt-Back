@@ -17,6 +17,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
                    @Autowired private val redisService: RedisService,
                    @Autowired private val tagMapper: TagMapper,
                    @Autowired private val pollService: PollService) {
+    fun getABoardCnt(parentId:Int):Int{
+        return boardMapper.getABoardCnt(parentId)
+    }
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
         return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
     }
@@ -36,6 +39,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
+        println("boardId = ${boardDTO.id}")
     }
 
     fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
@@ -110,7 +114,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun isInReportByBoardId(boardId: Int, userId: Int): Boolean {
         val boardReportDTO = boardMapper.isInReportByBoardId(boardId, userId)
-        return boardReportDTO != null
+        return boardReportDTO != 0
     }
 
     fun isInReportId(reportId: Int): Boolean {
@@ -190,6 +194,17 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun findLastInsertId(): Int {
         return boardMapper.findLastInsertId()
+    }
+
+    fun getPollBoardList(userId: Int ,boardTypeId: Int?, categoryId: Int, pagingDto: PagingDto): PagingResponse<PageBoardDTO> {
+        val count = boardMapper.countPollBoardList(categoryId,boardTypeId)
+
+        val pagination = Pagination(count,pagingDto)
+
+        val boardList = boardMapper.getPollBoardList(userId,categoryId,boardTypeId,pagingDto)
+
+        return PagingResponse(boardList,pagination)
+
     }
 }
 

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>과끼리 관리자 페이지</title>
     <link rel="stylesheet" th:href="@{/admin_index_page.css}">
+    <link rel="stylesheet" th:href="@{/admin_board_page.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -32,12 +33,10 @@
 
         menuItem.classList.add('active');
 
-        const contentDiv = document.getElementById('content');
-        const response = await fetch(contentUrl);
-        const content = await response.text();
-        contentDiv.innerHTML = content;
+        const contentDiv = $('#content');
+        contentDiv.load(contentUrl);
     }
-    $(document).on("click", ".sort-button", function() {
+    $(".sort-button").click(function() {
         const sortType = $(this).data("sort-type");
         const section = $(this).data("section");
         let contentUrl = `/admin/${section}`;

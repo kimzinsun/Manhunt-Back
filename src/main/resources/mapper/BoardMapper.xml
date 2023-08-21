@@ -3,6 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tovelop.maphant.mapper.BoardMapper">
+    <select id="getABoardCnt" resultType="Int">
+        select COUNT(*)
+        from board
+        where type_id = 8
+          and parent_id = #{parentId}
+    </select>
     <select id="getBoardTypeIdByBoardTypeName" resultType="Int">
         select id
         from board_type
@@ -13,7 +19,7 @@
         from category
         where name = #{categoryName};
     </select>
-    <insert id="insertBoard">
+    <insert id="insertBoard" parameterType="BoardDTO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete,
                           is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
         VALUES (#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete},
@@ -141,39 +147,39 @@
 <!--
 <!-    </select>-->
     <select id="findBoardList" resultType="PageBoardDTO">
-        select
-                b.id as boardId,
-                b.title as title,
-                SUBSTRING(b.body, 1, 30) as body,
-                b.created_at as createdAt,
-                b.modified_at as modifiedAt,
-                IF(is_anonymous, '익명',u.nickname) AS userNickname,
-                b.comment_cnt as commentCnt,
-                b.like_cnt as likeCnt,
-                b.is_anonymous as isAnonymous,
-                b.is_hide as isHide,
-                IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
-                b.images_url as imagesUrlString,
-                GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings
-            from board b
-                     INNER JOIN user u ON b.user_id = u.id
-                     LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
-                     LEFT OUTER JOIN board_tag ON b.id = board_tag.board_id
-                     LEFT OUTER JOIN tag t ON board_tag.tag_id = t.id
-            where b.category_id = #{categoryId} AND
-                b.type_id = #{findBoardDTO.boardTypeId} AND
-                b.state = 0 AND
-                is_hide = 0
-            GROUP BY b.id
-            order by b.${findBoardDTO.sortCriterion} DESC
-            limit #{findBoardDTO.pageSize} offset #{startRow}
+        select b.id                                                   as boardId,
+               b.title                                                as title,
+               SUBSTRING(b.body, 1, 30)                               as body,
+               b.created_at                                           as createdAt,
+               b.modified_at                                          as modifiedAt,
+               IF(is_anonymous, '익명', u.nickname)                     AS userNickname,
+               b.comment_cnt                                          as commentCnt,
+               b.like_cnt                                             as likeCnt,
+               b.is_anonymous                                         as isAnonymous,
+               b.is_hide                                              as isHide,
+               IF(blike.user_id IS NOT NULL, 1, 0)                    as isLike,
+               b.images_url                                           as imagesUrlString,
+               GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings
+        from board b
+                 INNER JOIN user u ON b.user_id = u.id
+                 LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
+                 LEFT OUTER JOIN board_tag ON b.id = board_tag.board_id
+                 LEFT OUTER JOIN tag t ON board_tag.tag_id = t.id
+        where b.category_id = #{categoryId}
+          AND b.type_id = #{findBoardDTO.boardTypeId}
+          AND b.state = 0
+          AND b.is_hide = 0
+        GROUP BY b.id
+        order by b.${findBoardDTO.sortCriterion} DESC
+            limit #{findBoardDTO.pageSize}
+        offset #{startRow}
     </select>
 
     <select id="getBoardSizeByCategoryIdAndBoardTypeId" resultType="Int">
-        select count(*)
-        from board
+        select cnt
+        from board_cnt_by_category
         where category_id = #{categoryId}
-          and type_id = #{boardTypeId}
+          and board_type_id = #{boardTypeId}
     </select>
     <select id="isInCategory" resultType="String">
         select name
@@ -191,8 +197,8 @@
         where board_id = #{boardId}
           and user_id = #{userId}
     </select>
-    <select id="isInReportByBoardId" resultType="BoardReportDTO">
-        select *
+    <select id="isInReportByBoardId" resultType="Int">
+        select count(*)
         from board_report
         where board_id = #{boardId}
           and user_id = #{userId}
@@ -428,5 +434,51 @@
                     AND b.type_id = #{boardSearchDto.boardTypeId}
                 </if>
         </if>
+    </select>
+    <select id="getPollBoardList" resultType="PageBoardDto">
+        select
+            b.id AS boardId,
+            b.title,
+            SUBSTRING(b.body, 1, 30) as body,
+            b.created_at AS createdAt,
+            b.modified_at AS modifiedAt,
+            IF(is_anonymous, '익명',u.nickname) AS userNickname,
+            comment_cnt AS commentCnt,
+            like_cnt AS likeCnt,
+            is_anonymous AS isAnonymous,
+            is_hide AS isHide,
+            IF(blike.user_id IS NOT NULL, 1, 0) as isLike,
+            b.images_url as imagesUrlString,
+            GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings
+        FROM board b
+                 INNER JOIN user u ON b.user_id = u.id
+                 INNER JOIN poll p ON b.id = p.board_id
+                 LEFT OUTER JOIN board_like blike ON b.id = blike.board_id AND blike.user_id = #{userId}
+                 LEFT OUTER JOIN board_tag ON b.id = board_tag.board_id
+                 LEFT OUTER JOIN tag t ON board_tag.tag_id = t.id
+        WHERE
+            is_hide = 0 AND
+            b.state = 0 AND
+            b.category_id = #{categoryId}
+            <if test="boardTypeId != null">
+                AND b.type_id = #{boardTypeId}
+            </if>
+        GROUP BY b.id
+        ORDER BY b.id DESC
+        LIMIT #{pagingDto.recordSize} OFFSET #{pagingDto.offset}
+    </select>
+
+    <select id="countPollBoardList">
+        SELECT
+            COUNT(distinct b.id)
+        FROM board b
+            INNER JOIN poll p ON b.id = p.board_id
+        WHERE
+            is_hide = 0 AND
+            b.state = 0 AND
+            b.category_id = #{categoryId}
+            <if test="boardTypeId != null">
+                AND b.type_id = #{boardTypeId}
+            </if>
     </select>
 </mapper>

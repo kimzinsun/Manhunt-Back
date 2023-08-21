@@ -19,7 +19,11 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
-class SignupController(@Autowired val userService: UserService, @Autowired val sendGrid: SendGrid, @Autowired val userDataService: UserDataService) {
+class SignupController(
+    @Autowired val userService: UserService,
+    @Autowired val sendGrid: SendGrid,
+    @Autowired val userDataService: UserDataService,
+) {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoderBcrypt
 
@@ -36,10 +40,15 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
     @DeleteMapping("")
     fun deleteUser(): ResponseEntity<ResponseUnit> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        if (auth != null && auth is TokenAuthToken && auth.isAuthenticated) {
+            print(auth.getUserData().email)
+        }
         if (auth.isNotLogged()) {
             return ResponseEntity.unprocessableEntity().body(Response.error("로그인이 안됨"))
         }
         if (auth.getUserRole() != "admin") {
+            userService.withDrawUser(auth.getUserData().email)
+            userService.updateWithDrawUser(auth.getUserData().email)
             userService.updateUserStateByUserId(auth.getUserId(), 3)
             return ResponseEntity.ok(Response.stateOnly(true))
         }
@@ -207,7 +216,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         //email로 nickname db저장
         userService.updateUserNicknameByEmail(auth.getUserData().email, changeInfoDTO.nickname)
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -222,7 +231,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         userService.updateUserPhoneNumByEmail(auth.getUserData().email, changeInfoDTO.phNum)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -250,7 +259,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
             user.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
         )
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -259,23 +268,18 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val user = auth.getUserData()
 
-        val oldCategoryIdList = userService.findCategoryIdByEmail(user.email)
         val newCategoryId = userService.findCategoryIdByName(changeInfoDTO.category!!)
-
-        if (newCategoryId in oldCategoryIdList){
-            return ResponseEntity.badRequest().body(Response.error("이미 등록된 계열입니다."))
-        }
 
         val oldMajorIdList = userService.findMajorIdByEmail(user.email)
         val newMajorId = userService.findMajorIdByName(changeInfoDTO.major!!)
 
-        if (newMajorId in oldMajorIdList){
+        if (newMajorId in oldMajorIdList) {
             return ResponseEntity.badRequest().body(Response.error("이미 등록된 전공입니다."))
         }
 
         userService.insertUserCategoryMajorByEmail(user.email, newCategoryId, newMajorId)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -288,7 +292,7 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
         val majorId = userService.findMajorIdByName(changeInfoDTO.major!!)
         userService.deleteCategoryIdMajorIdByUserId(user.email, categoryId, majorId)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -333,7 +337,9 @@ class SignupController(@Autowired val userService: UserService, @Autowired val s
 
         userService.updateUserPasswordByEmail(newPasswordDTO.email, passwordEncoder.encode(newPasswordDTO.passwordChk))
 
-        userDataService.updateUserData()
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }

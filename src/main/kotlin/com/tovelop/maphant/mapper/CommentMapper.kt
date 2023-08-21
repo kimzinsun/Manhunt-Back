@@ -28,4 +28,5 @@ interface CommentMapper {
     fun changeState(commentId: Int, state: Int)
     fun getBoardUserId(boardId: Int): Int
 
+    fun getAnonymousListByBoardId(boardId: Int): ArrayList<AnonymousListDTO>
 }

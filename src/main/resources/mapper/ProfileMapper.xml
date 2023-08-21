@@ -10,13 +10,23 @@
     </select>
     <select id="findNicknameAndBodyAndImageById" resultType="ProfileNicknameAndBodyAndImageDto">
         SELECT user.nickname as user_name,
+               category.name,
+               major.name,
                body,
                profile_img
         FROM user
                  LEFT OUTER JOIN profile
                                  ON profile.user_id = user.id
+                 join user_category_major on user.id = user_category_major.user_id
+                 join major on user_category_major.major_id = major.id
+                 join category on user_category_major.category_id = category.id
         WHERE user.id = #{user_id}
     </select>
+
+    <insert id="insertProfileBody">
+        INSERT INTO profile (user_id, body)
+        VALUES (#{userId}, #{body})
+    </insert>
 
     <update id="updateProfileImage">
         UPDATE profile

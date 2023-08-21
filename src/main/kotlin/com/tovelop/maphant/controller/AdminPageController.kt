@@ -1,5 +1,7 @@
 package com.tovelop.maphant.controller
 
+import com.tovelop.maphant.configure.security.UserDataService
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import org.springframework.http.ResponseEntity
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.AdminPageService
@@ -7,6 +9,7 @@ import com.tovelop.maphant.service.BannerService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -15,7 +18,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/admin")
 class AdminPageController(
     @Autowired val adminPageService: AdminPageService,
-    @Autowired val bannerService: BannerService
+    @Autowired val bannerService: BannerService,
+    @Autowired val userDataService: UserDataService
 ) {
     @GetMapping("/")
     fun adminPage(): String {
@@ -36,7 +40,7 @@ class AdminPageController(
     @GetMapping("/user")
     fun listUserReport(model: Model, @RequestParam sortType: String?): String {
         val findUserList = adminPageService.findAllUserSanction()
-        model.addAttribute("userReport", findUserList)
+        model.addAttribute("userSanction", findUserList)
         return "admin_user_page"
     }
 
@@ -55,27 +59,32 @@ class AdminPageController(
     @PostMapping("/sanction/board")
     fun sanctionBoard(@RequestParam boardId: Int): ResponseEntity<ResponseUnit> {
         adminPageService.updateBoardSanction(boardId)
+        adminPageService.updateBoardReportStateByBoardId(boardId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/sanction/comment")
     fun sanctionComment(@RequestParam commentId: Int): ResponseEntity<ResponseUnit> {
         adminPageService.updateCommentSanction(commentId)
+        adminPageService.updateCommentReportStateByCommentId(commentId)
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
     @PostMapping("/sanction/user")
     fun sanctionUser(@RequestBody userReportDTO: UserReportDTO): ResponseEntity<ResponseUnit> {
+        //유저 제재 내역 테이블에 이미 존재하는지 확인
         if (adminPageService.findReportByUserId(userReportDTO.userId)) {
             return ResponseEntity.ok(Response.stateOnly(false))
         }
         //유저를 정지 상태(2)로 변경
+        adminPageService.updateUserState(userReportDTO.userId, 2)
         //정지할 유저가 작성한 모든 글, 댓글을 임시 블락 상태(3)으로 변경
         adminPageService.updateBoardBlockByUserId(userReportDTO.userId)
         adminPageService.updateCommentBlockByUserId(userReportDTO.userId)
         //유저 제재 내역 테이블에 삽입
         adminPageService.insertUserReport(userReportDTO)
-        adminPageService.updateUserState(userReportDTO.userId, 2)
+        //유저 정보 업데이트
+        userDataService.updateUserData()
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -85,6 +94,11 @@ class AdminPageController(
         adminPageService.deleteRecentUserReportByUserId(userId)
         //유저를 정상 상태(1)로 변경
         adminPageService.updateUserState(userId, 1)
+        //정지할 유저가 작성한 모든 글, 댓글을 임시 블락 상태(3)으로 변경
+        adminPageService.updateBoardUnblockByUserId(userId)
+        adminPageService.updateCommentUnblockByUserId(userId)
+        //유저 정보 업데이트
+        userDataService.updateUserData()
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
