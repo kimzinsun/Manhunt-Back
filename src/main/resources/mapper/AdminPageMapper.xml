@@ -202,7 +202,7 @@
     <select id="findDayLoginLogByDate" resultType="DayLogDTO">
         select DATE_FORMAT(time, '%Y-%m-%d'), count(*)
         from log_login
-        where time >= #{start} and #{end} >= time
+        where time >= #{start} and #{end} > time
         group by DATE_FORMAT(time, '%Y-%m-%d')
     </select>
     <select id="findDayBoardLogByDate" resultType="DayLogDTO">

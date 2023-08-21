@@ -1,20 +1,20 @@
 package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.UserDataService
-import com.tovelop.maphant.configure.security.token.TokenAuthToken
-import org.springframework.http.ResponseEntity
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.service.AdminPageService
 import com.tovelop.maphant.service.BannerService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Controller
@@ -47,26 +47,46 @@ class AdminPageController(
         return "admin_user_page"
     }
     @GetMapping("/statistics")
-    fun listStatistics(model: Model): String {
-        // 가상의 데이터 생성 (예시)
-        val today = Date()
-        val dateInfo = SimpleDateFormat("yyyy.MM.dd. (E)", Locale.KOREA).format(today)
-        val infoBoxContent = "유용한 정보를 제공합니다."
+    fun listStatistics(
+        model: Model,
+        @RequestParam(required = false) labels: List<String>?,
+        @RequestParam(required = false) currentDate: String?
+    ): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val localDates = if (labels.isNullOrEmpty()) {
+            val endDate = LocalDate.now()
+            val startDate = endDate.minusDays(6)
+            (0..ChronoUnit.DAYS.between(startDate, endDate))
+                .map { startDate.plusDays(it) }
+        } else {
+            labels.map { LocalDate.parse(it, formatter) }
+        }
 
-        // 그래프 데이터 생성 (예시)
-        val visitorData = listOf(100, 150, 80, 120, 200)
-        val postCountData = listOf(50, 70, 40, 60, 90)
-        val commentCountData = listOf(200, 300, 150, 180, 250)
+        // 오늘 날짜 기준으로 처리
 
-        // 모델에 데이터 추가
-        model.addAttribute("dateInfo", dateInfo)
-        model.addAttribute("infoBoxContent", infoBoxContent)
-        model.addAttribute("visitorData", visitorData)
-        model.addAttribute("postCountData", postCountData)
-        model.addAttribute("commentCountData", commentCountData)
+        val startDate = localDates.first()
+        val endDate = localDates.last()
 
+        val visitorData = adminPageService.findDayLoginLogByDate(startDate, endDate)
+        val dateCountMap = visitorData.associateBy({ it.date.format(formatter) }, { it.count })
+        val visitorCounts = localDates.map { dateCountMap.getOrDefault(it.format(formatter), 0) }
+
+        val postCounts = listOf(50, 70, 40, 60, 90)
+        val commentCounts = listOf(200, 300, 150, 180, 250)
+
+        val actualCurrentDate = currentDate ?: LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd (E)"))
+        model.addAttribute("infoBoxContent", "통계")
+        model.addAttribute("dateInfo", actualCurrentDate)
+        model.addAttribute("visitorCounts", visitorCounts)
+        model.addAttribute("postCounts", postCounts)
+        model.addAttribute("commentCounts", commentCounts)
+        model.addAttribute("visitorCounts", visitorCounts)
         return "admin_statistics_page"
     }
+
+
+
+
 
     @GetMapping("/reportInfo/board")
     fun boardReportInfo(@RequestParam boardId: Int): ResponseEntity<Response<List<BoardReportInfoDTO>>> {

@@ -3,6 +3,7 @@ package com.tovelop.maphant.mapper
 import com.tovelop.maphant.dto.*
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Mapper
@@ -39,10 +40,10 @@ interface AdminPageMapper {
     fun findLoginLogByDate(start: LocalDateTime, end: LocalDateTime): Int
     fun findBoardLogByDate(start: LocalDateTime, end: LocalDateTime): Int
     fun findCommentLogByDate(start: LocalDateTime, end: LocalDateTime): Int
-    fun findDayLoginLogByDate(start: LocalDateTime, end: LocalDateTime): List<DayLogDTO>
     fun findDayBoardLogByDate(start: LocalDateTime, end: LocalDateTime): List<DayLogDTO>
     fun findDayCommentLogByDate(start: LocalDateTime, end: LocalDateTime): List<DayLogDTO>
     fun findWeekLoginLogByDate(start: LocalDateTime, end: LocalDateTime): List<WeekLogDTO>
     fun findWeekBoardLogByDate(start: LocalDateTime, end: LocalDateTime): List<WeekLogDTO>
     fun findWeekCommentLogByDate(start: LocalDateTime, end: LocalDateTime): List<WeekLogDTO>
+    fun findDayLoginLogByDate(start: LocalDate, end: LocalDate): List<DayLogDTO>
 }
