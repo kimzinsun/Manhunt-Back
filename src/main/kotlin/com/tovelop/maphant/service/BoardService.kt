@@ -8,6 +8,7 @@ import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.Collections
 import java.util.Random
 
 
@@ -16,6 +17,9 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
                    @Autowired private val redisService: RedisService,
                    @Autowired private val tagMapper: TagMapper,
                    @Autowired private val pollService: PollService) {
+    fun getABoardCnt(parentId:Int):Int{
+        return boardMapper.getABoardCnt(parentId)
+    }
     fun getBoardTypeIdByBoardTypeName(boardTypeName: String): Int {
         return boardMapper.getBoardTypeIdByBoardTypeName(boardTypeName)
     }
@@ -35,6 +39,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun insertBoard(boardDTO: BoardDTO) {
         boardMapper.insertBoard(boardDTO)
+        println("boardId = ${boardDTO.id}")
     }
 
     fun findBoard(boardId: Int, userId: Int): ExtBoardDTO? {
@@ -83,6 +88,17 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
         return boardMapper.findBoardByKeyword(keyword, boardTypeId, categoryId)
     }
 
+    fun findBoardListBySearch(boardSearchDto:BoardSearchDto,pagingDto: PagingDto, categoryId: Int, userId: Int): PagingResponse<BoardSearchResponseDto> {
+
+        val count = boardMapper.countBoardListBySearch(boardSearchDto,categoryId);
+        if(count < 1) return PagingResponse(Collections.emptyList(),Pagination(0,pagingDto))
+
+        val pagination = Pagination(count,pagingDto)
+        val boardList = boardMapper.findBoardListBySearch(boardSearchDto, pagingDto, categoryId, userId)
+
+        return PagingResponse(boardList,pagination)
+    }
+
     fun isInCategory(categoryId: Int): Boolean {
         return boardMapper.isInCategory(categoryId) != null
     }
@@ -98,7 +114,7 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun isInReportByBoardId(boardId: Int, userId: Int): Boolean {
         val boardReportDTO = boardMapper.isInReportByBoardId(boardId, userId)
-        return boardReportDTO != null
+        return boardReportDTO != 0
     }
 
     fun isInReportId(reportId: Int): Boolean {
@@ -178,6 +194,17 @@ class BoardService(@Autowired val boardMapper: BoardMapper,
 
     fun findLastInsertId(): Int {
         return boardMapper.findLastInsertId()
+    }
+
+    fun getPollBoardList(userId: Int ,boardTypeId: Int?, categoryId: Int, pagingDto: PagingDto): PagingResponse<PageBoardDTO> {
+        val count = boardMapper.countPollBoardList(categoryId,boardTypeId)
+
+        val pagination = Pagination(count,pagingDto)
+
+        val boardList = boardMapper.getPollBoardList(userId,categoryId,boardTypeId,pagingDto)
+
+        return PagingResponse(boardList,pagination)
+
     }
 }
 
