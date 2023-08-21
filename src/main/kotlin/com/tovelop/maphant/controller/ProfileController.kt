@@ -23,7 +23,7 @@ class ProfileController(
 ) {
 
     @GetMapping
-    fun getProfile(@RequestParam targetUserId: Int?): ResponseEntity<Response<ProfileNicknameAndBodyAndImageDto>> {
+    fun getProfile(@RequestParam targetUserId: Int?): ResponseEntity<Response<List<ProfileNicknameAndBodyAndImageDto>>> {
         val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
         return ResponseEntity.ok()
             .body(Response.success(profileService.getNicknameAndBodyAndImage(targetUserId ?: userId)))
@@ -37,7 +37,6 @@ class ProfileController(
     ): ResponseEntity<Response<String>> {
         val auth = SecurityContextHolder.getContext().authentication!! as TokenAuthToken
         val userId: Int = auth.getUserId()
-
         if (nickname != null) profileService.updateProfileNickname(userId, nickname)
         if (body != null) profileService.updateProfileBody(userId, body)
         if (file != null) {
@@ -69,4 +68,14 @@ class ProfileController(
         return ResponseEntity.ok()
             .body(Response.success(profileService.getBoardsList(userId, targetUserId ?: userId, pagingDto)))
     }
+
+    @GetMapping("/like")
+    fun getLikeBoardList(
+        @ModelAttribute @Valid pagingDto: PagingDto,
+    ): ResponseEntity<Response<PagingResponse<BoardResDto>>> {
+        val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
+        return ResponseEntity.ok()
+            .body(Response.success(profileService.getLikeBoardsList(userId, pagingDto)))
+    }
+
 }

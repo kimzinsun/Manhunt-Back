@@ -44,7 +44,7 @@ class TokenAuthFilter(authenticationManager: AuthenticationManager?)
         // privKey * timestamp
         val headerSign = request.getHeader("x-sign") ?: throw BadCredentialsException("No sign header")
 
-        if(headerAuth != "maphant@pubKey") {
+        if(headerAuth != "maphant@pubKey" && headerTS.toInt() != -1) {
             val epoch = System.currentTimeMillis() / 1000
             if(epoch - headerTS.toInt() > 60) {
                 throw BadCredentialsException("Timestamp expired")

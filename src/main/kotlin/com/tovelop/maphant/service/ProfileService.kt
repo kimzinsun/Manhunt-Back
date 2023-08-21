@@ -21,10 +21,10 @@ class ProfileService(
     private val uploadLogService: UploadLogService,
     private val commentMapper: CommentMapper
 ) {
-    val defaultProfileImg = "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+    val defaultProfileImg = "https://tovelope.s3.ap-northeast-2.amazonaws.com/image_1.jpg"
 
     //프로필 이미지의 Dto 불러오기
-    fun getNicknameAndBodyAndImage(targetUserId: Int): ProfileNicknameAndBodyAndImageDto =
+    fun getNicknameAndBodyAndImage(targetUserId: Int): List<ProfileNicknameAndBodyAndImageDto> =
         profileMapper.findNicknameAndBodyAndImageById(targetUserId)
 
     //유저가 작성한 댓글 목록 불러오기
@@ -63,8 +63,13 @@ class ProfileService(
     fun updateProfileNickname(userId: Int, nickname: String) =
         profileMapper.updateProfileNickname(userId, nickname)
 
-    fun updateProfileBody(userId: Int, body: String) =
-        profileMapper.updateProfileBody(userId, body)
+    fun updateProfileBody(userId: Int, body: String) {
+        existProfile(userId).let {
+            if (it) profileMapper.updateProfileBody(userId, body)
+            else profileMapper.insertProfileBody(userId, body)
+        }
+
+    }
 
     @Transactional
     fun updateProfileImage(userId: Int, imageUrl: String, file: MultipartFile): String {
@@ -95,4 +100,17 @@ class ProfileService(
         }
 
     fun existProfile(userId: Int): Boolean = profileMapper.findById(userId) != null
+
+    fun getLikeBoardsList(userId: Int, params: PagingDto): PagingResponse<BoardResDto> {
+        var count = profileMapper.findLikeBoardCntByUser(userId)
+
+        if (count < 1) {
+            return PagingResponse(Collections.emptyList(), null)
+        }
+
+        val pagination = Pagination(count, params)
+        val boards = profileMapper.findLikeBoardWithPaging(userId, params)
+
+        return PagingResponse(boards, pagination)
+    }
 }
