@@ -216,7 +216,7 @@ class SignupController(
 
         //email로 nickname db저장
         userService.updateUserNicknameByEmail(auth.getUserData().email, changeInfoDTO.nickname)
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -231,7 +231,7 @@ class SignupController(
 
         userService.updateUserPhoneNumByEmail(auth.getUserData().email, changeInfoDTO.phNum)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -259,7 +259,7 @@ class SignupController(
             user.email, passwordEncoder.encode(changeInfoDTO.newPasswordCheck)
         )
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -279,7 +279,7 @@ class SignupController(
 
         userService.insertUserCategoryMajorByEmail(user.email, newCategoryId, newMajorId)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -292,7 +292,7 @@ class SignupController(
         val majorId = userService.findMajorIdByName(changeInfoDTO.major!!)
         userService.deleteCategoryIdMajorIdByUserId(user.email, categoryId, majorId)
 
-        userDataService.updateUserData()
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
@@ -337,7 +337,9 @@ class SignupController(
 
         userService.updateUserPasswordByEmail(newPasswordDTO.email, passwordEncoder.encode(newPasswordDTO.passwordChk))
 
-        userDataService.updateUserData()
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+
+        userDataService.updateUserDataByUserId(auth.getUserId())
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 }

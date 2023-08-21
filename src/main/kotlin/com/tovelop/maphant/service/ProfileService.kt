@@ -24,7 +24,7 @@ class ProfileService(
     val defaultProfileImg = "https://tovelope.s3.ap-northeast-2.amazonaws.com/image_1.jpg"
 
     //프로필 이미지의 Dto 불러오기
-    fun getNicknameAndBodyAndImage(targetUserId: Int): ProfileNicknameAndBodyAndImageDto =
+    fun getNicknameAndBodyAndImage(targetUserId: Int): List<ProfileNicknameAndBodyAndImageDto> =
         profileMapper.findNicknameAndBodyAndImageById(targetUserId)
 
     //유저가 작성한 댓글 목록 불러오기
@@ -63,9 +63,9 @@ class ProfileService(
     fun updateProfileNickname(userId: Int, nickname: String) =
         profileMapper.updateProfileNickname(userId, nickname)
 
-    fun updateProfileBody(userId: Int, body: String){
+    fun updateProfileBody(userId: Int, body: String) {
         existProfile(userId).let {
-            if(it)profileMapper.updateProfileBody(userId, body)
+            if (it) profileMapper.updateProfileBody(userId, body)
             else profileMapper.insertProfileBody(userId, body)
         }
 

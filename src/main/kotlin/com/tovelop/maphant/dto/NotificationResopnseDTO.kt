@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class NotificationDBDTO(
     val id: Int = 0,
-    val etc: Map<String, String>? = null,
+    val etc: String? = null,
     val title: String = "",
     val body: String = "",
     val createdAt: LocalDateTime = LocalDateTime.now(),
