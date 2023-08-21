@@ -31,6 +31,9 @@ class SearchController(private val searchService: SearchService,
 
     @GetMapping("init")
     fun init() {
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        val userId = auth.getUserId()
+        if(userId != 1) return
         val boards = boardMapper.findAllBoards()
 
         boards?.forEach { board -> searchService.create(board.boardId, board.title, board.body, board.tags) }
