@@ -46,10 +46,11 @@
     </update>
 
     <select id="getPollIdByBoardId" resultType="int">
-        SELECT poll.id
+        SELECT DISTINCT poll.id
         FROM poll,
              board
-        WHERE board_id = board.id
+        WHERE board_id = #{board.id}
+          and poll.state != 2
     </select>
 
     <resultMap id="pollOptionResultMap" type="com.tovelop.maphant.dto.PollOption">
