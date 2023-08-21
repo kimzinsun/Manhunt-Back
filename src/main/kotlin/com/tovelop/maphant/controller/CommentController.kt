@@ -118,7 +118,13 @@ class CommentController(
             FcmMessageDTO(
                 commentService.getBoardUserId(commentDTO.board_id),
                 "댓글이 달렸습니다.",
-                commentDTO.body
+                commentDTO.body,
+                mutableMapOf(
+                    "type" to "comment",
+                    "boardId" to commentDTO.board_id.toString(),
+                    "commentId" to commentDTO.id.toString(),
+                    "board_type" to commentService.findBoard(commentDTO.board_id)!!.typeId.toString(),
+                )
             )
         )
         return ResponseEntity.ok().body(Response.stateOnly(true))

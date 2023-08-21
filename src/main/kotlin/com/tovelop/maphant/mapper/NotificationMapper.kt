@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 interface NotificationMapper {
     fun getNotificationsByUserId(userId: Int, params: PagingDto): List<NotificationDBDTO>
     fun createNotification(notification: FcmMessageDTO, jsonStr: String)
-    fun updateNotification(id: Int)
 
     fun cntNotificationsByUserId(userId: Int): Int
+    fun updateNotificationReadAt(id: Int, readAt: LocalDateTime)
 }
