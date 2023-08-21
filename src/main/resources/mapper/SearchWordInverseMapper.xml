@@ -87,4 +87,10 @@
             (#{data.board_id}, #{data.search_word_id}, #{data.tf}, #{data.idf})
         </foreach>
     </insert>
+
+    <delete id="deleteByBoardId">
+        DELETE
+        FROM search_word_inverse
+        WHERE board_id = #{boardId}
+    </delete>
 </mapper>
