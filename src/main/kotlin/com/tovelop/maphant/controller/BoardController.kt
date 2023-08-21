@@ -4,10 +4,7 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
 import com.tovelop.maphant.mapper.BoardMapper
-import com.tovelop.maphant.service.BoardService
-import com.tovelop.maphant.service.PollService
-import com.tovelop.maphant.service.RateLimitingService
-import com.tovelop.maphant.service.TagService
+import com.tovelop.maphant.service.*
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
 import com.tovelop.maphant.type.paging.PagingResponse
@@ -28,7 +25,8 @@ class BoardController(
     @Autowired val boardService: BoardService,
     @Autowired val rateLimitingService: RateLimitingService,
     @Autowired val tagService: TagService,
-    @Autowired val pollService: PollService
+    @Autowired val pollService: PollService,
+    @Autowired val searchService: SearchService
 ) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
@@ -212,6 +210,7 @@ class BoardController(
 
         //게시물에 있었던 각 태그들의 갯수를 1씩 감소시킴
         tagService.deleteTagCnt(boardId)
+        searchService.delete(boardId)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
@@ -251,16 +250,19 @@ class BoardController(
             )
             pollService.createPoll(poll)
         }
+
         // tagNames가 비어있지 않은 경우 tagService.insertTag
         if (board.tagNames.isNullOrEmpty().not()) board.tagNames?.let {
-            val boardId = boardService.findLastInsertId()
-            tagService.insertTag(category, boardId, it)
+            tagService.insertTag(category, boardDto.id!!, it)
             it.forEach { tagName ->
                 tagService.insertBoardTag(
-                    boardId, tagService.getTagByName(tagName)?.id ?: throw Exception("태그가 존재하지 않습니다.")
+                    boardDto.id, tagService.getTagByName(tagName)?.id ?: throw Exception("태그가 존재하지 않습니다.")
                 )
             }
         }
+
+        searchService.create(boardDto.id!!,boardDto.title,boardDto.body,board.tagNames)
+
 
         // 제목 내용 빈칸인지 확인
         return ResponseEntity.ok(Response.stateOnly(true))
@@ -295,6 +297,7 @@ class BoardController(
         }
         board.body=badWordFiltering.filterBadWords(board.body)
         boardService.updateBoard(board.toUpdateBoardDTO())
+        searchService.update(board.id, board.title, board.body, board.tags)
         // 태그 수정하기
         if (!board.tags.isNullOrEmpty()) tagService.modifyTag(category, board.id, board.tags)
 

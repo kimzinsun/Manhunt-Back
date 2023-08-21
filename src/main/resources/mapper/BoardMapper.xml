@@ -481,4 +481,25 @@
                 AND b.type_id = #{boardTypeId}
             </if>
     </select>
+
+    <select id="getCountAllBoards">
+        SELECT
+            COUNT(*)
+        FROM board
+    </select>
+
+    <select id="findAllBoards" resultType="InitBoardDto">
+        select
+            b.id AS boardId,
+            b.title,
+            body,
+            GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tagStrings
+            FROM board b
+            LEFT OUTER JOIN board_tag ON b.id = board_tag.board_id
+            LEFT OUTER JOIN tag t ON board_tag.tag_id = t.id
+        WHERE
+            is_hide = 0 AND
+            b.state = 0
+        GROUP BY b.id
+    </select>
 </mapper>
