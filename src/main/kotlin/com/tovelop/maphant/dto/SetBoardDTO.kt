@@ -4,12 +4,13 @@ data class SetBoardDTO(
     val parentId: Int?,
     val typeId: Int,
     val title: String,
-    val body: String,
+    var body: String,
     val isHide: Int,
     val isComplete: Int,
     val isAnonymous: Int,
-    val imagesUrl: String?,
-    val tagNames: List<String>?
+    val imagesUrl: List<String>?,
+    val tagNames: List<String>?,
+    val poll : BoardPollDto?
 ) {
     fun toBoardDTO(userId: Int, categoryId: Int): BoardDTO {
         return BoardDTO(
@@ -27,7 +28,7 @@ data class SetBoardDTO(
             commentCnt = 0,
             likeCnt = 0,
             reportCnt = 0,
-            imagesUrl = imagesUrl, // 이미지는 s3? 물어보고 수정
+            imagesUrl = imagesUrl?.joinToString(","), // 이미지는 s3? 물어보고 수정
             createdAt = null,
             modifiedAt = null,
         )

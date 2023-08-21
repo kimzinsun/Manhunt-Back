@@ -7,6 +7,7 @@ import com.tovelop.maphant.mapper.CommentMapper
 import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class AdminPageService(
@@ -80,6 +81,14 @@ class AdminPageService(
         boardMapper.updateStateOfBoard(boardId, 2)
     }
 
+    fun updateBoardReportStateByBoardId(boardId: Int){
+        adminPageMapper.updateBoardReportStateByBoardId(boardId)
+    }
+
+    fun updateCommentReportStateByCommentId(commentId: Int){
+        adminPageMapper.updateCommentReportStateByCommentId(commentId)
+    }
+
     /**
      *유저 제재에 의한 게시글 블락 처리
      */
@@ -119,7 +128,22 @@ class AdminPageService(
     fun findUserReportList(): List<UserDTO> {
         return adminPageMapper.findUserReportList(adminPageMapper.findBoardCommentSanctionCount().map { it.userId })
     }
-    fun findUserReportInfo(userId: Int): List<List<Any>> {
-        return adminPageMapper.findUserReportInfo()
+    fun findReportByUserId(userId: Int): Boolean {
+        return adminPageMapper.findReportByUserId(userId)
+    }
+    fun findReportInfoByUserId(userId: Int): List<UserReportDTO> {
+        return adminPageMapper.findReportInfoByUserId(userId)
+    }
+
+    fun findLoginLogByDate(start: LocalDateTime, end: LocalDateTime): Int {
+        return adminPageMapper.findLoginLogByDate(start, end)
+    }
+
+    fun findBoardLogByDate(start: LocalDateTime, end: LocalDateTime): Int {
+        return adminPageMapper.findBoardLogByDate(start, end)
+    }
+
+    fun findCommentLogByDate(start: LocalDateTime, end: LocalDateTime): Int {
+        return adminPageMapper.findCommentLogByDate(start, end)
     }
 }

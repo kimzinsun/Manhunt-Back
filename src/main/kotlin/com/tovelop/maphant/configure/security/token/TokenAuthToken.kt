@@ -27,9 +27,9 @@ class TokenAuthToken(
     }
 
     fun createToken(timestamp: Int, privToken: String): String {
+        if(headerAuth == "maphant@pubKey" || timestamp == -1) return privToken
         val encoder = PasswordEncoderSHA512()
-        val token = encoder.encode(timestamp.toString() + privToken)
-        return if (headerAuth == "maphant@pubKey" || timestamp == -1) privToken else token
+        return encoder.encode(timestamp.toString() + privToken)
     }
 
     override fun isAuthenticated() = userData != null
