@@ -262,7 +262,7 @@ class BoardController(
         boardService.insertBoard(boardDto)
         rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
 
-        if (board.poll != null) { //투표생성
+        if(board.poll != null && !board.poll.title.isNullOrEmpty() && !board.poll.options.isEmpty()) { //투표생성
             val poll = PollDTO(
                 board.poll.id,
                 boardDto.id as Int,
