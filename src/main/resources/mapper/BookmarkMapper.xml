@@ -31,4 +31,11 @@
         WHERE ub.user_id = #{userId}
           and ub.board_id = #{boardId}
     </delete>
+
+    <select id="isBookmarked">
+        SELECT *
+        FROM user_bookmark ub
+        WHERE ub.user_id = #{userId}
+          and ub.board_id = #{boardId}
+    </select>
 </mapper>
