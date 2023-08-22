@@ -15,7 +15,7 @@ class PollController(val pollService: PollService) {
     @GetMapping("/{board_id}")
     @ResponseBody
     fun getPoll(@PathVariable("board_id") boardId: Int) =
-        mutableMapOf("poll_id" to pollService.getPollIdByBoardId(boardId))
+        ResponseEntity.ok().body(Response.success(mutableMapOf("poll_id" to pollService.getPollIdByBoardId(boardId))))
 
     @PostMapping("/") // 투표 생성
     fun createPoll(@RequestBody poll: PollDTO): ResponseEntity<Any> {
@@ -105,6 +105,7 @@ class PollController(val pollService: PollService) {
     fun pollInfoByBoardId(@PathVariable("board_id") boardId: Int): ResponseEntity<Any> {
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
         val pollId = pollService.getPollIdByBoardId(boardId)
+            ?: return ResponseEntity.badRequest().body(Response.error<Any>("삭제 됐거나 없는 투표입니다."))
         if (pollService.isPolledUser(auth.getUserId(), pollId) == 0) {
             return ResponseEntity.ok().body(Response.success(pollService.getPoll(pollId)))
         }

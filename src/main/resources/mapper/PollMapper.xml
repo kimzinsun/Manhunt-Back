@@ -107,8 +107,8 @@
                po.option_name   as option_name,
                po.option_cnt    as option_cnt
         FROM poll
-                 JOIN poll_option po on poll.id = po.poll_id
-                 JOIN poll_user pu on pu.poll_id = poll.id
+                 INNER JOIN poll_option po on poll.id = po.poll_id
+                 LEFT OUTER JOIN poll_user pu on pu.poll_id = poll.id
         WHERE poll.board_id = #{boardId}
           and poll.state != 2
     </select>

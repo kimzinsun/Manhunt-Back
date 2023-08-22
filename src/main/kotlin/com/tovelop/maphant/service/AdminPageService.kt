@@ -7,6 +7,7 @@ import com.tovelop.maphant.mapper.CommentMapper
 import com.tovelop.maphant.mapper.UserMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -145,5 +146,29 @@ class AdminPageService(
 
     fun findCommentLogByDate(start: LocalDateTime, end: LocalDateTime): Int {
         return adminPageMapper.findCommentLogByDate(start, end)
+    }
+
+    fun findDayLoginLogByDate(start: LocalDate, end: LocalDate): List<DayLogDTO>{
+        return adminPageMapper.findDayLoginLogByDate(start, end)
+    }
+
+    fun findDayBoardLogByDate(start: LocalDateTime, end: LocalDateTime): List<DayLogDTO>{
+        return adminPageMapper.findDayBoardLogByDate(start, end)
+    }
+
+    fun findDayCommentLogByDate(start: LocalDateTime, end: LocalDateTime): List<DayLogDTO>{
+        return adminPageMapper.findDayCommentLogByDate(start, end)
+    }
+
+    fun findWeekLoginLogByDate(start: LocalDateTime, end: LocalDateTime): List<WeekLogDTO>{
+        return adminPageMapper.findWeekLoginLogByDate(start, end)
+    }
+
+    fun findWeekBoardLogByDate(start: LocalDateTime, end: LocalDateTime): List<WeekLogDTO>{
+        return adminPageMapper.findWeekBoardLogByDate(start, end)
+    }
+
+    fun findWeekCommentLogByDate(start: LocalDateTime, end: LocalDateTime): List<WeekLogDTO>{
+        return adminPageMapper.findWeekCommentLogByDate(start, end)
     }
 }
