@@ -56,6 +56,7 @@ class Security {
             .requestMatchers("/admin/login").permitAll()
             .requestMatchers("/admin/**").hasRole("admin")
             .requestMatchers("/user/signup").permitAll()
+            .requestMatchers("/email/**").permitAll()
             .requestMatchers("/user/validation/**").permitAll()
             .anyRequest().permitAll()
         }
