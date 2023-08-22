@@ -8,18 +8,33 @@
         FROM profile
         WHERE user_id = #{user_id}
     </select>
-    <select id="findNicknameAndBodyAndImageById" resultType="ProfileNicknameAndBodyAndImageDto">
-        SELECT user.nickname as user_name,
-               category.name,
-               major.name,
-               body,
-               profile_img
+
+    <resultMap id="profileData" type="ProfileCategoryDTO">
+        <result property="nickname" column="nickname"/>
+        <result property="body" column="body"/>
+        <result property="profileImg" column="profile_img"/>
+        <collection property="category" ofType="UserDataCategoryDTO">
+            <result property="categoryId" column="category_id"/>
+            <result property="categoryName" column="category_name"/>
+            <result property="majorId" column="major_id"/>
+            <result property="majorName" column="major_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="findNicknameAndBodyAndImageById" resultMap="profileData">
+        SELECT user.nickname as nickname,
+               profile.body  as body,
+               profile_img   as profile_img,
+               ucm.category_id,
+               category.name as category_name,
+               ucm.major_id,
+               major.name    as major_name
         FROM user
                  LEFT OUTER JOIN profile
                                  ON profile.user_id = user.id
-                 join user_category_major on user.id = user_category_major.user_id
-                 join major on user_category_major.major_id = major.id
-                 join category on user_category_major.category_id = category.id
+                 join user_category_major ucm on user.id = ucm.user_id
+                 join major on ucm.major_id = major.id
+                 join category on ucm.category_id = category.id
         WHERE user.id = #{user_id}
     </select>
 
