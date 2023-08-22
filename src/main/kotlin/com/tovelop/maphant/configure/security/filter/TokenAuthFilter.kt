@@ -48,7 +48,7 @@ class TokenAuthFilter(authenticationManager: AuthenticationManager?)
             }
         }
 
-        val authReq = TokenAuthToken(headerAuth, headerTS.toInt(), headerSign)
+        val authReq = TokenAuthToken(headerAuth, headerTS.toInt(), headerSign, request = request)
 
         return this.authenticationManager.authenticate(authReq)
     }
