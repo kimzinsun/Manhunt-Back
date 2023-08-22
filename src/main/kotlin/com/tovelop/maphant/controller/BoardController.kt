@@ -177,8 +177,19 @@ class BoardController(
             }
         }
         val pollId = pollService.getPollIdByBoardId(boardId)
-        val optionList = pollService.getPollByBoardId(boardId, auth.getUserId())
         board.addBookmark(bookmarkService.isBookmarked(auth.getUserId(), boardId))
+        //투표 없는 경우
+        if(pollId==null){
+            return ResponseEntity.ok(
+                Response.success(
+                    BoardInfo(
+                        board, null
+                    )
+                )
+            )
+        }
+        val optionList = pollService.getPollByBoardId(boardId, auth.getUserId())
+        //투표한 경우
         if (pollService.isPolledUser(auth.getUserId(), pollId) == 0) {
             return ResponseEntity.ok(
                 Response.success(
@@ -190,6 +201,7 @@ class BoardController(
         }
         if (optionList.getOrNull() == null) return ResponseEntity.badRequest()
             .body(Response.error<Any>("삭제 됐거나 없는 투표입니다."))
+        //투표하지 않은 경우
         return ResponseEntity.ok(
             Response.success(
                 BoardInfo(
