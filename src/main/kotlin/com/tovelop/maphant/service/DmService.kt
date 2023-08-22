@@ -94,7 +94,10 @@ class DmService(
         fcmService.send(FcmMessageDTO(
             receiver_id,
             userNickname,
-            content
+            content,
+            mapOf(
+                "roomId" to "${room.id}",
+            )
         ))
 
         return dmDto
