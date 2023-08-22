@@ -62,7 +62,7 @@ data class CommentRESDTO(
 data class CommentExtDTO(
     val id: Int,
     val parent_id: Int?,
-    val user_id: Int?,
+    var user_id: Int?,
     var nickname: String,
     val boardtype_id: Int,
     val board_type: String,
