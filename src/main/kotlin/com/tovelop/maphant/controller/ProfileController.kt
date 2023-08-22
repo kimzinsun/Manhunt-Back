@@ -3,7 +3,7 @@ package com.tovelop.maphant.controller
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.BoardResDto
 import com.tovelop.maphant.dto.CommentExtDTO
-import com.tovelop.maphant.dto.ProfileNicknameAndBodyAndImageDto
+import com.tovelop.maphant.dto.ProfileCategoryDTO
 import com.tovelop.maphant.service.AwsS3Service
 import com.tovelop.maphant.service.ProfileService
 import com.tovelop.maphant.type.paging.PagingDto
@@ -23,7 +23,7 @@ class ProfileController(
 ) {
 
     @GetMapping
-    fun getProfile(@RequestParam targetUserId: Int?): ResponseEntity<Response<List<ProfileNicknameAndBodyAndImageDto>>> {
+    fun getProfile(@RequestParam targetUserId: Int?): ResponseEntity<Response<ProfileCategoryDTO>> {
         val userId: Int = (SecurityContextHolder.getContext().authentication as TokenAuthToken).getUserId()
         return ResponseEntity.ok()
             .body(Response.success(profileService.getNicknameAndBodyAndImage(targetUserId ?: userId)))
