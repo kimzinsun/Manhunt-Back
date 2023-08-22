@@ -27,7 +27,7 @@ data class ExtBoardDTO(
     val isLike: Boolean,
     val isMyBoard: Boolean,
     var tags: List<ReqTagDTO>,
-    var bookmark: Boolean = false,
+    var isBookmarked: Boolean = false,
 ) {
     val imagesUrl: List<String>
         get() = imagesUrlString?.split(",") ?: listOf()
@@ -79,7 +79,7 @@ data class ExtBoardDTO(
     )
 
     fun addBookmark(bookmark: Boolean) {
-        this.bookmark = bookmark
+        this.isBookmarked = bookmark
     }
 }
 
