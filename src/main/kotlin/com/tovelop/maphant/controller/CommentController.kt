@@ -56,9 +56,9 @@ class CommentController(
                 it.nickname = "익명" + anonymousKV[it.user_id]!!.rowNum
             }
             if (it.modified_at == null) {
-                it.timeFormat(it, it.created_at.formatTime())
+                it.timeFormat(it, it.created_at.formatTime(), userId)
             } else {
-                it.timeFormat(it, it.modified_at.formatTime() + "(수정됨)")
+                it.timeFormat(it, it.modified_at.formatTime() + "(수정됨)", userId)
             }
         }
         val pagingResponse = PagingResponse(commentTime, comment.pagination)
@@ -118,7 +118,13 @@ class CommentController(
             FcmMessageDTO(
                 commentService.getBoardUserId(commentDTO.board_id),
                 "댓글이 달렸습니다.",
-                commentDTO.body
+                commentDTO.body,
+                mutableMapOf(
+                    "type" to "comment",
+                    "boardId" to commentDTO.board_id.toString(),
+                    "commentId" to commentDTO.id.toString(),
+                    "board_type" to commentService.findBoard(commentDTO.board_id)!!.typeId.toString(),
+                )
             )
         )
         return ResponseEntity.ok().body(Response.stateOnly(true))

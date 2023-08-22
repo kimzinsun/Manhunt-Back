@@ -11,11 +11,11 @@ import org.springframework.web.multipart.MultipartFile
 @Repository
 interface ProfileMapper {
     // user테이블의 id 값으로 프로필 사진 불러오기
-    fun findNicknameAndBodyAndImageById(userId: Int): List<ProfileNicknameAndBodyAndImageDto>
+    fun findNicknameAndBodyAndImageById(userId: Int): ProfileCategoryDTO
 
     fun findById(userId: Int): ProfileDto?
 
-    fun insertProfileBody(userId: Int, body: String):Boolean
+    fun insertProfileBody(userId: Int, body: String): Boolean
 
     fun updateProfileImage(userId: Int, imageUrl: String): Boolean
 

@@ -171,4 +171,14 @@ $(document).ready(function() {
             }
         })
     })
+    $(".sort-button").click(function() {
+        const sortType = $(this).data("sort-type");
+        const section = $(this).data("section");
+        let contentUrl = `/admin/${section}`;
+
+        if (sortType !== "time") {
+            contentUrl += `?sortType=${sortType}`;
+        }
+        setActiveMenu(this, contentUrl);
+    });
 });
