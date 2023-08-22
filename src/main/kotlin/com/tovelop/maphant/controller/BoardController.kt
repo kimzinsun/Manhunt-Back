@@ -25,7 +25,8 @@ class BoardController(
     @Autowired val rateLimitingService: RateLimitingService,
     @Autowired val tagService: TagService,
     @Autowired val pollService: PollService,
-    @Autowired val searchService: SearchService
+    @Autowired val searchService: SearchService,
+    @Autowired val bookmarkService: BookmarkService
 ) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
@@ -177,11 +178,12 @@ class BoardController(
         }
         val pollId = pollService.getPollIdByBoardId(boardId)
         val optionList = pollService.getPollByBoardId(boardId, auth.getUserId())
-        if (pollService.isPolledUser(auth.getUserId(), pollId) == 0){
+        board.addBookmark(bookmarkService.isBookmarked(auth.getUserId(), boardId))
+        if (pollService.isPolledUser(auth.getUserId(), pollId) == 0) {
             return ResponseEntity.ok(
                 Response.success(
                     BoardInfo(
-                        board,  pollService.getPoll(pollId)
+                        board, pollService.getPoll(pollId)
                     )
                 )
             )
@@ -191,7 +193,7 @@ class BoardController(
         return ResponseEntity.ok(
             Response.success(
                 BoardInfo(
-                    board,  optionList.getOrNull()
+                    board, optionList.getOrNull()
                 )
             )
         )
