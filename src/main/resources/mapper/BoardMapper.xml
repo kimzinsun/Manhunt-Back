@@ -486,6 +486,9 @@
         SELECT
             COUNT(*)
         FROM board
+        WHERE
+            is_hide = 0 AND
+            state = 0
     </select>
 
     <select id="findAllBoards" resultType="InitBoardDto">

@@ -1,5 +1,7 @@
 package com.tovelop.maphant.controller
 
+import com.tovelop.maphant.configure.security.UserDataService
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.EmailAuthDTO
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
@@ -8,6 +10,7 @@ import com.tovelop.maphant.utils.SendGrid
 import com.tovelop.maphant.utils.ValidationHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/email")
-class EmailAuthController(@Autowired val sendGrid: SendGrid, @Autowired val userService: UserService) {
+class EmailAuthController(@Autowired val sendGrid: SendGrid,
+                          @Autowired val userService: UserService,
+                          @Autowired val userDataService: UserDataService,
+) {
     @PostMapping("/sendsignup")
     fun sendAuthCode(@RequestBody emailAuthDTO: EmailAuthDTO): ResponseEntity<ResponseUnit> {
         if (!ValidationHelper.isUniversityEmail(emailAuthDTO.email))
@@ -35,6 +41,8 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid, @Autowired val user
             .body(Response.error("인증코드가 일치하지 않습니다."))
 
         userService.updateUserState(emailAuthDTO.email, 1)
+        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
+        userDataService.updateUserDataByUserId(auth.getUserId())
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
