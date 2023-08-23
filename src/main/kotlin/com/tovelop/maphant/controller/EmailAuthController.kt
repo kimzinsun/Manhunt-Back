@@ -6,6 +6,7 @@ import com.tovelop.maphant.dto.EmailAuthDTO
 import com.tovelop.maphant.service.UserService
 import com.tovelop.maphant.type.response.Response
 import com.tovelop.maphant.type.response.ResponseUnit
+import com.tovelop.maphant.utils.SecurityHelper.Companion.isLogged
 import com.tovelop.maphant.utils.SendGrid
 import com.tovelop.maphant.utils.ValidationHelper
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,9 +43,9 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid,
 
         userService.updateUserState(emailAuthDTO.email, 1)
 
-        val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        if (auth.isAuthenticated) {
-            userDataService.updateUserDataByUserId(auth.getUserId())
+        val auth = SecurityContextHolder.getContext().authentication
+        if (auth.isLogged()) {
+            userDataService.updateUserDataByUserId((auth as TokenAuthToken).getUserId())
         }
 
         return ResponseEntity.ok(Response.stateOnly(true))
