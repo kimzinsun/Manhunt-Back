@@ -3,7 +3,6 @@ package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.security.token.TokenAuthToken
 import com.tovelop.maphant.dto.*
-import com.tovelop.maphant.mapper.BoardMapper
 import com.tovelop.maphant.service.*
 import com.tovelop.maphant.type.paging.Pagination
 import com.tovelop.maphant.type.paging.PagingDto
@@ -26,7 +25,8 @@ class BoardController(
     @Autowired val rateLimitingService: RateLimitingService,
     @Autowired val tagService: TagService,
     @Autowired val pollService: PollService,
-    @Autowired val searchService: SearchService
+    @Autowired val searchService: SearchService,
+    @Autowired val bookmarkService: BookmarkService
 ) {
     val sortCriterionMap = mapOf(1 to "created_at", 2 to "like_cnt")
 
@@ -106,8 +106,7 @@ class BoardController(
                         FindBoardDTO(it.id, parentId, page, recordSize, sortCriterionMap[sortCriterionId]!!),
                         auth.getUserId(),
                         category
-                    ),
-                    Pagination(
+                    ), Pagination(
                         if (boardTypeId == aBoardTypeId) boardService.getABoardCnt(parentId!!)
                         else boardService.getBoardSizeByCategoryIdAndBoardTypeId(category, it.id),
                         PagingDto(page, recordSize, pageSize)
@@ -116,13 +115,11 @@ class BoardController(
             }
         } else {
             BoardListInfo(
-                null,
-                boardService.findBoardList(
+                null, boardService.findBoardList(
                     FindBoardDTO(boardTypeId, parentId, page, recordSize, sortCriterionMap[sortCriterionId]!!),
                     auth.getUserId(),
                     category
-                ),
-                Pagination(
+                ), Pagination(
                     if (boardTypeId == aBoardTypeId) boardService.getABoardCnt(parentId!!)
                     else boardService.getBoardSizeByCategoryIdAndBoardTypeId(category, boardTypeId),
                     PagingDto(page, recordSize, pageSize)
@@ -162,7 +159,7 @@ class BoardController(
         return ResponseEntity.ok(Response.stateOnly(true))
     }
 
-    data class BoardInfo(val board: ExtBoardDTO, val poll: Result<PollInfoDTO>)
+    data class BoardInfo(val board: ExtBoardDTO, val poll: Any?)
 
     @GetMapping("{boardId}/")
     fun readBoard(@PathVariable("boardId") boardId: Int): ResponseEntity<Any> {
@@ -179,10 +176,36 @@ class BoardController(
                 return ResponseEntity.badRequest().body(Response.error<Any>("권한이 없습니다."))
             }
         }
+        val pollId = pollService.getPollIdByBoardId(boardId)
+        board.addBookmark(bookmarkService.isBookmarked(auth.getUserId(), boardId))
+        //투표 없는 경우
+        if(pollId==null){
+            return ResponseEntity.ok(
+                Response.success(
+                    BoardInfo(
+                        board, null
+                    )
+                )
+            )
+        }
+        val optionList = pollService.getPollByBoardId(boardId, auth.getUserId())
+        //투표한 경우
+        if (pollService.isPolledUser(auth.getUserId(), pollId) == 0) {
+            return ResponseEntity.ok(
+                Response.success(
+                    BoardInfo(
+                        board, pollService.getPoll(pollId)
+                    )
+                )
+            )
+        }
+        if (optionList.getOrNull() == null) return ResponseEntity.badRequest()
+            .body(Response.error<Any>("삭제 됐거나 없는 투표입니다."))
+        //투표하지 않은 경우
         return ResponseEntity.ok(
             Response.success(
                 BoardInfo(
-                    board, pollService.getPollByBoardId(boardId, auth.getUserId())
+                    board, optionList.getOrNull()
                 )
             )
         )
@@ -234,7 +257,7 @@ class BoardController(
         if (badWordFiltering.hasBadWords(board.title)) {
             return ResponseEntity.badRequest().body(Response.error("제목에는 비속어를 적을 수 없습니다."))
         }
-        board.body=badWordFiltering.filterBadWords(board.body)
+        board.body = badWordFiltering.filterBadWords(board.body)
         val boardDto = board.toBoardDTO(auth.getUserId(), category)
         boardService.insertBoard(boardDto)
         rateLimitingService.requestCheck(auth.getUserId(), "WRITE_POST")
@@ -261,7 +284,7 @@ class BoardController(
             }
         }
 
-        searchService.create(boardDto.id!!,boardDto.title,boardDto.body,board.tagNames)
+        searchService.create(boardDto.id!!, boardDto.title, boardDto.body, board.tagNames)
 
 
         // 제목 내용 빈칸인지 확인
@@ -295,7 +318,7 @@ class BoardController(
         if (badWordFiltering.hasBadWords(board.title)) {
             return ResponseEntity.badRequest().body(Response.error("제목에는 비속어를 적을 수 없습니다."))
         }
-        board.body=badWordFiltering.filterBadWords(board.body)
+        board.body = badWordFiltering.filterBadWords(board.body)
         boardService.updateBoard(board.toUpdateBoardDTO())
         searchService.update(board.id, board.title, board.body, board.tags)
         // 태그 수정하기
