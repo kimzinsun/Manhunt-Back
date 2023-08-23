@@ -28,7 +28,7 @@ class FcmService(
                         .build()
                 )
 
-            if(fcmMessageDTO.etc != null) {
+            if (fcmMessageDTO.etc != null) {
                 for (key in fcmMessageDTO.etc.keys) {
                     messageBuilder.putData(key, fcmMessageDTO.etc[key])
                 }
@@ -38,7 +38,6 @@ class FcmService(
             FirebaseMessaging.getInstance().send(message)
         }
 
-        notificationService.createNotification(fcmMessageDTO)
     }
 
     fun saveFcmToken(userId: Int, token: String) {
@@ -46,9 +45,11 @@ class FcmService(
     }
 
     fun send(messageDTO: FcmMessageDTO) {
+        notificationService.createNotification(messageDTO) // web에서도 알림 로그 저장가능하게
+
         val tokens = fcmMapper.selectTokenById(messageDTO.userId)
-        if(tokens.isEmpty()) return
-        messageDTO.setTokens(tokens)
         sendByTokens(messageDTO)
+        if (tokens.isEmpty()) return
+        messageDTO.setTokens(tokens)
     }
 }
