@@ -109,6 +109,7 @@
                  INNER JOIN poll_option po on poll.id = po.poll_id
                  LEFT OUTER JOIN poll_user pu on pu.poll_id = poll.id
         WHERE poll.board_id = #{boardId}
+          and pu.user_id = #{userId}
           and poll.state != 2
     </select>
 
