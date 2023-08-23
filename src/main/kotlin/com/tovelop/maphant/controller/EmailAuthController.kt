@@ -43,8 +43,9 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid,
         userService.updateUserState(emailAuthDTO.email, 1)
 
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        val userId = if (auth.isAuthenticated) auth.getUserId() else userService.findUserIdByUserEmail(emailAuthDTO.email)
-        userDataService.updateUserDataByUserId(userId)
+        if (auth.isAuthenticated) {
+            userDataService.updateUserDataByUserId(auth.getUserId())
+        }
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }
