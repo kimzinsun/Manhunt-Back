@@ -230,6 +230,9 @@ class CommentController(
         if (comment.state == 2 || comment.state == 3) {
             return ResponseEntity.badRequest().body(Response.error("차단된 댓글입니다."))
         }
+        if (comment.user_id == userId) {
+            return ResponseEntity.badRequest().body(Response.error("자신의 댓글은 신고할 수 없습니다."))
+        }
         if (commentService.findCommentReport(
                 commentRequest.commentId
             ) != emptyList<CommentReportDTO>()
