@@ -54,6 +54,8 @@ class CommentController(
         val commentTime = comment.list.map {
             if (it.is_anonymous && anonymousKV.containsKey(it.user_id)) {
                 it.nickname = "익명" + anonymousKV[it.user_id]!!.rowNum
+                it.user_id = null
+
             }
             if (it.modified_at == null) {
                 it.timeFormat(it, it.created_at.formatTime(), userId)
