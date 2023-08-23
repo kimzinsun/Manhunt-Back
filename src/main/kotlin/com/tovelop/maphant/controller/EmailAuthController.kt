@@ -41,8 +41,10 @@ class EmailAuthController(@Autowired val sendGrid: SendGrid,
             .body(Response.error("인증코드가 일치하지 않습니다."))
 
         userService.updateUserState(emailAuthDTO.email, 1)
+
         val auth = SecurityContextHolder.getContext().authentication as TokenAuthToken
-        userDataService.updateUserDataByUserId(auth.getUserId())
+        val userId = if (auth.isAuthenticated) auth.getUserId() else userService.findUserIdByUserEmail(emailAuthDTO.email)
+        userDataService.updateUserDataByUserId(userId)
 
         return ResponseEntity.ok(Response.stateOnly(true))
     }

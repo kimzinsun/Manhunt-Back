@@ -155,4 +155,8 @@ class UserService(val mapper: UserMapper) {
     fun updateWithDrawUser(email: String) {
         mapper.updateWithDrawUser(email)
     }
+
+    fun findUserIdByUserEmail(email: String): Int{
+        return mapper.findUserIdByUserEmail(email)
+    }
 }
